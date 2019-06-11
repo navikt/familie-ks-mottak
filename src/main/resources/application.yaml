@@ -15,3 +15,4 @@ management:
       info: "status/isAlive"
   metrics.export.prometheus.enabled: true
 
+http.proxy: http://webproxy-nais.nav.no:8088
