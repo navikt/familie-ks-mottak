@@ -1,9 +1,7 @@
 package no.nav.familie.ks.mottak.api;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -11,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MottakController {
 
 
-    @PostMapping("/soknad")
-    public String mottaSoknad(String soknad) {
+    @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String mottaSoknad(@RequestBody String soknad) {
         return soknad;
     }
 
