@@ -18,7 +18,7 @@ public class MottakController {
     }
 
     @GetMapping("/ping")
-    //@Unprotected
+    @Unprotected
     public String ping() {
         return "OK";
     }
