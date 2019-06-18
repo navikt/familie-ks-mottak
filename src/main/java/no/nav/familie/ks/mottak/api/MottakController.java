@@ -1,11 +1,14 @@
 package no.nav.familie.ks.mottak.api;
 
+import no.nav.security.oidc.api.ProtectedWithClaims;
+import no.nav.security.oidc.api.Unprotected;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/api")
+@ProtectedWithClaims(issuer = "selvbetjening", claimMap = { "acr=Level4" })
 public class MottakController {
 
 
@@ -15,6 +18,7 @@ public class MottakController {
     }
 
     @GetMapping("/ping")
+    @Unprotected
     public String ping() {
         return "OK";
     }
