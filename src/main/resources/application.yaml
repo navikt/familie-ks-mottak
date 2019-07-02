@@ -5,6 +5,9 @@ server:
 spring:
   autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   main.banner-mode: "off"
+  jersey:
+    servlet.load-on-startup: 1
+    application-path: "/api"
 
 management:
   endpoint.health.show-details: always
@@ -16,3 +19,4 @@ management:
   metrics.export.prometheus.enabled: true
 
 http.proxy: http://webproxy-nais.nav.no:8088
+SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083/api

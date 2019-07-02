@@ -19,9 +19,35 @@
         <revision>1</revision>
         <java.version>11</java.version>
         <oidc-support.version>0.2.18</oidc-support.version>
+        <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
     </properties>
 
     <dependencies>
+
+        <!-- Interne avhengigheter -->
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>oidc-jersey-support</artifactId>
+            <version>${oidc-support.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>oidc-test-support</artifactId>
+            <version>${oidc-support.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.sbl</groupId>
+            <artifactId>rest</artifactId>
+            <version>${common-java-modules.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- Spring Boot avhengigheter -->
         <dependency>
@@ -30,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -43,23 +69,28 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Logging -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- NAV-interne avhengigheter -->
         <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>oidc-spring-support</artifactId>
-            <version>${oidc-support.version}</version>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>oidc-test-support</artifactId>
-            <version>${oidc-support.version}</version>
-            <scope>test</scope>
+            <groupId>no.nav.sbl</groupId>
+            <artifactId>log</artifactId>
+            <version>${common-java-modules.version}</version>
         </dependency>
     </dependencies>
 

@@ -9,13 +9,12 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootConfiguration
 @ComponentScan({ "no.nav.familie.ks.mottak" })
 public class ApplicationConfig {
-
     @Bean
     ServletWebServerFactory servletWebServerFactory() {
 
         JettyServletWebServerFactory serverFactory = new JettyServletWebServerFactory();
 
-        serverFactory.setPort(8080);
+        serverFactory.setPort(8082);
 
         return serverFactory;
     }

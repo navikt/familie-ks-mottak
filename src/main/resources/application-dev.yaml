@@ -4,3 +4,7 @@ no.nav.security.oidc:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
