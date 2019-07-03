@@ -18,7 +18,7 @@ import java.time.Duration;
 
 @RestController
 @RequestMapping("/api")
-@ProtectedWithClaims(issuer = "selvbetjening", claimMap = { "acr=Level4" })
+@ProtectedWithClaims(issuer = "intern")
 public class MottakController {
 
     private HttpClient client;
@@ -28,7 +28,7 @@ public class MottakController {
     @Autowired
     public MottakController(@Value("${SOKNAD_KONTANTSTOTTE_SAK_API_URL}") URI sakServiceUri, @Autowired StsRestClient stsRestClient) {
         this.client = HttpClient.newHttpClient();
-        this.sakServiceUri = URI.create(sakServiceUri + "/behandling/start");
+        this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.stsRestClient = stsRestClient;
     }
 
