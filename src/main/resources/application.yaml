@@ -16,3 +16,5 @@ management:
   metrics.export.prometheus.enabled: true
 
 http.proxy: http://webproxy-nais.nav.no:8088
+SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083
+STS_URL: http://security-token-service.default.svc.nais.local
