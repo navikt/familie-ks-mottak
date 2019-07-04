@@ -36,16 +36,18 @@ public class StsRestClient {
         this.stsPassword = stsPassword;
     }
 
-    private boolean hasTokenExpired() {
+    private boolean isTokenValid() {
+        if (cachedToken == null) return false;
+
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
                     .minus(10, ChronoUnit.MINUTES)
-                    .isAfter(now());
+                    .isBefore(now());
     }
 
     public String getSystemOIDCToken() {
-        if (!hasTokenExpired()) {
+        if (isTokenValid()) {
             return cachedToken.getAccess_token();
         }
 
