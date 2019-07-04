@@ -5,7 +5,9 @@ import no.nav.security.oidc.api.ProtectedWithClaims;
 import no.nav.security.oidc.api.Unprotected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -33,7 +35,8 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String mottaSoknad(@RequestBody String soknad) {
+    @Unprotected
+    public ResponseEntity mottaSoknad(@RequestBody String soknad) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(sakServiceUri)
                 .POST(HttpRequest.BodyPublishers.ofString(soknad))
@@ -48,7 +51,7 @@ public class MottakController {
             e.printStackTrace();
         }
 
-        return "OK";
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/ping")
