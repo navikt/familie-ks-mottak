@@ -12,11 +12,11 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 
-import static java.time.LocalDate.now;
+import static java.time.LocalTime.now;
+
 
 @Component
 public class StsRestClient {
@@ -41,8 +41,8 @@ public class StsRestClient {
 
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
                     .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .minus(10, ChronoUnit.MINUTES)
+                    .toLocalTime()
+                    .minusMinutes(10)
                     .isBefore(now());
     }
 
@@ -78,7 +78,6 @@ public class StsRestClient {
         }
 
         if (accessTokenResponse != null) {
-            System.out.println(accessTokenResponse.getAccess_token());
             this.cachedToken = accessTokenResponse;
             return accessTokenResponse.getAccess_token();
         } else {
