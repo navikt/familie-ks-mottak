@@ -2,13 +2,13 @@ package no.nav.familie.ks.mottak.api;
 
 import no.nav.familie.ks.mottak.sts.StsRestClient;
 import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,8 +35,7 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Unprotected
-    public ResponseEntity mottaSoknad(@RequestBody String soknad) {
+    public HttpResponse mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(sakServiceUri)
                 .POST(HttpRequest.BodyPublishers.ofString(soknad))
@@ -45,18 +44,6 @@ public class MottakController {
                 .timeout(Duration.ofMinutes(2))
                 .build();
 
-        try {
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @GetMapping("/ping")
-    @Unprotected
-    public String ping() {
-        return "OK";
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
