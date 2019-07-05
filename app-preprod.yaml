@@ -35,4 +35,4 @@ spec:
     - https://familie-ks-mottak.nais.preprod.local
   env:
     - name: SPRING_PROFILES_ACTIVE
-        value: preprod
+      value: preprod
