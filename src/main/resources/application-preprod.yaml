@@ -6,3 +6,4 @@ no.nav.security.oidc:
     cookie_name: selvbetjening-idtoken
 
 SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://familie-ks-sak/api
+STS_URL: http://security-token-service.default.svc.nais.local

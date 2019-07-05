@@ -78,6 +78,7 @@ public class StsRestClient {
         }
 
         if (accessTokenResponse != null) {
+            System.out.println(accessTokenResponse);
             this.cachedToken = accessTokenResponse;
             return accessTokenResponse.getAccess_token();
         } else {
