@@ -4,3 +4,5 @@ no.nav.security.oidc:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
+
+SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083
