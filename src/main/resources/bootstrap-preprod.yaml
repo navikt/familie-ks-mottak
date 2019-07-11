@@ -3,6 +3,11 @@ spring:
     vault:
       enabled: true
       uri: https://vault.adeo.no
+      connection-timeout: 5000
+      read-timeout: 15000
+      config:
+        order: -10
+        lifecycle.enabled: true
       database:
         enabled: true
         role: familie-ks-mottak-admin
