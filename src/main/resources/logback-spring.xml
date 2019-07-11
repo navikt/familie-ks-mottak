@@ -15,15 +15,15 @@
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>50MB</maxFileSize>
         </triggeringPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
     <logger name="secureLogger" level="INFO" additivity="false">
-        <appender-ref ref="secureLog" />
+        <appender-ref ref="secureLog"/>
     </logger>
 
     <!-- Spesiell håndtering av loggeren no.nav.log.LogFilter for å forhindre logging av isAlive-sjekker o.l. -->
-    <appender name="stdout_json_with_filter"  class="no.nav.log.MaskingAppender">
+    <appender name="stdout_json_with_filter" class="no.nav.log.MaskingAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
             <evaluator>
                 <matcher>
@@ -38,7 +38,7 @@
             <OnMatch>DENY</OnMatch>
         </filter>
         <appender name="stdout_json_masked_with_filter" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
         </appender>
     </appender>
 

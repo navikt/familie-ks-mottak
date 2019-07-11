@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    vault:
+      enabled: true
+      uri: https://vault.adeo.no
+      database:
+        enabled: true
+        role: familie-ks-mottak-preprod-admin
+        backend: postgresql/preprod-fss
+      authentication: KUBERNETES
+      kubernetes:
+        role: familie-ks-mottak
+        kubernetes-path: kubernetes/preprod/fss
+        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      generic:
+        enabled: true
+        backend: kv/preprod/fss
+        application-name: familie-ks-mottak/default
+        default-context: familie-ks-mottak/default

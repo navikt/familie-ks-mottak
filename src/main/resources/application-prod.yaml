@@ -5,6 +5,10 @@ no.nav.security.oidc:
     acceptedaudience: ${ACCEPTEDAUDIENCE} #Ligger i vault
     cookie_name: selvbetjening_idtoken
 
+spring:
+  datasource:
+    url: jdbc:postgresql://b27dbvl007.prod.local:5432/familie-ks-mottak
+
 # Appdynamics
 APPDYNAMICS_CONTROLLER_HOST_NAME: appdynamics.adeo.no
 APPDYNAMICS_CONTROLLER_PORT: 443
@@ -12,3 +16,4 @@ APPDYNAMICS_CONTROLLER_SSL_ENABLED: true
 APPDYNAMICS_AGENT_ACCOUNT_NAME: PROD
 
 SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://familie-ks-sak/api
+

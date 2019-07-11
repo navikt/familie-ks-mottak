@@ -29,7 +29,7 @@ public class StsRestClient {
 
     private AccessTokenResponse cachedToken;
 
-    public StsRestClient (@Value("${STS_URL}") URI stsUrl, @Value("${CREDENTIAL_USERNAME}") String stsUsername, @Value("${CREDENTIAL_PASSWORD}") String stsPassword) {
+    public StsRestClient(@Value("${STS_URL}") URI stsUrl, @Value("${CREDENTIAL_USERNAME}") String stsUsername, @Value("${CREDENTIAL_PASSWORD}") String stsPassword) {
         this.client = HttpClient.newHttpClient();
         this.stsUrl = URI.create(stsUrl + "/rest/v1/sts/token?grant_type=client_credentials&scope=openid");
         this.stsUsername = stsUsername;
@@ -40,10 +40,10 @@ public class StsRestClient {
         if (cachedToken == null) return false;
 
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalTime()
-                    .minusMinutes(10)
-                    .isBefore(now());
+            .atZone(ZoneId.systemDefault())
+            .toLocalTime()
+            .minusMinutes(10)
+            .isBefore(now());
     }
 
     public String getSystemOIDCToken() {
@@ -52,11 +52,11 @@ public class StsRestClient {
         }
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(stsUrl)
-                .header("Authorization", basicAuth(stsUsername, stsPassword))
-                .header("Content-Type", "application/json")
-                .timeout(Duration.ofSeconds(30))
-                .build();
+            .uri(stsUrl)
+            .header("Authorization", basicAuth(stsUsername, stsPassword))
+            .header("Content-Type", "application/json")
+            .timeout(Duration.ofSeconds(30))
+            .build();
 
         AccessTokenResponse accessTokenResponse;
         try {
