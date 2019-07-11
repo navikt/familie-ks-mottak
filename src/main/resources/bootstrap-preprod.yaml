@@ -5,7 +5,7 @@ spring:
       uri: https://vault.adeo.no
       database:
         enabled: true
-        role: familie-ks-mottak-preprod-admin
+        role: familie-ks-mottak-admin
         backend: postgresql/preprod-fss
       authentication: KUBERNETES
       kubernetes:
