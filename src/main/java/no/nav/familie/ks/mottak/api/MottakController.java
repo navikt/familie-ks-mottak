@@ -20,7 +20,7 @@ import java.time.Duration;
 
 @RestController
 @RequestMapping("/api")
-@ProtectedWithClaims(issuer = "intern")
+@ProtectedWithClaims(issuer = "selvbetjening", claimMap = {"acr=Level4"})
 public class MottakController {
 
     private HttpClient client;
