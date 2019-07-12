@@ -13,6 +13,7 @@ public class FlywayConfiguration {
 
     @Bean
     public FlywayConfigurationCustomizer flywayConfig(@Value("${spring.cloud.vault.database.role}") String role) {
+        System.out.println("Role: " + role);
         return c -> c.initSql(String.format("SET ROLE \"%s\"", role));
     }
 }
