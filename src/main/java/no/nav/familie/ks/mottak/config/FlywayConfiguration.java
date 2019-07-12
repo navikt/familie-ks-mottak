@@ -14,9 +14,10 @@ import org.springframework.context.annotation.Configuration;
 public class FlywayConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlywayConfiguration.class);
+
     @Bean
     public FlywayConfigurationCustomizer flywayConfig(@Value("${spring.cloud.vault.database.role}") String role) {
-        log.info("Role: {}", role);
+        log.info(String.format("SET ROLE \"%s\"", role));
         return c -> c.initSql(String.format("SET ROLE \"%s\"", role));
     }
 }
