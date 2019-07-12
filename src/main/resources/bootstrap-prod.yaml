@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    vault:
+      enabled: true
+      uri: https://vault.adeo.no
+      connection-timeout: 5000
+      read-timeout: 15000
+      config:
+        order: -10
+        lifecycle.enabled: true
+      database:
+        enabled: true
+        role: familie-ks-mottak-admin
+        backend: postgresql/prod-fss
+      authentication: KUBERNETES
+      kubernetes:
+        role: familie-ks-mottak
+        kubernetes-path: kubernetes/prod/fss
+        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      generic:
+        enabled: true
+        backend: kv/prod/fss
+        application-name: familie-ks-mottak/default
+        default-context: familie-ks-mottak/default
