@@ -8,6 +8,8 @@ no.nav.security.oidc:
 spring:
   datasource:
     url: jdbc:postgresql://a01dbfl039.adeo.no:5432/familie-ks-mottak
+  flyway:
+    enabled: true
 
 # Appdynamics
 APPDYNAMICS_CONTROLLER_HOST_NAME: appdynamics.adeo.no

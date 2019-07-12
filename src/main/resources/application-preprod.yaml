@@ -8,5 +8,7 @@ no.nav.security.oidc:
 spring:
   datasource:
     url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ks-mottak
+  flyway:
+    enabled: true
 
 SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://familie-ks-sak/api
