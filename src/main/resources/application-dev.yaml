@@ -5,4 +5,15 @@ no.nav.security.oidc:
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
 
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql=false
+    hibernate:
+      ddl-auto: create
+  flyway:
+    enabled: false
+
 SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083

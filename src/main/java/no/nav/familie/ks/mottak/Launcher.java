@@ -18,5 +18,4 @@ public class Launcher {
         ConfigurableApplicationContext applicationContext = app.run(args);
         Runtime.getRuntime().addShutdownHook(new DelayedShutdownHook(applicationContext));
     }
-
 }

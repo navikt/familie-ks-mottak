@@ -37,12 +37,12 @@ public class MottakController {
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpResponse mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(sakServiceUri)
-                .POST(HttpRequest.BodyPublishers.ofString(soknad))
-                .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-                .header("Content-Type", "application/json")
-                .timeout(Duration.ofMinutes(2))
-                .build();
+            .uri(sakServiceUri)
+            .POST(HttpRequest.BodyPublishers.ofString(soknad))
+            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+            .header("Content-Type", "application/json")
+            .timeout(Duration.ofMinutes(2))
+            .build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
