@@ -27,10 +27,10 @@ spec:
   resources:
     limits:
       memory: 512Mi
-      cpu: 500m
+      cpu: 1
     requests:
       memory: 256Mi
-      cpu: 200m
+      cpu: 500m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ks-mottak.nais.preprod.local
   secureLogs:
