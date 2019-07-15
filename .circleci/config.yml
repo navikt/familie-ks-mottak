@@ -1,0 +1,170 @@
+version: 2.1
+orbs:
+  nais: 'navikt/nais-deployment@1.1.0'
+
+executors:
+  nais-deployer:
+    environment:
+      TEAM: teamfamilie
+    docker:
+      - image: navikt/deployment-cli:latest
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Generate version number, github token and docker image tags
+          command: |
+            export VERSION="$(node -p "require('./package').version")-$CIRCLE_SHA1"
+            echo "export VERSION="$(node -p "require('./package').version")-$CIRCLE_SHA1"" >> properties.env
+            echo "export DOCKER_TAG=\"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$VERSION\"" >> properties.env
+            cat properties.env >> $BASH_ENV
+      - restore_cache:
+          key: familie-ks-mottak-{{ checksum "pom.xml" }}
+      - run:
+          name: Hent dependencies
+          command: |
+            mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: familie-ks-mottak-{{ checksum "pom.xml" }}
+      - run:
+          name: Bygger produksjon
+          command: |
+            mvn clean package
+      - persist_to_workspace:
+          root: /home/circleci/project
+          paths:
+            - .
+
+  deploy_docker:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Set up environment variables
+          command: cat /home/circleci/project/properties.env >> $BASH_ENV
+      - run:
+          name: Bygger Docker image
+          command: |
+            echo $DOCKER_TAG $VERSION
+            docker build -t $DOCKER_TAG .
+      - run:
+          name: Docker push
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+            echo "Pushing with tag $DOCKER_TAG"
+            docker push $DOCKER_TAG
+      - persist_to_workspace:
+          root: /home/circleci/project
+          paths:
+            - properties.env
+
+  github_app:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - run:
+          name: Creating Github Apps Installation Token
+          command: |
+            git clone https://github.com/navikt/github-apps-support.git
+            export PATH=`pwd`/github-apps-support/bin:$PATH
+            echo $GITHUB_PRIVATE_KEY | base64 --decode > ./github.key.pem
+            GITHUB_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./github.key.pem $GITHUB_APP_ID`)
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./github.key.pem
+
+  deploy_dev:
+    executor: nais-deployer
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - checkout
+      - run:
+          name: Set up environment variables
+          command: cat /home/circleci/project/properties.env >> $BASH_ENV
+      - run:
+          name: Create github deployment for stable test
+          command: |
+            deployment-cli deploy create \
+              --cluster=dev-fss \
+              --repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
+              --appid=${GITHUB_APP_ID} \
+              --team=${TEAM} \
+              --version=${VERSION} \
+              --key=/home/circleci/project/github.key.pem \
+              --resource=./app-preprod.yaml
+
+  deploy_prod:
+    executor: nais-deployer
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - checkout
+      - run:
+          name: Set up environment variables
+          command: cat /home/circleci/project/properties.env >> $BASH_ENV
+      - run:
+          name: Create github deployment for production
+          command: |
+            deployment-cli deploy create \
+              --cluster=prod-fss \
+              --repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
+              --appid=${GITHUB_APP_ID} \
+              --team=${TEAM} \
+              --version=${VERSION} \
+              --key=/home/circleci/project/github.key.pem \
+              --resource=./app-prod.yaml
+
+workflows:
+  version: 2
+  build_n_deploy:
+    jobs:
+    - build:
+        filters:
+          tags:
+            only: /^v[0-9]+\.[0-9]+$/
+    - deploy_docker:
+        context: NAIS deployment
+        requires:
+        - build
+        filters:
+          tags:
+            only: /^v[0-9]+\.[0-9]+$/
+    - github_app:
+        context: familie-ci
+        filters:
+          tags:
+            only: /^v[0-9]+\.[0-9]+$/
+    - deploy_dev:
+        context: familie-ci
+        requires:
+        - deploy_docker
+        - github_app
+        filters:
+          tags:
+            only: /^.*/
+          branches:
+            only: /.*/
+    - deploy_prod:
+        context: familie-ci
+        requires:
+        - deploy_docker
+        - github_app
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v[0-9]+\.[0-9]+$/
