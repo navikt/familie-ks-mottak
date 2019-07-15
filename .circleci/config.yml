@@ -20,8 +20,8 @@ jobs:
       - run:
           name: Generate version number, github token and docker image tags
           command: |
-            export VERSION="$(node -p "require('./package').version")-$CIRCLE_SHA1"
-            echo "export VERSION="$(node -p "require('./package').version")-$CIRCLE_SHA1"" >> properties.env
+            export VERSION="$CIRCLE_SHA1"
+            echo "export VERSION="$CIRCLE_SHA1"" >> properties.env
             echo "export DOCKER_TAG=\"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$VERSION\"" >> properties.env
             cat properties.env >> $BASH_ENV
       - restore_cache:
