@@ -40,7 +40,6 @@ public class MottakController {
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpResponse mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
         String STSToken = stsRestClient.getSystemOIDCToken();
-        LOG.info("STS-token: {}", STSToken);
 
         HttpRequest request = HttpRequest.newBuilder()
             .uri(sakServiceUri)
