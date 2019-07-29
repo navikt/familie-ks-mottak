@@ -39,6 +39,7 @@ public class MottakController {
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpResponse mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
+        LOG.info("Sender søknad videre til sak");
         String STSToken = stsRestClient.getSystemOIDCToken();
 
         HttpRequest request = HttpRequest.newBuilder()

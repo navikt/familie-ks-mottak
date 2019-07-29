@@ -55,9 +55,10 @@ public class StsRestClient {
 
     public String getSystemOIDCToken() {
         if (isTokenValid()) {
+            LOG.info("Henter token fra cache");
             return cachedToken.getAccess_token();
         }
-
+        LOG.info("Spør STS om token");
         HttpRequest request = HttpRequest.newBuilder()
             .uri(stsUrl)
             .header("Authorization", basicAuth(stsUsername, stsPassword))
