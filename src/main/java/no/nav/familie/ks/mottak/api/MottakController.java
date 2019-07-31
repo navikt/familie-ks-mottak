@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,18 +40,20 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpResponse mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
-        LOG.info("Sender søknad videre til sak");
-        String STSToken = stsRestClient.getSystemOIDCToken();
-
+    public ResponseEntity mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(sakServiceUri)
-            .POST(HttpRequest.BodyPublishers.ofString(soknad))
-            .header("Authorization", "Bearer " + STSToken)
-            .header("Content-Type", "application/json")
-            .timeout(Duration.ofMinutes(2))
-            .build();
+                .uri(sakServiceUri)
+                .POST(HttpRequest.BodyPublishers.ofString(soknad))
+                .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofMinutes(2))
+                .build();
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != HttpStatus.OK.value()) {
+            LOG.warn("Innsending til sak feilet. Responskode: {}. Feilmelding: {}", response.statusCode(), response.body());
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
