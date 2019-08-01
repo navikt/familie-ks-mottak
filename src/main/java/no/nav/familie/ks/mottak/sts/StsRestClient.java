@@ -50,7 +50,7 @@ public class StsRestClient {
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
             .atZone(ZoneId.systemDefault())
             .toLocalTime()
-            .minusMinutes(10)
+            .minusMinutes(15)
             .isBefore(now());
     }
 
