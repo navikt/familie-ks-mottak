@@ -16,4 +16,7 @@ spring:
   flyway:
     enabled: false
 
-SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083
+SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083/api
+
+server:
+  port: 8084
