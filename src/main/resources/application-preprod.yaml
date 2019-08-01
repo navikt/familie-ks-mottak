@@ -10,4 +10,4 @@ spring:
     url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ks-mottak
 
 
-SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://familie-ks-sak/api
+FAMILIE_KS_SAK_API_URL: http://familie-ks-sak/api

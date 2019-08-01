@@ -33,7 +33,7 @@ public class MottakController {
     private static final Logger LOG = LoggerFactory.getLogger(MottakController.class);
 
     @Autowired
-    public MottakController(@Value("${SOKNAD_KONTANTSTOTTE_SAK_API_URL}") URI sakServiceUri, @Autowired StsRestClient stsRestClient) {
+    public MottakController(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, @Autowired StsRestClient stsRestClient) {
         this.client = HttpClient.newHttpClient();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.stsRestClient = stsRestClient;

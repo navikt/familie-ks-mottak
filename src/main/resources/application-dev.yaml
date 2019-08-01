@@ -16,4 +16,4 @@ spring:
   flyway:
     enabled: false
 
-SOKNAD_KONTANTSTOTTE_SAK_API_URL: http://localhost:8083
+FAMILIE_KS_SAK_API_URL: http://localhost:8083
