@@ -1,9 +1,12 @@
 package no.nav.familie.ks.mottak.api;
 
+import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.ks.mottak.sts.StsRestClient;
 import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import no.nav.security.oidc.context.OIDCValidationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -31,6 +34,8 @@ public class MottakController {
     private URI sakServiceUri;
     private StsRestClient stsRestClient;
     private static final String SELVBETJENING = "selvbetjening";
+    private static final Logger log = LoggerFactory.getLogger(MottakController.class);
+
 
     @Autowired
     public MottakController(@Value("${SOKNAD_KONTANTSTOTTE_SAK_API_URL}") URI sakServiceUri, @Autowired StsRestClient stsRestClient) {
@@ -49,7 +54,7 @@ public class MottakController {
             .header("Nav-Personident", hentFnrFraToken())
             .timeout(Duration.ofMinutes(2))
             .build();
-
+        log.info("Sender søknad til " + sakServiceUri);
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
