@@ -145,6 +145,12 @@
             <artifactId>spring-tx</artifactId>
             <version>5.1.8.RELEASE</version>
         </dependency>
+
+        <!-- div -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
