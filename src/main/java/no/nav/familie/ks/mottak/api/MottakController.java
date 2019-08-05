@@ -33,6 +33,7 @@ public class MottakController {
     private HttpClient client;
     private URI sakServiceUri;
     private StsRestClient stsRestClient;
+
     private static final String SELVBETJENING = "selvbetjening";
     private static final Logger LOG = LoggerFactory.getLogger(MottakController.class);
 
