@@ -8,7 +8,7 @@ metadata:
 
 spec:
   image: repo.adeo.no:5443/familie-ks-mottak:RELEASE_VERSION
-  port: 8082
+  port: 8084
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30
