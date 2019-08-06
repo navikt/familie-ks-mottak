@@ -44,7 +44,7 @@ public class StsRestClient {
             .atZone(ZoneId.systemDefault())
             .toLocalTime()
             .minusMinutes(15)
-            .isBefore(now());
+            .isAfter(now());
     }
 
     public String getSystemOIDCToken() {
