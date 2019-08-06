@@ -44,12 +44,12 @@ public class StsRestClient {
     private boolean isTokenValid() {
         if (cachedToken == null) return false;
 
-        LOG.info("Tokenet løper ut: {}. Tiden nå er: {}", Instant.ofEpochMilli(cachedToken.getExpires_in()).atZone(ZoneId.systemDefault()).toLocalTime(), now());
+        LOG.info("Tokenet løper ut: {}. Tiden nå er: {}", Instant.ofEpochMilli(cachedToken.getExpires_in()).atZone(ZoneId.systemDefault()).toLocalTime(), now(ZoneId.systemDefault()));
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
             .atZone(ZoneId.systemDefault())
             .toLocalTime()
             .minusMinutes(15)
-            .isAfter(now());
+            .isAfter(now(ZoneId.systemDefault()));
     }
 
     public String getSystemOIDCToken() {
