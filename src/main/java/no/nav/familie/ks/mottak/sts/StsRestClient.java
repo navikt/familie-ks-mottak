@@ -44,7 +44,7 @@ public class StsRestClient {
     private boolean isTokenValid() {
         if (cachedToken == null) return false;
 
-        LOG.info("Tokenet løper ut: {}", Instant.ofEpochMilli(cachedToken.getExpires_in()).atZone(ZoneId.systemDefault()).toLocalTime());
+        LOG.info("Tokenet løper ut: {}. Tiden nå er: {}", Instant.ofEpochMilli(cachedToken.getExpires_in()).atZone(ZoneId.systemDefault()).toLocalTime(), now());
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
             .atZone(ZoneId.systemDefault())
             .toLocalTime()
