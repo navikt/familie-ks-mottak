@@ -1,6 +1,8 @@
 package no.nav.familie.ks.mottak.sts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ import static java.time.LocalTime.now;
 @Component
 public class StsRestClient {
 
+    private static final Logger LOG = LoggerFactory.getLogger(StsRestClient.class);
+
     private ObjectMapper mapper = new ObjectMapper();
 
     private HttpClient client;
@@ -40,18 +44,21 @@ public class StsRestClient {
     private boolean isTokenValid() {
         if (cachedToken == null) return false;
 
+        LOG.info("Tokenet løper ut: {}. Tiden nå er: {}", Instant.ofEpochMilli(cachedToken.getExpires_in()).atZone(ZoneId.systemDefault()).toLocalTime(), now(ZoneId.systemDefault()));
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
             .atZone(ZoneId.systemDefault())
             .toLocalTime()
             .minusMinutes(15)
-            .isBefore(now());
+            .isAfter(now(ZoneId.systemDefault()));
     }
 
     public String getSystemOIDCToken() {
         if (isTokenValid()) {
+            LOG.info("Henter token fra cache");
             return cachedToken.getAccess_token();
         }
 
+        LOG.info("Henter token fra STS");
         HttpRequest request = HttpRequest.newBuilder()
             .uri(stsUrl)
             .header("Authorization", basicAuth(stsUsername, stsPassword))
