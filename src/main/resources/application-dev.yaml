@@ -16,6 +16,9 @@ spring:
   flyway:
     enabled: false
 
+logging:
+  config: "classpath:logback-test.xml"
+
 FAMILIE_KS_SAK_API_URL: http://localhost:8083/api
 
 server:

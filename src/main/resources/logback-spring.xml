@@ -29,7 +29,7 @@
                 <matcher>
                     <Name>isalive</Name>
                     <!-- filter out odd numbered statements -->
-                    <regex>status=200, method=GET, path=(\/internal\/status\/isAlive|\/internal\/prometheus)</regex>
+                    <regex>status=200, method=GET, host=(.*), path=(\/internal\/status\/isAlive|\/internal\/prometheus)</regex>
                 </matcher>
 
                 <expression>isalive.matches(formattedMessage)</expression>
