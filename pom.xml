@@ -21,7 +21,6 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
         <oidc-support.version>0.2.18</oidc-support.version>
-        <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
     </properties>
 
     <dependencyManagement>
@@ -106,9 +105,9 @@
         </dependency>
 
         <dependency>
-            <groupId>no.nav.sbl</groupId>
+            <groupId>no.nav.common</groupId>
             <artifactId>log</artifactId>
-            <version>${common-java-modules.version}</version>
+            <version>1.2019.07.25-08.54-f2bfe18c24bc</version>
         </dependency>
 
         <dependency>

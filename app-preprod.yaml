@@ -7,7 +7,7 @@ metadata:
     team: teamfamilie
 
 spec:
-  image: repo.adeo.no:5443/familie-ks-mottak:RELEASE_VERSION
+  image: navikt/familie-ks-mottak:{{version}}
   port: 8084
   liveness:
     path: /internal/status/isAlive
