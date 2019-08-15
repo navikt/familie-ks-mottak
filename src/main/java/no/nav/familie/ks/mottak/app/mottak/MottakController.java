@@ -1,9 +1,12 @@
-package no.nav.familie.ks.mottak.api;
+package no.nav.familie.ks.mottak.app.mottak;
 
+import no.nav.familie.ks.mottak.httpclient.HttpClientUtil;
+import no.nav.familie.ks.mottak.httpclient.HttpRequestUtil;
 import no.nav.familie.ks.mottak.sts.StsRestClient;
 import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import no.nav.security.oidc.context.OIDCValidationContext;
+import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,30 +33,33 @@ import java.time.Duration;
 @ProtectedWithClaims(issuer = "selvbetjening", claimMap = {"acr=Level4"})
 public class MottakController {
 
+    private static final String SELVBETJENING = "selvbetjening";
+    private static final Logger LOG = LoggerFactory.getLogger(MottakController.class);
     private HttpClient client;
     private URI sakServiceUri;
     private StsRestClient stsRestClient;
 
-    private static final String SELVBETJENING = "selvbetjening";
-    private static final Logger LOG = LoggerFactory.getLogger(MottakController.class);
-
     @Autowired
-    public MottakController(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, @Autowired StsRestClient stsRestClient) {
-        this.client = HttpClient.newHttpClient();
+    public MottakController(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, StsRestClient stsRestClient) {
+        this.client = HttpClientUtil.create();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.stsRestClient = stsRestClient;
     }
 
+    private static String hentFnrFraToken() {
+        OIDCValidationContext context = (OIDCValidationContext) RequestContextHolder.currentRequestAttributes().getAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, RequestAttributes.SCOPE_REQUEST);
+        context = context != null ? context : new OIDCValidationContext();
+        return context.getClaims(SELVBETJENING).getClaimSet().getSubject();
+    }
+
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity mottaSoknad(@RequestBody String soknad) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(sakServiceUri)
-            .POST(HttpRequest.BodyPublishers.ofString(soknad))
-            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-            .header("Content-Type", "application/json")
-            .header("Nav-Personident", hentFnrFraToken())
-            .timeout(Duration.ofMinutes(2))
-            .build();
+        HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
+                .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
+                .header("Nav-Personident", hentFnrFraToken())
+                .POST(HttpRequest.BodyPublishers.ofString(soknad))
+                .uri(sakServiceUri)
+                .build();
         LOG.info("Sender søknad til " + sakServiceUri);
 
         HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -62,11 +68,5 @@ public class MottakController {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    private static String hentFnrFraToken() {
-        OIDCValidationContext context = (OIDCValidationContext) RequestContextHolder.currentRequestAttributes().getAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, RequestAttributes.SCOPE_REQUEST);
-        context = context != null ? context : new OIDCValidationContext();
-        return context.getClaims(SELVBETJENING).getClaimSet().getSubject();
     }
 }
