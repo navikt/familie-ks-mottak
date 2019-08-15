@@ -58,12 +58,6 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
@@ -73,12 +67,6 @@
             <artifactId>oidc-spring-support</artifactId>
             <version>${oidc-support.version}</version>
         </dependency>
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>oidc-test-support</artifactId>
-            <version>${oidc-support.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Logging -->
         <dependency>
@@ -87,27 +75,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>5.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>no.nav.common</groupId>
-            <artifactId>log</artifactId>
-            <version>1.2019.07.25-08.54-f2bfe18c24bc</version>
         </dependency>
 
         <dependency>
@@ -124,9 +94,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -139,16 +109,22 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>5.1.8.RELEASE</version>
-        </dependency>
-
         <!-- div -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>oidc-test-support</artifactId>
+            <version>${oidc-support.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

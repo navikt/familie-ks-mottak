@@ -1,6 +1,6 @@
 package no.nav.familie.ks.mottak.httpclient;
 
-import no.nav.log.LogFilter;
+import no.nav.familie.ks.mottak.config.filter.LogFilter;
 
 public enum NavHttpHeaders {
     NAV_PERSONIDENT("Nav-Personident"),

@@ -1,7 +1,7 @@
 package no.nav.familie.ks.mottak.httpclient;
 
-import no.nav.common.utils.IdUtils;
-import no.nav.log.MDCConstants;
+import no.nav.familie.ks.mottak.config.filter.IdUtils;
+import no.nav.familie.ks.mottak.config.filter.MDCConstants;
 import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.MDC;
 
