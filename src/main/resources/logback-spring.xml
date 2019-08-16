@@ -25,16 +25,13 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
-    <logger name="no.nav.log.LogFilter" additivity="false">
-        <!-- nais+local -->
-        <appender-ref ref="stdout_json"/>
-    </logger>
-
     <root level="${ROOT_LOG_LEVEL:-INFO}">
         <!-- nais+local -->
         <appender-ref ref="stdout_json"/>
     </root>
 
+    <logger name="no.nav" level="WARN"/>
+    <logger name="no.nav.familie" level="INFO"/>
     <logger name="org.apache" level="INFO"/>
     <logger name="org.apache.cxf" level="ERROR"/>
     <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR"/>
