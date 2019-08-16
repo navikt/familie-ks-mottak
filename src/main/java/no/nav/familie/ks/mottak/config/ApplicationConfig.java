@@ -1,6 +1,6 @@
 package no.nav.familie.ks.mottak.config;
 
-import no.nav.familie.ks.mottak.config.filter.LogFilter;
+import no.nav.familie.log.filter.LogFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringBootConfiguration;

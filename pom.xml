@@ -32,6 +32,11 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>no.nav.familie.felles</groupId>
+                <artifactId>log</artifactId>
+                <version>1_20190816094816_6f81a4d</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -75,15 +80,14 @@
         </dependency>
 
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>5.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>log</artifactId>
         </dependency>
 
         <!-- Database -->
