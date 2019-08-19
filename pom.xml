@@ -20,6 +20,7 @@
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
+        <felles.version>1.0_20190819103533_69f5183</felles.version>
     </properties>
 
     <dependencyManagement>
@@ -34,7 +35,12 @@
             <dependency>
                 <groupId>no.nav.familie.felles</groupId>
                 <artifactId>log</artifactId>
-                <version>1.0_20190816203832_7590fe4</version>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.familie.felles</groupId>
+                <artifactId>http-client</artifactId>
+                <version>${felles.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
@@ -100,6 +106,11 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>http-client</artifactId>
         </dependency>
 
         <dependency>

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnProperty("spring.flyway.enabled")
-public class FlywayConfiguration {
+public class FlywayConfig {
 
     @Bean
     public FlywayConfigurationCustomizer flywayConfig(@Value("${spring.cloud.vault.database.role}") String role) {

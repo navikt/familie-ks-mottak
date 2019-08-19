@@ -1,8 +1,8 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
-import no.nav.familie.ks.mottak.httpclient.HttpClientUtil;
-import no.nav.familie.ks.mottak.httpclient.HttpRequestUtil;
-import no.nav.familie.ks.mottak.sts.StsRestClient;
+import no.nav.familie.http.client.HttpClientUtil;
+import no.nav.familie.http.client.HttpRequestUtil;
+import no.nav.familie.http.sts.StsRestClient;
 import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import no.nav.security.oidc.context.OIDCValidationContext;
@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 
 @RestController
 @RequestMapping("/api")
@@ -47,7 +46,8 @@ public class MottakController {
     }
 
     private static String hentFnrFraToken() {
-        OIDCValidationContext context = (OIDCValidationContext) RequestContextHolder.currentRequestAttributes().getAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, RequestAttributes.SCOPE_REQUEST);
+        OIDCValidationContext context = (OIDCValidationContext) RequestContextHolder.currentRequestAttributes()
+                .getAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, RequestAttributes.SCOPE_REQUEST);
         context = context != null ? context : new OIDCValidationContext();
         return context.getClaims(SELVBETJENING).getClaimSet().getSubject();
     }

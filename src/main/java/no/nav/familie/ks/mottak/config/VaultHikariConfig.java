@@ -18,15 +18,15 @@ import static org.springframework.vault.core.lease.domain.RequestedSecret.rotati
 
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.vault.database.enabled")
-public class VaultHikariConfiguration implements InitializingBean {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VaultHikariConfiguration.class);
+public class VaultHikariConfig implements InitializingBean {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VaultHikariConfig.class);
 
     private final SecretLeaseContainer container;
     private final HikariDataSource hikariDataSource;
     private final VaultDatabaseProperties props;
 
-    public VaultHikariConfiguration(SecretLeaseContainer container, HikariDataSource hikariDataSource,
-                                    VaultDatabaseProperties props) {
+    public VaultHikariConfig(SecretLeaseContainer container, HikariDataSource hikariDataSource,
+                             VaultDatabaseProperties props) {
         this.container = container;
         this.hikariDataSource = hikariDataSource;
         this.props = props;
