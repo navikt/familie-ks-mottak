@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>no.nav.familie.felles</groupId>
                 <artifactId>log</artifactId>
-                <version>1_20190816094816_6f81a4d</version>
+                <version>1.0_20190816203832_7590fe4</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
