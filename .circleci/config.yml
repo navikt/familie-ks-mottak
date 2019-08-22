@@ -1,6 +1,7 @@
-version: 2.1
+version: 2
 orbs:
-  nais: 'navikt/nais-deployment@1.1.0'
+  nais: navikt/nais-deployment@1.1.0
+  slack: circleci/slack@3.3.0
 
 executors:
   nais-deployer:
@@ -81,22 +82,6 @@ jobs:
           paths:
             - properties.env
 
-  github_app:
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    steps:
-      - run:
-          name: Creating Github Apps Installation Token
-          command: |
-            git clone https://github.com/navikt/github-apps-support.git
-            export PATH=`pwd`/github-apps-support/bin:$PATH
-            echo $GITHUB_PRIVATE_KEY | base64 --decode > ./github.key.pem
-            GITHUB_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./github.key.pem $GITHUB_APP_ID`)
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./github.key.pem
-
   deploy_dev:
     executor: nais-deployer
     steps:
@@ -113,9 +98,9 @@ jobs:
               --cluster=dev-fss \
               --repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
               --appid=${GITHUB_APP_ID} \
+              --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --key=/home/circleci/project/github.key.pem \
               --resource=./app-preprod.yaml
 
   deploy_prod:
@@ -134,48 +119,75 @@ jobs:
               --cluster=prod-fss \
               --repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
               --appid=${GITHUB_APP_ID} \
+              --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --key=/home/circleci/project/github.key.pem \
               --resource=./app-prod.yaml
 
 workflows:
   version: 2
-  build_n_deploy:
+  build_n_deploy_master:
     jobs:
-    - build:
-        filters:
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
-    - deploy_docker:
-        context: NAIS deployment
-        requires:
-        - build
-        filters:
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
-    - github_app:
-        context: familie-ci
-        filters:
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
-    - deploy_dev:
-        context: familie-ci
-        requires:
-        - deploy_docker
-        - github_app
-        filters:
-          tags:
-            only: /^.*/
-          branches:
-            only: /.*/
-    - deploy_prod:
-        context: familie-ci
-        requires:
-        - deploy_docker
-        - github_app
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
+      - build:
+          filters:
+            branches:
+              only: master
+      - deploy_docker:
+          context: NAIS deployment
+          requires:
+          - build
+      - deploy_dev:
+          context: familie-ci
+          requires:
+          - deploy_docker
+      - slack/approval-notification:
+          context: familie-ci
+          mentions: 'here'
+          message: Godkjenn deploy av branchen \`master\` til \`prod-fss\`
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_dev
+      - await-approval-dev:
+          context: familie-ci
+          type: approval
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_dev
+      - deploy_prod:
+          context: familie-ci
+          requires:
+            - await-approval-dev
+  build_n_deploy_branch:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+      - deploy_docker:
+          context: NAIS deployment
+          requires:
+            - build
+      - slack/approval-notification:
+          context: familie-ci
+          message: Godkjenn deploy av branchen \`${CIRCLE_BRANCH}\` til \`dev-fss\`
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_docker
+      - await-approval:
+          context: familie-ci
+          type: approval
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_docker
+      - deploy_dev:
+          context: familie-ci
+          requires:
+            - await-approval
