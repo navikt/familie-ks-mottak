@@ -91,7 +91,7 @@ jobs:
       - run:
           name: Set up environment variables
           command: cat /home/circleci/project/properties.env >> $BASH_ENV
-      - run
+      - run:
           name: Github tag
           command: |
             echo $VERSION |
