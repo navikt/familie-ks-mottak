@@ -95,8 +95,8 @@ jobs:
       - run:
           name: Github tag
           command: |
-            git config user.email "team.familie@nav.no" |
-            git config user.name "Team Familie" |
+            git config user.email team.familie@nav.no |
+            git config user.name teamfamilie |
             git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]" |
             git push --tags
 
