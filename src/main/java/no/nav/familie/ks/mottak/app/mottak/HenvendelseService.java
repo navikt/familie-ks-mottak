@@ -42,6 +42,6 @@ public class HenvendelseService {
 
     private void prosseser(Henvendelse henvendelse) throws IOException, InterruptedException {
         henvendelse.behandler();
-        søknadService.sendTilSak(henvendelse.getPayload());
+        søknadService.sendTilSak(henvendelse.getPayload().getBytes());
     }
 }
