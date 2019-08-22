@@ -95,11 +95,10 @@ jobs:
       - run:
           name: Github tag
           command: |
-            git config --global user.email team.familie@nav.no |
-            git config --global user.name teamfamilie |
-            git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]" |
+            git config --global user.email "team.familie@nav.no"
+            git config --global user.name "teamfamilie"
+            git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]"
             git push --tags
-            echo yes | command
 
   deploy_dev:
     executor: nais-deployer
