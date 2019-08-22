@@ -99,7 +99,7 @@ jobs:
             git config --global user.name teamfamilie |
             git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]" |
             git push --tags
-            echo yes
+            echo yes | command
 
   deploy_dev:
     executor: nais-deployer
