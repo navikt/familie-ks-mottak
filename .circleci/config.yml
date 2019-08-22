@@ -97,8 +97,8 @@ jobs:
           command: |
             git config user.email "team.familie@nav.no" |
             git config user.name "Team Familie" |
-            git github_tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]" |
-            git push --github_tags
+            git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]" |
+            git push --tags
 
   deploy_dev:
     executor: nais-deployer
