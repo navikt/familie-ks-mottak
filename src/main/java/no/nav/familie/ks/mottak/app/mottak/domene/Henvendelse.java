@@ -17,8 +17,8 @@ public class Henvendelse {
     private Long id;
 
     @Lob
-    @Column(name = "payload", nullable = false, updatable = false)
-    private String payload;
+    @Column(name = "payload", nullable = false, updatable = false, columnDefinition = "json")
+    private byte[] payload;
 
     @Column(name = "status", nullable = false)
     private HenvendelseStatus status = HenvendelseStatus.UBEHANDLET;
@@ -36,7 +36,7 @@ public class Henvendelse {
     }
 
     public Henvendelse(String payload) {
-        this.payload = payload;
+        this.payload = payload.getBytes();
     }
 
     @PrePersist
@@ -45,12 +45,12 @@ public class Henvendelse {
         this.logg.add(new HenvendelseLogg(this, LoggType.UBEHANDLET));
     }
 
-    public String getPayload() {
+    public byte[] getPayload() {
         return payload;
     }
 
     public Henvendelse setPayload(String payload) {
-        this.payload = payload;
+        this.payload = payload.getBytes();
         return this;
     }
 
