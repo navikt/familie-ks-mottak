@@ -25,7 +25,8 @@ public class VaultHikariConfig implements InitializingBean {
     private final HikariDataSource hikariDataSource;
     private final VaultDatabaseProperties props;
 
-    public VaultHikariConfig(SecretLeaseContainer container, HikariDataSource hikariDataSource,
+    public VaultHikariConfig(SecretLeaseContainer container,
+                             HikariDataSource hikariDataSource,
                              VaultDatabaseProperties props) {
         this.container = container;
         this.hikariDataSource = hikariDataSource;
