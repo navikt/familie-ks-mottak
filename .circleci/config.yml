@@ -21,8 +21,8 @@ jobs:
       - run:
           name: Generate version number and docker image tags
           command: |
-            export VERSION="$CIRCLE_SHA1"
-            echo "export VERSION="$CIRCLE_SHA1"" >> properties.env
+            export VERSION="$(mvn help:evaluate -Dchangelist= -Dexpression=project.version -q -DforceStdout)-$CIRCLE_SHA1"
+            echo "export VERSION=$VERSION" >> properties.env
             echo "export DOCKER_TAG=\"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$VERSION\"" >> properties.env
             cat properties.env >> $BASH_ENV
       - restore_cache:
@@ -81,6 +81,22 @@ jobs:
           root: /home/circleci/project
           paths:
             - properties.env
+
+  tag:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - run:
+          name: Set up environment variables
+          command: cat /home/circleci/project/properties.env >> $BASH_ENV
+      - run
+          name: Github tag
+          command: |
+            echo $VERSION |
+            git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT" |
+            git push --tags
 
   deploy_dev:
     executor: nais-deployer
@@ -187,6 +203,9 @@ workflows:
               ignore: /pull\/.*/
           requires:
             - deploy_docker
+      - tag:
+          requires:
+            - await-approval
       - deploy_dev:
           context: familie-ci
           requires:
