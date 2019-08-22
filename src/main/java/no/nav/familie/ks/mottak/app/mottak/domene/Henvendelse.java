@@ -1,7 +1,5 @@
 package no.nav.familie.ks.mottak.app.mottak.domene;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +10,11 @@ import java.util.List;
 @NamedQuery(name = "Henvendelse.finnAlleHenvendeserKlareForProsessering",
         query = "SELECT h FROM Henvendelse h WHERE h.status IN ('KLAR_TIL_PLUKK', 'UBEHANDLET') ORDER BY opprettetTidspunkt DESC ",
         lockMode = LockModeType.PESSIMISTIC_WRITE)
-public class Henvendelse extends AbstractPersistable<Long> {
+public class Henvendelse {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Lob
     @Column(name = "payload", nullable = false, updatable = false)
@@ -69,6 +71,10 @@ public class Henvendelse extends AbstractPersistable<Long> {
         return this;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Henvendelse ferdigstill() {
         this.status = HenvendelseStatus.FERDIG;
         this.logg.add(new HenvendelseLogg(this, LoggType.FERDIG));
@@ -92,7 +98,7 @@ public class Henvendelse extends AbstractPersistable<Long> {
     @Override
     public String toString() {
         return "Henvendelse{" +
-                "id=" + getId() +
+                "id=" + id +
                 "status=" + status +
                 ", opprettetTidspunkt=" + opprettetTidspunkt +
                 ", versjon=" + versjon +
