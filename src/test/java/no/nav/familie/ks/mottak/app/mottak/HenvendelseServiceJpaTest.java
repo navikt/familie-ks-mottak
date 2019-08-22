@@ -16,12 +16,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -49,19 +47,19 @@ public class HenvendelseServiceJpaTest {
         henvendelseService.prosesser();
 
         assertThat(henvendelse1.getStatus()).isEqualTo(HenvendelseStatus.FERDIG);
-        assertThat(henvendelse1.getLogg()).hasSize(3);
+        assertThat(henvendelse1.getLogg()).hasSize(4);
     }
 
     @Test
     public void skal_håndtere_feil() throws IOException, InterruptedException {
         final var henvendelse1 = new Henvendelse("");
-        when(repository.finnAlleHenvendeserKlareForProsessering()).thenReturn(List.of(henvendelse1));
+        repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(HenvendelseStatus.UBEHANDLET);
         doThrow(new IllegalStateException()).when(søknadService).sendTilSak(any());
 
         henvendelseService.prosesser();
 
         assertThat(henvendelse1.getStatus()).isEqualTo(HenvendelseStatus.FEILET);
-        assertThat(henvendelse1.getLogg()).hasSize(3);
+        assertThat(henvendelse1.getLogg()).hasSize(4);
     }
 }

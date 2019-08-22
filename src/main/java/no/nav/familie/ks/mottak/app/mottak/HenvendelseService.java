@@ -29,6 +29,7 @@ public class HenvendelseService {
         henvendelser.forEach(henvendelse -> {
             try {
                 henvendelse.plukker();
+                henvendelseRepository.saveAndFlush(henvendelse);
                 prosseser(henvendelse);
                 henvendelse.ferdigstill();
                 henvendelseRepository.saveAndFlush(henvendelse);

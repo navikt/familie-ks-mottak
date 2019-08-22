@@ -17,6 +17,7 @@ public class HenvendelseLogg {
     @JoinColumn(name = "henvendelse_id")
     private Henvendelse henvendelse;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, updatable = false)
     private LoggType type;
 

@@ -20,6 +20,7 @@ public class Henvendelse {
     @Column(name = "payload", nullable = false, updatable = false, columnDefinition = "text")
     private String payload;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private HenvendelseStatus status = HenvendelseStatus.UBEHANDLET;
 
@@ -29,7 +30,7 @@ public class Henvendelse {
     @Version
     private Long versjon;
 
-    @OneToMany(mappedBy = "henvendelse", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "henvendelse", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<HenvendelseLogg> logg = new ArrayList<>();
 
     Henvendelse() {
