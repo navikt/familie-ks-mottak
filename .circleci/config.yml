@@ -149,10 +149,18 @@ workflows:
               ignore: /pull\/.*/
           requires:
             - deploy_dev
+      - await-approval-dev:
+          context: familie-ci
+          type: approval
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_dev
       - deploy_prod:
           context: familie-ci
           requires:
-            - slack/approval-notification
+            - await-approval-dev
   build_n_deploy_branch:
     jobs:
       - build:
@@ -171,7 +179,15 @@ workflows:
               ignore: /pull\/.*/
           requires:
             - deploy_docker
+      - await-approval:
+          context: familie-ci
+          type: approval
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_docker
       - deploy_dev:
           context: familie-ci
           requires:
-            - slack/approval-notification
+            - await-approval
