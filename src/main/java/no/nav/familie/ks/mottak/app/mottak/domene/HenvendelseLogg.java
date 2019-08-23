@@ -11,6 +11,7 @@ public class HenvendelseLogg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_logg_seq")
+    @SequenceGenerator(name = "henvendelse_logg_seq")
     private Long id;
 
     @ManyToOne

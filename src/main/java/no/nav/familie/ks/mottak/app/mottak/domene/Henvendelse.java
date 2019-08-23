@@ -14,6 +14,7 @@ public class Henvendelse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_seq")
+    @SequenceGenerator(name = "henvendelse_seq")
     private Long id;
 
     @Lob
