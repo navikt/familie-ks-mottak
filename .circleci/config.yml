@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
-  nais: 'navikt/nais-deployment@1.1.0'
+  nais: navikt/nais-deployment@1.1.0
+  slack: circleci/slack@3.3.0
 
 executors:
   nais-deployer:
@@ -14,14 +15,23 @@ jobs:
     docker:
       - image: circleci/openjdk:11-jdk
     steps:
+      - run:
+          name: Add github to known hosts
+          command: |
+            mkdir ~/.ssh
+            echo "github.com,140.82.118.3 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
+      - add_ssh_keys:
+          fingerprints:
+            - "73:fc:5a:28:30:60:a6:5d:3d:79:ab:e4:54:3f:4e:72"
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
           name: Generate version number and docker image tags
           command: |
-            export VERSION="$CIRCLE_SHA1"
-            echo "export VERSION="$CIRCLE_SHA1"" >> properties.env
+            export VERSION="$(mvn help:evaluate -Dchangelist= -Dexpression=project.version -q -DforceStdout)-$CIRCLE_SHA1"
+            echo $VERSION
+            echo "export VERSION=$VERSION" >> properties.env
             echo "export DOCKER_TAG=\"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$VERSION\"" >> properties.env
             cat properties.env >> $BASH_ENV
       - restore_cache:
@@ -81,21 +91,31 @@ jobs:
           paths:
             - properties.env
 
-  github_app:
+  github_tag:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
+      - attach_workspace:
+          at: /home/circleci/project
       - run:
-          name: Creating Github Apps Installation Token
+          name: Set up environment variables
           command: |
-            git clone https://github.com/navikt/github-apps-support.git
-            export PATH=`pwd`/github-apps-support/bin:$PATH
-            echo $GITHUB_PRIVATE_KEY | base64 --decode > ./github.key.pem
-            GITHUB_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./github.key.pem $GITHUB_APP_ID`)
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./github.key.pem
+            cat /home/circleci/project/properties.env >> $BASH_ENV
+      - run:
+          name: Add github to known hosts
+          command: |
+            mkdir ~/.ssh
+            echo "github.com,140.82.118.3 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
+      - add_ssh_keys:
+          fingerprints:
+            - "73:fc:5a:28:30:60:a6:5d:3d:79:ab:e4:54:3f:4e:72"
+      - run:
+          name: Github tag
+          command: |
+            git config --global user.email "team.familie@nav.no"
+            git config --global user.name "teamfamilie"
+            git tag -a $VERSION -m "$VERSION [skip ci]"
+            git push --tags
 
   deploy_dev:
     executor: nais-deployer
@@ -113,9 +133,9 @@ jobs:
               --cluster=dev-fss \
               --repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
               --appid=${GITHUB_APP_ID} \
+              --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --key=/home/circleci/project/github.key.pem \
               --resource=./app-preprod.yaml
 
   deploy_prod:
@@ -134,48 +154,79 @@ jobs:
               --cluster=prod-fss \
               --repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
               --appid=${GITHUB_APP_ID} \
+              --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --key=/home/circleci/project/github.key.pem \
               --resource=./app-prod.yaml
 
 workflows:
   version: 2
-  build_n_deploy:
+  build_n_deploy_master:
     jobs:
-    - build:
-        filters:
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
-    - deploy_docker:
-        context: NAIS deployment
-        requires:
-        - build
-        filters:
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
-    - github_app:
-        context: familie-ci
-        filters:
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
-    - deploy_dev:
-        context: familie-ci
-        requires:
-        - deploy_docker
-        - github_app
-        filters:
-          tags:
-            only: /^.*/
-          branches:
-            only: /.*/
-    - deploy_prod:
-        context: familie-ci
-        requires:
-        - deploy_docker
-        - github_app
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v[0-9]+\.[0-9]+$/
+      - build:
+          filters:
+            branches:
+              only: master
+      - deploy_docker:
+          context: NAIS deployment
+          requires:
+          - build
+      - deploy_dev:
+          context: familie-ci
+          requires:
+          - deploy_docker
+      - slack/approval-notification:
+          context: familie-ci
+          mentions: 'here'
+          message: Godkjenn deploy av branchen \`master\` til \`prod-fss\`
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_dev
+      - await-approval-dev:
+          context: familie-ci
+          type: approval
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_dev
+      - github_tag:
+          context: familie-ci
+          requires:
+            - await-approval-dev
+      - deploy_prod:
+          context: familie-ci
+          requires:
+            - github_tag
+  build_n_deploy_branch:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+      - deploy_docker:
+          context: NAIS deployment
+          requires:
+            - build
+      - slack/approval-notification:
+          context: familie-ci
+          message: Godkjenn deploy av branchen \`${CIRCLE_BRANCH}\` til \`dev-fss\`
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_docker
+      - await-approval:
+          context: familie-ci
+          type: approval
+          filters:
+            branches:
+              ignore: /pull\/.*/
+          requires:
+            - deploy_docker
+      - deploy_dev:
+          context: familie-ci
+          requires:
+            - await-approval
