@@ -98,7 +98,7 @@ jobs:
             git config --global user.email "team.familie@nav.no"
             git config --global user.name "teamfamilie"
             git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]"
-            git push --tags "https://x-access-token:GITHUB_PRIVATE_KEY@github.com/$CIRCLE_PROJECT_REPONAME.git" HEAD:master
+            git push --tags "https://x-access-token:$GITHUB_PRIVATE_KEY@github.com/$CIRCLE_PROJECT_REPONAME.git" HEAD:master
 
   deploy_dev:
     executor: nais-deployer
