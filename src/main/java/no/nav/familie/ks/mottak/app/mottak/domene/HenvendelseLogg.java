@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class HenvendelseLogg {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_logg_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_logg_seq")
     private Long id;
 
     @ManyToOne
