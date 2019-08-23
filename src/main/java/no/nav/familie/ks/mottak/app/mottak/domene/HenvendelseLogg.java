@@ -1,7 +1,5 @@
 package no.nav.familie.ks.mottak.app.mottak.domene;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import javax.persistence.*;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -9,12 +7,18 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "HENVENDELSE_LOGG")
-public class HenvendelseLogg extends AbstractPersistable<Long> {
+public class HenvendelseLogg {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_logg_seq")
+    @SequenceGenerator(name = "henvendelse_logg_seq")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "henvendelse_id")
     private Henvendelse henvendelse;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, updatable = false)
     private LoggType type;
 
@@ -50,7 +54,7 @@ public class HenvendelseLogg extends AbstractPersistable<Long> {
     @Override
     public String toString() {
         return "HenvendelseLogg{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", type=" + type +
                 ", node='" + node + '\'' +
                 ", opprettetTidspunkt=" + opprettetTidspunkt +

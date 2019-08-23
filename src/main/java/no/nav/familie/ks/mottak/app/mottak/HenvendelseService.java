@@ -29,6 +29,7 @@ public class HenvendelseService {
         henvendelser.forEach(henvendelse -> {
             try {
                 henvendelse.plukker();
+                henvendelseRepository.saveAndFlush(henvendelse);
                 prosseser(henvendelse);
                 henvendelse.ferdigstill();
                 henvendelseRepository.saveAndFlush(henvendelse);
@@ -42,6 +43,6 @@ public class HenvendelseService {
 
     private void prosseser(Henvendelse henvendelse) throws IOException, InterruptedException {
         henvendelse.behandler();
-        søknadService.sendTilSak(henvendelse.getPayload());
+        søknadService.sendTilSak(henvendelse.getPayload().getBytes());
     }
 }

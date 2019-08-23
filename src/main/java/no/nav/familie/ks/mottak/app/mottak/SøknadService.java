@@ -31,10 +31,10 @@ public class SøknadService {
         this.stsRestClient = stsRestClient;
     }
 
-    public void sendTilSak(String søknad) throws IOException, InterruptedException {
+    public void sendTilSak(byte[] søknad) throws IOException, InterruptedException {
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
                 .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(søknad))
+                .POST(HttpRequest.BodyPublishers.ofByteArray(søknad))
                 .uri(sakServiceUri)
                 .build();
         LOG.info("Sender søknad til " + sakServiceUri);
