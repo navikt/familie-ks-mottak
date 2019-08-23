@@ -35,7 +35,6 @@ public class MottakController {
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity mottaSoknad(@RequestBody String soknad) {
-        log.info("Mottatt henvendelse: " + soknad);
         henvendelseRepository.saveAndFlush(new Henvendelse(soknad));
         henvendelseService.prosesser();
         return new ResponseEntity(HttpStatus.OK);
