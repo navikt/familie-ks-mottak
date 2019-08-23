@@ -104,7 +104,7 @@ jobs:
             git config --global user.email "team.familie@nav.no"
             git config --global user.name "teamfamilie"
             git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]"
-            git push --tags
+            git push --verbose --tags
 
   deploy_dev:
     executor: nais-deployer
