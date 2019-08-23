@@ -101,6 +101,11 @@ jobs:
           name: Set up environment variables
           command: |
             cat /home/circleci/project/properties.env >> $BASH_ENV
+      - run:
+          name: Add github to known hosts
+          command: |
+            mkdir ~/.ssh
+            echo "github.com,140.82.118.3 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
       - add_ssh_keys:
           fingerprints:
             - "73:fc:5a:28:30:60:a6:5d:3d:79:ab:e4:54:3f:4e:72"
