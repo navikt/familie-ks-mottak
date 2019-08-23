@@ -98,9 +98,12 @@ jobs:
       - attach_workspace:
           at: /home/circleci/project
       - run:
-          name: Set up environment variables and add github to known hosts
+          name: Set up environment variables
           command: |
             cat /home/circleci/project/properties.env >> $BASH_ENV
+      - add_ssh_keys:
+          fingerprints:
+            - "73:fc:5a:28:30:60:a6:5d:3d:79:ab:e4:54:3f:4e:72"
       - run:
           name: Github tag
           command: |
