@@ -114,7 +114,7 @@ jobs:
           command: |
             git config --global user.email "team.familie@nav.no"
             git config --global user.name "teamfamilie"
-            git tag -a $VERSION-SNAPSHOT -m "$VERSION-SNAPSHOT [skip ci]"
+            git tag -a $VERSION -m "$VERSION [skip ci]"
             git push --tags
 
   deploy_dev:
@@ -226,11 +226,7 @@ workflows:
               ignore: /pull\/.*/
           requires:
             - deploy_docker
-      - github_tag:
-          context: familie-ci
-          requires:
-            - await-approval
       - deploy_dev:
           context: familie-ci
           requires:
-            - github_tag
+            - await-approval
