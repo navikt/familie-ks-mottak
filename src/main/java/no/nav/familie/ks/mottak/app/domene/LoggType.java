@@ -1,4 +1,4 @@
-package no.nav.familie.ks.mottak.app.mottak.domene;
+package no.nav.familie.ks.mottak.app.domene;
 
 import java.util.List;
 import java.util.Objects;
