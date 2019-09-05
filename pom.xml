@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-vault-dependencies</artifactId>
-                <version>2.1.2.RELEASE</version>
+                <version>2.2.0.M2</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -156,6 +156,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <!-- Trengs for å kjøre på milestone av cloud vault -->
+        <repository>
+            <id>spring milestone</id>
+            <name>spring</name>
+            <url>https://repo.spring.io/milestone/</url>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>${project.artifactId}</finalName>
