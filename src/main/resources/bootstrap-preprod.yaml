@@ -7,7 +7,9 @@ spring:
       read-timeout: 15000
       config:
         order: -10
-        lifecycle.enabled: true
+        lifecycle:
+          enabled: true
+          expiry-threshold: 2m
       database:
         enabled: true
         role: familie-ks-mottak-admin
