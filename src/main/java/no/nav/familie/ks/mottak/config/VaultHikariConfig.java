@@ -35,16 +35,18 @@ public class VaultHikariConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        container.setLeaseEndpoints(LeaseEndpoints.SysLeases);
+
         RequestedSecret secret = rotating(props.getBackend() + "/creds/" + props.getRole());
         container.addLeaseListener(leaseEvent -> {
-            if ((leaseEvent.getSource() == secret) && (leaseEvent instanceof SecretLeaseCreatedEvent)) {
-                LOGGER.info("Roterer brukernavn/passord for : {}", leaseEvent.getSource().getPath());
-                Map<String, Object> secrets = ((SecretLeaseCreatedEvent) leaseEvent).getSecrets();
-                String username = secrets.get("username").toString();
-                String password = secrets.get("password").toString();
+            if (leaseEvent.getSource() == secret && leaseEvent instanceof SecretLeaseCreatedEvent) {
+                LOGGER.info("Rotating creds for path: " + leaseEvent.getSource().getPath());
+                SecretLeaseCreatedEvent slce = (SecretLeaseCreatedEvent) leaseEvent;
+                String username = slce.getSecrets().get("username").toString();
+                String password = slce.getSecrets().get("password").toString();
                 hikariDataSource.setUsername(username);
                 hikariDataSource.setPassword(password);
+                hikariDataSource.getHikariConfigMXBean().setUsername(username);
+                hikariDataSource.getHikariConfigMXBean().setPassword(password);
             }
         });
         container.addRequestedSecret(secret);
