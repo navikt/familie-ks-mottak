@@ -19,6 +19,7 @@ public class ProsesseringConfig {
         executor.setMaxPoolSize(4);
         executor.setThreadNamePrefix("TaskProsessering-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setQueueCapacity(20);
         executor.initialize();
         return executor;
     }

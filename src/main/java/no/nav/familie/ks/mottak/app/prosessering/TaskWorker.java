@@ -24,6 +24,7 @@ class TaskWorker {
     private final TaskRepository taskRepository;
     private GenericApplicationContext context;
     private Map<String, AsyncTask> tasktypeMap = new HashMap<>();
+    private Map<String, Integer> maxAntallFeilMap = new HashMap<>();
 
     @Autowired
     public TaskWorker(GenericApplicationContext context, TaskRepository taskRepository, List<AsyncTask> taskTyper) {
@@ -37,6 +38,7 @@ class TaskWorker {
         final var annotation = AnnotationUtils.findAnnotation(aClass, TaskBeskrivelse.class);
         Objects.requireNonNull(annotation, "annotasjon mangler");
         tasktypeMap.put(annotation.taskType(), task);
+        maxAntallFeilMap.put(annotation.taskType(), annotation.maxAntallFeil());
     }
 
 
@@ -51,12 +53,14 @@ class TaskWorker {
         final var startTidspunkt = System.currentTimeMillis();
         var henvendelse = taskRepository.findById(henvendelseId).orElseThrow();
         log.info("Behandler task='{}'", henvendelse);
+        Integer maxAntallFeil = 0;
         try {
             henvendelse.behandler();
             henvendelse = taskRepository.save(henvendelse);
 
             // finn tasktype
             AsyncTask task = finnTask(henvendelse.getType());
+            maxAntallFeil = finnMaxAntallFeil(henvendelse.getType());
 
             // execute
             task.preCondition(henvendelse);
@@ -69,7 +73,7 @@ class TaskWorker {
 
         } catch (Exception e) {
             log.warn("Kjøring av task='{}' feilet med feilmelding={}", henvendelse, e.getMessage());
-            henvendelse.feilet(new TaskFeil(henvendelse, e));
+            henvendelse.feilet(new TaskFeil(henvendelse, e), maxAntallFeil);
         }
         taskRepository.save(henvendelse);
         log.info("Fullført kjøring av task '{}', kjøretid={} ms", henvendelse, (System.currentTimeMillis() - startTidspunkt));
@@ -80,5 +84,12 @@ class TaskWorker {
             throw new IllegalArgumentException("Ukjent tasktype " + taskType);
         }
         return tasktypeMap.get(taskType);
+    }
+
+    private Integer finnMaxAntallFeil(String taskType) {
+        if (!maxAntallFeilMap.containsKey(taskType)) {
+            throw new IllegalArgumentException("Ukjent tasktype " + taskType);
+        }
+        return maxAntallFeilMap.get(taskType);
     }
 }

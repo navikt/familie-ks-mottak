@@ -9,11 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "HENVENDELSE")
+@Table(name = "TASK")
 public class Task {
-
-    @Transient
-    private Integer MAX_ANTALL_FEIL = 3;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_seq")
@@ -100,14 +97,14 @@ public class Task {
         return status;
     }
 
-    public Task feilet(TaskFeil feil) {
+    public Task feilet(TaskFeil feil, int maxAntallFeil) {
         try {
             this.logg.add(new TaskLogg(this, LoggType.FEILET, feil.writeValueAsString()));
         } catch (IOException e) {
             this.logg.add(new TaskLogg(this, LoggType.FEILET));
         }
         final var antallFeilendeForsøk = logg.stream().filter(it -> it.getType().equals(LoggType.FEILET)).count();
-        if (MAX_ANTALL_FEIL > antallFeilendeForsøk) {
+        if (maxAntallFeil > antallFeilendeForsøk) {
             this.status = Status.KLAR_TIL_PLUKK;
         } else {
             this.status = Status.FEILET;

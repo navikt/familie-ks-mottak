@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "HENVENDELSE_LOGG")
+@Table(name = "TASK_LOGG")
 public class TaskLogg {
 
     @Id

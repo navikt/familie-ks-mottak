@@ -4,9 +4,11 @@ import no.nav.familie.ks.mottak.app.domene.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -15,24 +17,42 @@ public class TaskProsesserer {
     public static final int POLLING_DELAY = 30000;
     private static final Logger log = LoggerFactory.getLogger(TaskProsesserer.class);
     private TaskWorker worker;
+    private TaskExecutor taskExecutor;
     private TaskProsesseringRepository taskProsesseringRepository;
 
     @Autowired
-    public TaskProsesserer(TaskWorker worker, TaskProsesseringRepository taskProsesseringRepository) {
+    public TaskProsesserer(TaskWorker worker,
+                           @Qualifier("taskProsesseringExecutor") TaskExecutor taskExecutor,
+                           TaskProsesseringRepository taskProsesseringRepository) {
         this.worker = worker;
+        this.taskExecutor = taskExecutor;
         this.taskProsesseringRepository = taskProsesseringRepository;
     }
 
     @Scheduled(fixedDelay = POLLING_DELAY)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void pollAndExecute() {
         log.debug("Poller etter nye tasks");
-        final var maxAntall = 5;
-        final var henvendelser = taskProsesseringRepository.finnAlleTasksKlareForProsessering(maxAntall);
-        log.info("Pollet {} tasks med max {}", henvendelser.size(), maxAntall);
+        final var maxAntall = 10;
+        final var pollingSize = calculatePollingSize(maxAntall);
 
-        henvendelser.forEach(this::executeWork);
-        log.info("Ferdig med polling, venter {} til neste kjøring.", POLLING_DELAY);
+        final var minCapacity = 2;
+        if (pollingSize > minCapacity) {
+            final var henvendelser = taskProsesseringRepository.finnAlleTasksKlareForProsessering(pollingSize);
+            log.info("Pollet {} tasks med max {}", henvendelser.size(), maxAntall);
+
+            henvendelser.forEach(this::executeWork);
+        } else {
+            log.info("Pollet ingen tasks siden kapasiteten var {} < {}", pollingSize, minCapacity);
+        }
+        log.info("Ferdig med polling, venter {} ms til neste kjøring.", POLLING_DELAY);
+    }
+
+    private int calculatePollingSize(int maxAntall) {
+        final var remainingCapacity = ((ThreadPoolTaskExecutor) taskExecutor).getThreadPoolExecutor().getQueue().remainingCapacity();
+        final var pollingSize = Math.min(remainingCapacity, maxAntall);
+        log.info("Ledig kapasitet i kø {}, poller etter {}", remainingCapacity, pollingSize);
+        return pollingSize;
     }
 
     private void executeWork(Task task) {
