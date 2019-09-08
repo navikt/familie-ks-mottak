@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 public class TaskLogg {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_logg_seq")
-    @SequenceGenerator(name = "henvendelse_logg_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_logg_seq")
+    @SequenceGenerator(name = "task_logg_seq")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "henvendelse_id")
+    @JoinColumn(name = "task_id")
     private Task task;
 
     @Enumerated(EnumType.STRING)

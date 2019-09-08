@@ -6,3 +6,7 @@ UPDATE TASK SET type = 'sendSøknadTilSak';
 ALTER TABLE TASK ALTER COLUMN type set not null;
 
 ALTER TABLE TASK_LOGG ADD COLUMN feilmelding text;
+ALTER TABLE TASK_LOGG rename COLUMN henvendelse_id to task_id;
+
+ALTER SEQUENCE henvendelse_seq RENAME TO task_seq;
+ALTER SEQUENCE henvendelse_logg_seq RENAME TO task_logg_seq;

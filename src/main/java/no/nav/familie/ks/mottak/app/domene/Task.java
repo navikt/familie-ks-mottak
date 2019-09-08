@@ -13,8 +13,8 @@ import java.util.List;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "henvendelse_seq")
-    @SequenceGenerator(name = "henvendelse_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_seq")
+    @SequenceGenerator(name = "task_seq")
     private Long id;
 
     @Lob
