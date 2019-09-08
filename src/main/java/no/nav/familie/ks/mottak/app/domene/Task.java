@@ -1,6 +1,6 @@
 package no.nav.familie.ks.mottak.app.domene;
 
-import no.nav.familie.ks.mottak.app.prosessering.TaskFeil;
+import no.nav.familie.prosessering.TaskFeil;
 
 import javax.persistence.*;
 import java.io.IOException;

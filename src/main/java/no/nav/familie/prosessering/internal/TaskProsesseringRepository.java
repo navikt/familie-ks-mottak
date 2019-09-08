@@ -1,4 +1,4 @@
-package no.nav.familie.ks.mottak.app.prosessering;
+package no.nav.familie.prosessering.internal;
 
 import no.nav.familie.ks.mottak.app.domene.Task;
 import no.nav.familie.ks.mottak.app.domene.TaskRepository;

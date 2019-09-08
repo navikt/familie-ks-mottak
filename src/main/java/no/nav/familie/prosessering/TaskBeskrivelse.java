@@ -1,4 +1,4 @@
-package no.nav.familie.ks.mottak.app.prosessering;
+package no.nav.familie.prosessering;
 
 import java.lang.annotation.*;
 

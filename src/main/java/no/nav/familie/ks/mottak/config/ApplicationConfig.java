@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootConfiguration
 @EnableJpaAuditing
-@ComponentScan({"no.nav.familie.ks.mottak"})
+@ComponentScan({"no.nav.familie"})
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

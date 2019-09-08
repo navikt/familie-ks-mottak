@@ -1,4 +1,4 @@
-package no.nav.familie.ks.mottak.app.prosessering;
+package no.nav.familie.prosessering;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -17,7 +17,7 @@ import java.io.StringWriter;
 /**
  * Json struktur for feil som kan oppstå. Dupliserer noen properties for enkelthets skyld til senere prosessering.
  * <p>
- * Kan kun gjenskapes som json dersom sisteFeil ble lagret som Json i PROSESS_TASK tabell
+ * Kan kun gjenskapes som json dersom sisteFeil ble lagret som Json i TASK tabell
  * (dvs. i nyere versjoner &gt;=2.4, gamle versjoner lagrer som flat string).
  */
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)

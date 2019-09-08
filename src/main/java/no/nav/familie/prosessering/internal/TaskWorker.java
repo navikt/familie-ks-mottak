@@ -1,6 +1,9 @@
-package no.nav.familie.ks.mottak.app.prosessering;
+package no.nav.familie.prosessering.internal;
 
 import no.nav.familie.ks.mottak.app.domene.TaskRepository;
+import no.nav.familie.prosessering.AsyncTask;
+import no.nav.familie.prosessering.TaskBeskrivelse;
+import no.nav.familie.prosessering.TaskFeil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
