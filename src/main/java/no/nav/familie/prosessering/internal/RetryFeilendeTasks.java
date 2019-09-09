@@ -1,6 +1,5 @@
-package no.nav.familie.ks.mottak.app.task;
+package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.prosessering.internal.TaskProsesseringRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
