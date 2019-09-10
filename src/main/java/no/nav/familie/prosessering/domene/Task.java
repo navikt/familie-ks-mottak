@@ -3,6 +3,7 @@ package no.nav.familie.prosessering.domene;
 import no.nav.familie.log.IdUtils;
 import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.familie.prosessering.TaskFeil;
+import org.slf4j.MDC;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -49,10 +50,10 @@ public class Task {
     Task() {
     }
 
-    public Task(String type, String payload, String callId) {
+    public Task(String type, String payload) {
         this.type = type;
         this.payload = payload;
-        this.metadata.put(MDCConstants.MDC_CALL_ID, Objects.requireNonNullElseGet(callId, IdUtils::generateId));
+        this.metadata.put(MDCConstants.MDC_CALL_ID, Objects.requireNonNullElseGet(MDC.get(MDCConstants.MDC_CALL_ID), IdUtils::generateId));
     }
 
     @PrePersist
