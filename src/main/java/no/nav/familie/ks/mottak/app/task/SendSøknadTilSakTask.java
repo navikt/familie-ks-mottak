@@ -1,9 +1,9 @@
 package no.nav.familie.ks.mottak.app.task;
 
-import no.nav.familie.ks.mottak.app.domene.Task;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
+import no.nav.familie.prosessering.domene.Task;
 import org.springframework.stereotype.Service;
 
 @Service

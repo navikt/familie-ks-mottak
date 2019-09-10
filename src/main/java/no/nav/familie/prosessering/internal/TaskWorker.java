@@ -1,14 +1,15 @@
 package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.ks.mottak.app.domene.TaskRepository;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
 import no.nav.familie.prosessering.TaskFeil;
+import no.nav.familie.prosessering.domene.Task;
+import no.nav.familie.prosessering.domene.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static no.nav.familie.log.mdc.MDCConstants.MDC_CALL_ID;
+
 @Service
 class TaskWorker {
 
+    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
     private static final Logger log = LoggerFactory.getLogger(TaskWorker.class);
     private final TaskRepository taskRepository;
-    private GenericApplicationContext context;
     private Map<String, AsyncTask> tasktypeMap = new HashMap<>();
     private Map<String, Integer> maxAntallFeilMap = new HashMap<>();
 
     @Autowired
-    public TaskWorker(GenericApplicationContext context, TaskRepository taskRepository, List<AsyncTask> taskTyper) {
-        this.context = context;
+    public TaskWorker(TaskRepository taskRepository, List<AsyncTask> taskTyper) {
         this.taskRepository = taskRepository;
         taskTyper.forEach(this::kategoriserTask);
     }
@@ -45,41 +47,57 @@ class TaskWorker {
     }
 
 
-    @Async("taskProsesseringExecutor")
+    @Async("taskExecutor")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void doTask(Long henvendelseId) {
         Objects.requireNonNull(henvendelseId, "id kan ikke være null");
-        context.getBean(TaskWorker.class).doActualWork(henvendelseId);
+        doActualWork(henvendelseId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    // For testing
     void doActualWork(Long henvendelseId) {
         final var startTidspunkt = System.currentTimeMillis();
-        var henvendelse = taskRepository.findById(henvendelseId).orElseThrow();
-        log.info("Behandler task='{}'", henvendelse);
+        var taskDetails = taskRepository.findById(henvendelseId).orElseThrow();
+
+        initLogContext(taskDetails);
+
+        log.info("Behandler task='{}'", taskDetails);
         Integer maxAntallFeil = 0;
         try {
-            henvendelse.behandler();
-            henvendelse = taskRepository.save(henvendelse);
+            taskDetails.behandler();
+            taskDetails = taskRepository.save(taskDetails);
 
             // finn tasktype
-            AsyncTask task = finnTask(henvendelse.getType());
-            maxAntallFeil = finnMaxAntallFeil(henvendelse.getType());
+            AsyncTask task = finnTask(taskDetails.getType());
+            maxAntallFeil = finnMaxAntallFeil(taskDetails.getType());
 
             // execute
-            task.preCondition(henvendelse);
-            task.doTask(henvendelse);
-            task.postCondition(henvendelse);
-            task.onCompletion(henvendelse);
+            task.preCondition(taskDetails);
+            task.doTask(taskDetails);
+            task.postCondition(taskDetails);
+            task.onCompletion(taskDetails);
 
-            henvendelse.ferdigstill();
-            log.info("Ferdigstiller task='{}'", henvendelse);
-
+            taskDetails.ferdigstill();
+            log.info("Ferdigstiller task='{}'", taskDetails);
+            taskRepository.save(taskDetails);
+            log.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
-            log.warn("Kjøring av task='{}' feilet med feilmelding={}", henvendelse, e.getMessage());
-            henvendelse.feilet(new TaskFeil(henvendelse, e), maxAntallFeil);
+            taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
+            log.info("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e.getMessage());
+            taskRepository.save(taskDetails);
+        } finally {
+            clearLogContext();
         }
-        taskRepository.save(henvendelse);
-        log.info("Fullført kjøring av task '{}', kjøretid={} ms", henvendelse, (System.currentTimeMillis() - startTidspunkt));
+    }
+
+    private void clearLogContext() {
+        LOG_CONTEXT.clear();
+        MDC.remove(MDC_CALL_ID);
+    }
+
+    private void initLogContext(Task taskDetails) {
+        MDC.put(MDC_CALL_ID, taskDetails.getCallId());
+        LOG_CONTEXT.add("task", taskDetails.getType());
     }
 
     private AsyncTask finnTask(String taskType) {

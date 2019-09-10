@@ -1,4 +1,4 @@
-package no.nav.familie.ks.mottak.app.domene;
+package no.nav.familie.prosessering.domene;
 
 import javax.persistence.*;
 import java.net.Inet4Address;

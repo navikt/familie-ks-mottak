@@ -1,6 +1,6 @@
 package no.nav.familie.prosessering;
 
-import no.nav.familie.ks.mottak.app.domene.Task;
+import no.nav.familie.prosessering.domene.Task;
 
 public interface AsyncTask {
 

@@ -1,11 +1,13 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
-import no.nav.familie.ks.mottak.app.domene.Task;
-import no.nav.familie.ks.mottak.app.domene.TaskRepository;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
+import no.nav.familie.log.mdc.MDCConstants;
+import no.nav.familie.prosessering.domene.Task;
+import no.nav.familie.prosessering.domene.TaskRepository;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +36,7 @@ public class MottakController {
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity mottaSoknad(@RequestBody String soknad) {
-        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad);
+        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad, MDC.get(MDCConstants.MDC_CALL_ID));
         taskRepository.save(task);
         return new ResponseEntity(HttpStatus.OK);
     }

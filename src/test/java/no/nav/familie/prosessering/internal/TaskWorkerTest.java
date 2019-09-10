@@ -1,12 +1,12 @@
 package no.nav.familie.prosessering.internal;
 
 import no.nav.familie.http.sts.StsRestClient;
-import no.nav.familie.ks.mottak.app.domene.Status;
-import no.nav.familie.ks.mottak.app.domene.Task;
-import no.nav.familie.ks.mottak.app.domene.TaskRepository;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
+import no.nav.familie.prosessering.domene.Status;
+import no.nav.familie.prosessering.domene.Task;
+import no.nav.familie.prosessering.domene.TaskRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +38,14 @@ public class TaskWorkerTest {
     private TaskRepository repository;
 
     @Autowired
-    private TaskProsesserer henvendelseService;
+    private TaskExecutorService henvendelseService;
 
     @Autowired
     private TaskWorker worker;
 
     @Test
     public void skal_behandle_task() {
-        var henvendelse1 = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}", null);
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
 
@@ -58,7 +58,7 @@ public class TaskWorkerTest {
 
     @Test
     public void skal_håndtere_feil() {
-        var henvendelse1 = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}", null);
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
         doThrow(new IllegalStateException()).when(task).doTask(any());

@@ -1,4 +1,4 @@
-package no.nav.familie.ks.mottak.app.domene;
+package no.nav.familie.prosessering.domene;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

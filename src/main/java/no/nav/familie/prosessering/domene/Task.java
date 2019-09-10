@@ -1,5 +1,7 @@
-package no.nav.familie.ks.mottak.app.domene;
+package no.nav.familie.prosessering.domene;
 
+import no.nav.familie.log.IdUtils;
+import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.familie.prosessering.TaskFeil;
 
 import javax.persistence.*;
@@ -7,6 +9,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
 
 @Entity
 @Table(name = "TASK")
@@ -31,6 +35,10 @@ public class Task {
     @Column(name = "type", nullable = false, updatable = false)
     private String type;
 
+    @Convert(converter = PropertiesToStringConverter.class)
+    @Column(name = "metadata")
+    private Properties metadata = new Properties();
+
     @Version
     private Long versjon;
 
@@ -41,9 +49,10 @@ public class Task {
     Task() {
     }
 
-    public Task(String type, String payload) {
+    public Task(String type, String payload, String callId) {
         this.type = type;
         this.payload = payload;
+        this.metadata.put(MDCConstants.MDC_CALL_ID, Objects.requireNonNullElseGet(callId, IdUtils::generateId));
     }
 
     @PrePersist
@@ -95,6 +104,14 @@ public class Task {
 
     public Status getStatus() {
         return status;
+    }
+
+    public String getCallId() {
+        return this.metadata.getProperty(MDCConstants.MDC_CALL_ID);
+    }
+
+    public Properties getMetadata() {
+        return metadata;
     }
 
     public Task feilet(TaskFeil feil, int maxAntallFeil) {

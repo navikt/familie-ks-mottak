@@ -1,6 +1,6 @@
 package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.ks.mottak.app.domene.Task;
+import no.nav.familie.prosessering.domene.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +12,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TaskProsesserer {
+public class TaskExecutorService {
 
     public static final int POLLING_DELAY = 30000;
-    private static final Logger log = LoggerFactory.getLogger(TaskProsesserer.class);
+    private static final Logger log = LoggerFactory.getLogger(TaskExecutorService.class);
     private TaskWorker worker;
     private TaskExecutor taskExecutor;
     private TaskProsesseringRepository taskProsesseringRepository;
 
     @Autowired
-    public TaskProsesserer(TaskWorker worker,
-                           @Qualifier("taskProsesseringExecutor") TaskExecutor taskExecutor,
-                           TaskProsesseringRepository taskProsesseringRepository) {
+    public TaskExecutorService(TaskWorker worker,
+                               @Qualifier("taskExecutor") TaskExecutor taskExecutor,
+                               TaskProsesseringRepository taskProsesseringRepository) {
         this.worker = worker;
         this.taskExecutor = taskExecutor;
         this.taskProsesseringRepository = taskProsesseringRepository;

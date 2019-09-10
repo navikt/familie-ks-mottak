@@ -12,12 +12,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableScheduling
 public class ProsesseringConfig {
 
-    @Bean(name = "taskProsesseringExecutor")
+    @Bean(name = "taskExecutor")
     public TaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(4);
         executor.setMaxPoolSize(4);
-        executor.setThreadNamePrefix("TaskProsessering-");
+        executor.setThreadNamePrefix("TaskWorker-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setQueueCapacity(20);
         executor.initialize();

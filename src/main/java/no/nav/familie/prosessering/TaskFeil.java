@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import no.nav.familie.ks.mottak.app.domene.Task;
+import no.nav.familie.prosessering.domene.Task;
 
 import javax.persistence.Embeddable;
 import java.io.IOException;

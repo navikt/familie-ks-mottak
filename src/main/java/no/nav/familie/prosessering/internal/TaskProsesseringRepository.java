@@ -1,7 +1,7 @@
 package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.ks.mottak.app.domene.Task;
-import no.nav.familie.ks.mottak.app.domene.TaskRepository;
+import no.nav.familie.prosessering.domene.Task;
+import no.nav.familie.prosessering.domene.TaskRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
