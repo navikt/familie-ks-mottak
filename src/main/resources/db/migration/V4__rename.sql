@@ -10,3 +10,5 @@ ALTER TABLE TASK_LOGG rename COLUMN henvendelse_id to task_id;
 
 ALTER SEQUENCE henvendelse_seq RENAME TO task_seq;
 ALTER SEQUENCE henvendelse_logg_seq RENAME TO task_logg_seq;
+
+UPDATE TASK SET status = 'AVVIKS_HÅNDTERT' WHERE status = 'FEILET';
