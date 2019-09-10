@@ -31,19 +31,24 @@ public class SøknadService {
         this.stsRestClient = stsRestClient;
     }
 
-    public void sendTilSak(byte[] søknad) throws IOException, InterruptedException {
+    public void sendTilSak(byte[] søknad) {
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
-                .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
-                .POST(HttpRequest.BodyPublishers.ofByteArray(søknad))
-                .uri(sakServiceUri)
-                .build();
+            .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
+            .POST(HttpRequest.BodyPublishers.ofByteArray(søknad))
+            .uri(sakServiceUri)
+            .build();
         LOG.info("Sender søknad til " + sakServiceUri);
 
-        HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != HttpStatus.OK.value()) {
-            LOG.warn("Innsending til sak feilet. Responskode: {}. Feilmelding: {}", response.statusCode(), response.body());
+        HttpResponse response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != HttpStatus.OK.value()) {
+                LOG.warn("Innsending til sak feilet. Responskode: {}. Feilmelding: {}", response.statusCode(), response.body());
 
-            throw new IllegalStateException("Innsending til sak feilet.");
+                throw new IllegalStateException("Innsending til sak feilet.");
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new IllegalStateException("Innsending til sak feilet.", e);
         }
     }
 }
