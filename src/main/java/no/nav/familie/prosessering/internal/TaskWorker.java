@@ -49,7 +49,7 @@ class TaskWorker {
 
     @Async("taskExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    void doTask(Long henvendelseId) {
+    public void doTask(Long henvendelseId) {
         Objects.requireNonNull(henvendelseId, "id kan ikke være null");
         doActualWork(henvendelseId);
     }
@@ -57,13 +57,13 @@ class TaskWorker {
     // For testing
     void doActualWork(Long henvendelseId) {
         final var startTidspunkt = System.currentTimeMillis();
+        Integer maxAntallFeil = 0;
         var taskDetails = taskRepository.findById(henvendelseId).orElseThrow();
 
         initLogContext(taskDetails);
-
-        log.info("Behandler task='{}'", taskDetails);
-        Integer maxAntallFeil = 0;
         try {
+
+            log.info("Behandler task='{}'", taskDetails);
             taskDetails.behandler();
             taskDetails = taskRepository.save(taskDetails);
 

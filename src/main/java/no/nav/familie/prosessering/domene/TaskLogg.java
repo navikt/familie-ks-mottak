@@ -27,7 +27,7 @@ public class TaskLogg {
 
     @Lob
     @Column(name = "feilmelding", updatable = false, columnDefinition = "text")
-    private String feilmelding = "";
+    private String feilmelding;
 
     @Column(name = "opprettet_tid", nullable = false, updatable = false)
     private LocalDateTime opprettetTidspunkt; // NOSONAR
