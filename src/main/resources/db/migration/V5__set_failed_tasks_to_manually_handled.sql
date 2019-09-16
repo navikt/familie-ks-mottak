@@ -1,0 +1,3 @@
+UPDATE TASK
+SET status = 'AVVIKS_HÅNDTERT'
+WHERE status = 'FEILET';

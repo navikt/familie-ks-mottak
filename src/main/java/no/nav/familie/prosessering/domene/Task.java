@@ -21,8 +21,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_seq")
     @SequenceGenerator(name = "task_seq")
     private Long id;
-
-    @Lob
+    
     @Column(name = "payload", updatable = false, columnDefinition = "text")
     private String payload;
 
