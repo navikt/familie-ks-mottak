@@ -10,24 +10,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@TaskBeskrivelse(taskType = SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK)
-public class SendSøknadTilSakTask implements AsyncTask {
+@TaskBeskrivelse(taskType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK)
+public class HentSaksnummerFraJoarkTask implements AsyncTask {
 
-    public static final String SEND_SØKNAD_TIL_SAK = "sendSøknadTilSak";
+    public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";
     private TaskRepository taskRepository;
     private SøknadService søknadService;
 
-    Flow flow = Flow.SENDSOKNADTILSAK;
+    final Flow flow = Flow.HENTSAKSNUMMERFRAJOARK;
 
     @Autowired
-    public SendSøknadTilSakTask(SøknadService søknadService, TaskRepository taskRepository) {
-        this.søknadService = søknadService;
+    public HentSaksnummerFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
+        this.søknadService = søknadService;
     }
 
     @Override
     public void doTask(Task task) {
-        søknadService.sendTilSak(task.getPayload().getBytes());
+        //søknadService.sendTilSak(task.getPayload().getBytes());
     }
 
     @Override

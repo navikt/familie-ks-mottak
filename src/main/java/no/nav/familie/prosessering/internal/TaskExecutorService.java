@@ -38,10 +38,10 @@ public class TaskExecutorService {
 
         final var minCapacity = 2;
         if (pollingSize > minCapacity) {
-            final var henvendelser = taskProsesseringRepository.finnAlleTasksKlareForProsessering(pollingSize);
-            log.info("Pollet {} tasks med max {}", henvendelser.size(), maxAntall);
+            final var tasks = taskProsesseringRepository.finnAlleTasksKlareForProsessering(pollingSize);
+            log.info("Pollet {} tasks med max {}", tasks.size(), maxAntall);
 
-            henvendelser.forEach(this::executeWork);
+            tasks.forEach(this::executeWork);
         } else {
             log.info("Pollet ingen tasks siden kapasiteten var {} < {}", pollingSize, minCapacity);
         }

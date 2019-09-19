@@ -18,6 +18,7 @@ public class DevLauncher {
 
     public static void main(String... args) {
         new SpringApplicationBuilder(ApplicationConfig.class)
+            //.profiles("postgresql")
             .profiles("dev")
             .run(args);
     }
