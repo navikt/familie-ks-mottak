@@ -32,7 +32,8 @@ public class JournalførSøknadTask implements AsyncTask {
 
     @Override
     public void onCompletion(Task task){
-        Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), LocalDateTime.now().plusMinutes(15));
+        LocalDateTime startTidspunkt = LocalDateTime.now().plusSeconds(1); //TODO sett til 15 minutter frem i tid når vi journalfører
+        Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), startTidspunkt);
         taskRepository.save(nesteTask);
     }
  }
