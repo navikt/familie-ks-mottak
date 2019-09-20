@@ -1,6 +1,5 @@
 package no.nav.familie.ks.mottak.app.task;
 
-import no.nav.familie.ks.mottak.app.flow.Flow;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
@@ -17,7 +16,6 @@ public class SendSøknadTilSakTask implements AsyncTask {
     private TaskRepository taskRepository;
     private SøknadService søknadService;
 
-    Flow flow = Flow.SENDSOKNADTILSAK;
 
     @Autowired
     public SendSøknadTilSakTask(SøknadService søknadService, TaskRepository taskRepository) {
@@ -32,7 +30,6 @@ public class SendSøknadTilSakTask implements AsyncTask {
 
     @Override
     public void onCompletion(Task task){
-        Task nesteTask = flow.nextTask(task);
-        taskRepository.save(nesteTask);
+        taskRepository.save(Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.getPayload()));
     }
 }

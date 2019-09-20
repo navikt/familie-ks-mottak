@@ -45,7 +45,7 @@ public class TaskWorkerTest {
 
     @Test
     public void skal_behandle_task() {
-        var henvendelse1 = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
 
@@ -58,7 +58,7 @@ public class TaskWorkerTest {
 
     @Test
     public void skal_håndtere_feil() {
-        var henvendelse1 = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
         doThrow(new IllegalStateException()).when(task).doTask(any());

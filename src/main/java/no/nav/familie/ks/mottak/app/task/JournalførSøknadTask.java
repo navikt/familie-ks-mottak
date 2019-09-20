@@ -1,6 +1,5 @@
 package no.nav.familie.ks.mottak.app.task;
 
-import no.nav.familie.ks.mottak.app.flow.Flow;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
@@ -8,6 +7,8 @@ import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @TaskBeskrivelse(taskType = JournalførSøknadTask.JOURNALFØR_SØKNAD)
@@ -17,7 +18,6 @@ public class JournalførSøknadTask implements AsyncTask {
     private TaskRepository taskRepository;
     private SøknadService søknadService;
 
-    final Flow flow = Flow.JOURNALFOR;
 
     @Autowired
     public JournalførSøknadTask(SøknadService søknadService, TaskRepository taskRepository) {
@@ -32,7 +32,7 @@ public class JournalførSøknadTask implements AsyncTask {
 
     @Override
     public void onCompletion(Task task){
-        Task nesteTask = flow.nextTask(task);
+        Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), LocalDateTime.now().plusMinutes(15));
         taskRepository.save(nesteTask);
     }
  }

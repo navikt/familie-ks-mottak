@@ -65,7 +65,7 @@ class TaskWorker {
 
             log.info("Behandler task='{}'", taskDetails);
             taskDetails.behandler();
-            taskDetails = taskRepository.save(taskDetails);
+            taskDetails = taskRepository.saveAndFlush(taskDetails);
 
             // finn tasktype
             AsyncTask task = finnTask(taskDetails.getType());
@@ -79,7 +79,8 @@ class TaskWorker {
 
             taskDetails.ferdigstill();
             log.info("Ferdigstiller task='{}'", taskDetails);
-            taskRepository.save(taskDetails);
+            taskRepository.saveAndFlush(taskDetails);
+            taskRepository.flush();
             log.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
