@@ -20,7 +20,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(
-        value = "SELECT t FROM Task t WHERE t.status IN ('KLAR_TIL_PLUKK', 'UBEHANDLET')  AND t.triggerTid is null OR t.triggerTid < CURRENT_TIMESTAMP")
+        value = "SELECT t FROM Task t WHERE t.status IN ('KLAR_TIL_PLUKK', 'UBEHANDLET')  AND  (t.triggerTid < CURRENT_TIMESTAMP OR t.triggerTid IS NULL) ORDER BY t.opprettetTidspunkt DESC")
     List<Task> finnAlleTasksKlareForProsessering(Pageable page);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

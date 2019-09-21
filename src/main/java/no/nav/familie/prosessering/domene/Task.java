@@ -57,7 +57,7 @@ public class Task {
     }
 
     public static Task nyTask(String type, String payload) {
-       return new Task(type, payload);
+       return new Task(type, payload, LocalDateTime.now());
     }
 
     private Task(String type, String payload) {
@@ -132,6 +132,10 @@ public class Task {
         return status;
     }
 
+    public LocalDateTime getOpprettetTidspunkt () {
+        return opprettetTidspunkt;
+    }
+
     public String getCallId() {
         return this.metadata.getProperty(MDCConstants.MDC_CALL_ID);
     }
@@ -162,10 +166,11 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-            "id=" + id +
-            ", status=" + status +
-            ", opprettetTidspunkt=" + opprettetTidspunkt +
-            ", versjon=" + versjon +
-            '}';
+                "id=" + id +
+                ", status=" + status +
+                ", opprettetTidspunkt=" + opprettetTidspunkt +
+                ", triggertid=" + triggerTid +
+                ", versjon=" + versjon +
+                '}';
     }
 }

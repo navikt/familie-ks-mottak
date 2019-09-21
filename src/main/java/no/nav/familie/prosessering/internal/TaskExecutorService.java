@@ -40,7 +40,7 @@ public class TaskExecutorService {
 
         final var minCapacity = 2;
         if (pollingSize > minCapacity) {
-            final var tasks = taskProsesseringRepository.finnAlleTasksKlareForProsessering(PageRequest.of(0, 3));
+            final var tasks = taskProsesseringRepository.finnAlleTasksKlareForProsessering(PageRequest.of(0, pollingSize));
             log.info("Pollet {} tasks med max {}", tasks.size(), maxAntall);
 
             tasks.forEach(this::executeWork);
@@ -58,8 +58,6 @@ public class TaskExecutorService {
     }
 
     private void executeWork(Task task) {
-        //taskProsesseringRepository.verifiserLås(task.getId());
-
         worker.doTask(task.getId());
     }
 }
