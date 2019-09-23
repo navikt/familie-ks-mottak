@@ -1,5 +1,6 @@
 package no.nav.familie.prosessering.internal;
 
+import no.nav.familie.prosessering.domene.TaskRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ScheduledTasksService {
 
-    private TaskProsesseringRepository taskRepository;
+    private TaskRepository taskRepository;
 
-    public ScheduledTasksService(TaskProsesseringRepository taskRepository) {
+    public ScheduledTasksService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 

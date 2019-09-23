@@ -32,6 +32,9 @@ public class Task {
     @Column(name = "opprettet_tid", nullable = false, updatable = false)
     private LocalDateTime opprettetTidspunkt; // NOSONAR
 
+    @Column(name = "trigger_tid", nullable = true, updatable = true)
+    private LocalDateTime triggerTid;
+
     @Column(name = "type", nullable = false, updatable = false)
     private String type;
 
@@ -49,9 +52,24 @@ public class Task {
     Task() {
     }
 
-    public Task(String type, String payload) {
+    public static Task nyTaskMedStartFremITid(String type, String payload, LocalDateTime triggerTidspunkt) {
+        return new Task(type, payload, triggerTidspunkt);
+    }
+
+    public static Task nyTask(String type, String payload) {
+       return new Task(type, payload, LocalDateTime.now());
+    }
+
+    private Task(String type, String payload) {
         this.type = type;
         this.payload = payload;
+        this.metadata.put(MDCConstants.MDC_CALL_ID, Objects.requireNonNullElseGet(MDC.get(MDCConstants.MDC_CALL_ID), IdUtils::generateId));
+    }
+
+    private Task(String type, String payload, LocalDateTime triggerTidspunkt) {
+        this.type = type;
+        this.payload = payload;
+        this.triggerTid = triggerTidspunkt;
         this.metadata.put(MDCConstants.MDC_CALL_ID, Objects.requireNonNullElseGet(MDC.get(MDCConstants.MDC_CALL_ID), IdUtils::generateId));
     }
 
@@ -102,8 +120,20 @@ public class Task {
         return logg;
     }
 
+    public LocalDateTime getTriggerTid() {
+        return triggerTid;
+    }
+
+    public void setTriggerTid(LocalDateTime triggerTidspunkt) {
+        this.triggerTid = triggerTidspunkt;
+    }
+
     public Status getStatus() {
         return status;
+    }
+
+    public LocalDateTime getOpprettetTidspunkt () {
+        return opprettetTidspunkt;
     }
 
     public String getCallId() {
@@ -136,10 +166,11 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-            "id=" + id +
-            ", status=" + status +
-            ", opprettetTidspunkt=" + opprettetTidspunkt +
-            ", versjon=" + versjon +
-            '}';
+                "id=" + id +
+                ", status=" + status +
+                ", opprettetTidspunkt=" + opprettetTidspunkt +
+                ", triggertid=" + triggerTid +
+                ", versjon=" + versjon +
+                '}';
     }
 }
