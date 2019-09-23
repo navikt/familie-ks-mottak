@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -22,16 +21,24 @@ import javax.transaction.Transactional;
 public class MottakController {
 
     private TaskRepository taskRepository;
+    private SøknadService søknadService;
 
     @Autowired
-    public MottakController(TaskRepository taskRepository) {
+    public MottakController(TaskRepository taskRepository, SøknadService søknadService) {
         this.taskRepository = taskRepository;
+        this.søknadService = søknadService;
     }
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity mottaSoknad(@RequestBody String soknad) {
         final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad);
         taskRepository.save(task);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/soknadmedvedlegg", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity mottaSoknadMedVedlegg(@Valid Søknad søknad, @RequestParam("vedlegg") MultipartFile[] vedlegg) {
+        søknadService.lagreSoknadOgLagTask();
         return new ResponseEntity(HttpStatus.OK);
     }
 }

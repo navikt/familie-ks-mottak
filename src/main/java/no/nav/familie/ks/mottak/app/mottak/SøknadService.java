@@ -3,18 +3,27 @@ package no.nav.familie.ks.mottak.app.mottak;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.HttpRequestUtil;
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.mottak.app.domene.Soknad;
+import no.nav.familie.ks.mottak.app.domene.SoknadRepository;
+import no.nav.familie.ks.mottak.app.domene.Vedlegg;
+import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
+import no.nav.familie.prosessering.domene.Task;
+import no.nav.familie.prosessering.domene.TaskRepository;
 import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class SøknadService {
@@ -24,11 +33,30 @@ public class SøknadService {
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
     private final HttpClient client;
+    private final SoknadRepository soknadRepository;
+    private final TaskRepository taskRepository;
 
-    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, StsRestClient stsRestClient) {
+    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, StsRestClient stsRestClient, SoknadRepository soknadRepository, TaskRepository taskRepository) {
         this.client = HttpClientUtil.create();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.stsRestClient = stsRestClient;
+        this.soknadRepository = soknadRepository;
+        this.taskRepository = taskRepository;
+    }
+
+    @Transactional
+    public void lagreSoknadOgLagTask() {
+        Soknad soknad = new Soknad();
+        List<Vedlegg> vedlegg = new LinkedList<>();
+        soknad.setVedlegg(vedlegg);
+
+        soknadRepository.save(soknad);
+
+        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK,("soknad.id=" +soknad.getId()));
+
+        taskRepository.save(task);
+
+
     }
 
     public void sendTilSak(byte[] søknad) {
