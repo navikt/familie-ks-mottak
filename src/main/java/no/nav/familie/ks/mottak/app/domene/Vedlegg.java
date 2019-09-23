@@ -18,6 +18,9 @@ public class Vedlegg {
     @Column(name="data")
     private byte[] data;
 
+    @Column(name="filnavn")
+    private String filnavn;
+
     public Long getId() {
         return id;
     }
@@ -41,4 +44,8 @@ public class Vedlegg {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    public String getFilnavn() { return filnavn; }
+
+    public void setFilnavn(String filnavn) { this.filnavn = filnavn; }
 }

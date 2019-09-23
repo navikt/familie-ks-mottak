@@ -1,7 +1,5 @@
 package no.nav.familie.ks.mottak.app.domene;
 
-import no.nav.familie.prosessering.domene.TaskLogg;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

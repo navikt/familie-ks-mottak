@@ -24,6 +24,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SøknadService {
@@ -45,14 +46,20 @@ public class SøknadService {
     }
 
     @Transactional
-    public void lagreSoknadOgLagTask() {
+    public void lagreSoknadOgLagTask(SøknadDto søknadDto) {
         Soknad soknad = new Soknad();
-        List<Vedlegg> vedlegg = new LinkedList<>();
+        soknad.setSoknadJson(søknadDto.getSoknad());
+        List<Vedlegg> vedlegg = søknadDto.getVedlegg().stream().map(vedleggDto -> {
+            var v = new Vedlegg();
+            v.setData(vedleggDto.getData());
+            v.setFilnavn(vedleggDto.getTittel());
+            return v;
+        }).collect(Collectors.toList());
         soknad.setVedlegg(vedlegg);
 
         soknadRepository.save(soknad);
 
-        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK,("soknad.id=" +soknad.getId()));
+        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, ("soknad.id=" + soknad.getId()));
 
         taskRepository.save(task);
 

@@ -9,10 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -37,8 +35,8 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknadmedvedlegg", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity mottaSoknadMedVedlegg(@Valid Søknad søknad, @RequestParam("vedlegg") MultipartFile[] vedlegg) {
-        søknadService.lagreSoknadOgLagTask();
+    public ResponseEntity mottaSoknadMedVedlegg(@RequestBody SøknadDto søknad) {
+        søknadService.lagreSoknadOgLagTask(søknad);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
