@@ -39,6 +39,7 @@ class TaskWorker {
     public TaskWorker(TaskRepository taskRepository, List<AsyncTask> taskTyper) {
         this.taskRepository = taskRepository;
         taskTyper.forEach(this::kategoriserTask);
+        tasktypeMap.keySet().forEach(this::initMetricCounters);
     }
 
     private void kategoriserTask(AsyncTask task) {
@@ -49,6 +50,9 @@ class TaskWorker {
         maxAntallFeilMap.put(annotation.taskType(), annotation.maxAntallFeil());
     }
 
+    private void initMetricCounters(String taskType) {
+        feiledeTasks.put(taskType, Metrics.counter("mottak.kontantstotte.feilede.tasks", "status", taskType, "beskrivelse", "Tasktyper i mottak"));
+    }
 
     @Async("taskExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -87,9 +91,7 @@ class TaskWorker {
             log.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
-            Counter counter = feiledeTasks.getOrDefault(taskDetails.getType(), Metrics.counter("mottak.kontantstotte.feilede.tasks", "status", taskDetails.getType()));
-            counter.increment();
-            feiledeTasks.put(taskDetails.getType(), counter);
+            feiledeTasks.get(taskDetails.getType()).increment();
             log.info("Feilet kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e.getMessage());
             taskRepository.save(taskDetails);
         } finally {
