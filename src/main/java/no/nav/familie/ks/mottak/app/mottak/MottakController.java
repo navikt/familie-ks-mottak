@@ -1,5 +1,6 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
+import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
@@ -29,7 +30,7 @@ public class MottakController {
 
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity mottaSoknad(@RequestBody String soknad) {
-        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad);
+        final var task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad);
         taskRepository.save(task);
         return new ResponseEntity(HttpStatus.OK);
     }

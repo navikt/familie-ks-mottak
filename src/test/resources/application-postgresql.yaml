@@ -1,0 +1,43 @@
+no.nav.security.oidc:
+  issuers: intern
+  issuer.intern:
+    discoveryurl: http://metadata
+    accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
+
+credential:
+  username: "srv-ks-sak"
+  password: "not-a-real-password"
+
+logging:
+  config: "classpath:logback-test.xml"
+
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mottak
+    hikari:
+      password: mottak
+      username: mottak
+  flyway:
+    enabled: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql=false
+    hibernate:
+      ddl-auto: none
+
+  cloud:
+    vault:
+      database:
+        role: mottak
+
+
+server:
+  port: 8083
+
+FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
+FAMILIE_KS_SAK_API_URL: http://localhost:8086/api

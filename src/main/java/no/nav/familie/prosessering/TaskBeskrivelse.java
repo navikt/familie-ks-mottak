@@ -1,5 +1,6 @@
 package no.nav.familie.prosessering;
 
+
 import java.lang.annotation.*;
 
 @Target({ElementType.TYPE})
