@@ -1,5 +1,7 @@
 package no.nav.familie.prosessering.internal;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
 import no.nav.familie.prosessering.TaskFeil;
@@ -31,6 +33,7 @@ class TaskWorker {
     private final TaskRepository taskRepository;
     private Map<String, AsyncTask> tasktypeMap = new HashMap<>();
     private Map<String, Integer> maxAntallFeilMap = new HashMap<>();
+    private final HashMap<String, Counter> feiledeTasks = new HashMap<>();
 
     @Autowired
     public TaskWorker(TaskRepository taskRepository, List<AsyncTask> taskTyper) {
@@ -84,7 +87,10 @@ class TaskWorker {
             log.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
-            log.info("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e.getMessage());
+            Counter counter = feiledeTasks.getOrDefault(taskDetails.getType(), Metrics.counter("mottak.kontantstotte.feilede.tasks", "status", taskDetails.getType()));
+            counter.increment();
+            feiledeTasks.put(taskDetails.getType(), counter);
+            log.info("Feilet kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e.getMessage());
             taskRepository.save(taskDetails);
         } finally {
             clearLogContext();
