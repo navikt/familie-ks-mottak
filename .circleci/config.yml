@@ -137,6 +137,7 @@ jobs:
               --team=${TEAM} \
               --version=${VERSION} \
               --resource=./app-preprod.yaml
+              --ref=$CIRCLE_BRANCH
 
   deploy_prod:
     executor: nais-deployer
@@ -158,6 +159,7 @@ jobs:
               --team=${TEAM} \
               --version=${VERSION} \
               --resource=./app-prod.yaml
+              --ref=$CIRCLE_BRANCH
 
 workflows:
   version: 2
