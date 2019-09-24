@@ -7,14 +7,22 @@ import java.util.List;
 public class SøknadDto {
 
     @JsonProperty
+    private final String fnr;
+
+    @JsonProperty
     private final String soknad;
 
     @JsonProperty
     private final List<VedleggDto> vedlegg;
 
-    public SøknadDto(@JsonProperty("soknad") String søknad, @JsonProperty("vedlegg") List<VedleggDto> vedlegg) {
+    public SøknadDto(@JsonProperty("fnr") String fnr, @JsonProperty("soknad") String søknad, @JsonProperty("vedlegg") List<VedleggDto> vedlegg) {
+        this.fnr = fnr;
         this.soknad = søknad;
         this.vedlegg = vedlegg;
+    }
+
+    public String getFnr() {
+        return this.fnr;
     }
 
     public String getSoknad() { return this.soknad; }

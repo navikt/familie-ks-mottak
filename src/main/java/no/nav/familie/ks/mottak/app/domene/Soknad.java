@@ -21,7 +21,10 @@ public class Soknad {
     @Column(name = "saksnummer")
     private String saksnummer;
 
-    @OneToMany(mappedBy = "soknad", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @Column(name = "fnr")
+    private String fnr;
+
+    @OneToMany(mappedBy = "soknad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("id asc")
     private List<Vedlegg> vedlegg = new ArrayList<>();
 
@@ -64,5 +67,13 @@ public class Soknad {
 
     public void setVedlegg(List<Vedlegg> vedlegg) {
         this.vedlegg = vedlegg;
+    }
+
+    public String getFnr() {
+        return fnr;
+    }
+
+    public void setFnr(String fnr) {
+        this.fnr = fnr;
     }
 }

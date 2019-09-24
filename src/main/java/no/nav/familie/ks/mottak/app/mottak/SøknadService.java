@@ -51,15 +51,17 @@ public class SøknadService {
         soknad.setSoknadJson(søknadDto.getSoknad());
         List<Vedlegg> vedlegg = søknadDto.getVedlegg().stream().map(vedleggDto -> {
             var v = new Vedlegg();
+            v.setSoknad(soknad);
             v.setData(vedleggDto.getData());
             v.setFilnavn(vedleggDto.getTittel());
             return v;
         }).collect(Collectors.toList());
         soknad.setVedlegg(vedlegg);
+        soknad.setFnr(søknadDto.getFnr());
 
         soknadRepository.save(soknad);
 
-        final var task = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, ("soknad.id=" + soknad.getId()));
+        final var task = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, ("soknad.id=" + soknad.getId()));
 
         taskRepository.save(task);
 
