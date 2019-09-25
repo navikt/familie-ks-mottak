@@ -77,7 +77,6 @@ public class SøknadService {
             .POST(HttpRequest.BodyPublishers.ofString(søknadJson))
             .uri(sakServiceUri)
             .build();
-        LOG.info("Søknad: {}", søknad);
         LOG.info("Sender søknad til " + sakServiceUri);
 
         HttpResponse response = null;
