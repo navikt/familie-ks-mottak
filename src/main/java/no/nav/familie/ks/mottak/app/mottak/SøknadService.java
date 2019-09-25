@@ -61,19 +61,23 @@ public class SøknadService {
 
         soknadRepository.save(soknad);
 
-        final var task = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, ("soknad.id=" + soknad.getId()));
+        final var task = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad.getId().toString());
 
         taskRepository.save(task);
 
 
     }
 
-    public void sendTilSak(byte[] søknad) {
+    public void sendTilSak(String søknadId) {
+        Soknad søknad = soknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
+        String søknadJson = søknad != null ? søknad.getSoknadJson() : "";
+
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
             .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
-            .POST(HttpRequest.BodyPublishers.ofByteArray(søknad))
+            .POST(HttpRequest.BodyPublishers.ofString(søknadJson))
             .uri(sakServiceUri)
             .build();
+        LOG.info("Søknad: {}", søknad);
         LOG.info("Sender søknad til " + sakServiceUri);
 
         HttpResponse response = null;

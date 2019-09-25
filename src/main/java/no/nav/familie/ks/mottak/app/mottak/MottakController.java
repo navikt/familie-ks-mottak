@@ -27,6 +27,7 @@ public class MottakController {
         this.søknadService = søknadService;
     }
 
+    @Deprecated
     @PostMapping(value = "/soknad", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity mottaSoknad(@RequestBody String soknad) {
         final var task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad);
