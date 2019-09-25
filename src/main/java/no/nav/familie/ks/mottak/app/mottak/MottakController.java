@@ -1,7 +1,6 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
-import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import no.nav.security.oidc.api.ProtectedWithClaims;
