@@ -85,7 +85,7 @@ class TaskWorker {
             secureLog.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
-            secureLog.warn("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e.getMessage());
+            secureLog.warn("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e);
             taskRepository.save(taskDetails);
         } finally {
             clearLogContext();
