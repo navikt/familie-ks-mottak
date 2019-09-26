@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class SøknadService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SøknadService.class);
+    private static final Logger SECURE_LOG = LoggerFactory.getLogger("secureLogger");
 
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
@@ -68,15 +69,23 @@ public class SøknadService {
     }
 
     public void sendTilSak(String payload) {
+        SECURE_LOG.info("Payload fra task: {}", payload);
         Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
+        SECURE_LOG.info("Søknad fra db: {}", søknad);
         
         String søknadJson = søknad != null ? søknad.getSoknadJson() : payload;
+        SECURE_LOG.info("Json som skal sendes til sak: {}", søknadJson);
 
-        HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
-            .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(søknadJson))
-            .uri(sakServiceUri)
-            .build();
+        HttpRequest request = null;
+        try {
+            request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
+                .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(søknadJson))
+                .uri(sakServiceUri)
+                .build();
+        } catch(Exception e) {
+            SECURE_LOG.info("Exception for request til sak:", e);
+        }
         LOG.info("Sender søknad til " + sakServiceUri);
 
         HttpResponse response = null;
