@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.SignedJWT;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
-import no.nav.familie.ks.mottak.app.domene.SoknadRepository;
+import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.app.mottak.SøknadDto;
 import no.nav.familie.ks.mottak.app.mottak.VedleggDto;
@@ -52,7 +52,7 @@ public class MottaSøknadIntegrasjonsTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private SoknadRepository soknadRepository;
+    private SøknadRepository søknadRepository;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -78,7 +78,7 @@ public class MottaSøknadIntegrasjonsTest {
 
     @Test
     public void søknad_lagres_med_fnr_og_json() {
-        List<Soknad> søknader = soknadRepository.findAll();
+        List<Soknad> søknader = søknadRepository.findAll();
 
         assertThat(søknader.size()).isEqualTo(1);
         assertThat(søknader.get(0).getFnr()).isEqualTo(INNLOGGET_BRUKER);
@@ -87,7 +87,7 @@ public class MottaSøknadIntegrasjonsTest {
 
     @Test
     public void vedlegg_lagres_med_ref_til_søknad() {
-        List<Soknad> søknader = soknadRepository.findAll();
+        List<Soknad> søknader = søknadRepository.findAll();
         List<Vedlegg> vedlegg = søknader.get(0).getVedlegg();
 
         assertThat(vedlegg.size()).isEqualTo(2);

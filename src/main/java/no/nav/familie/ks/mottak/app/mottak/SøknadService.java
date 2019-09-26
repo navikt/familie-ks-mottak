@@ -4,7 +4,7 @@ import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.HttpRequestUtil;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
-import no.nav.familie.ks.mottak.app.domene.SoknadRepository;
+import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.prosessering.domene.Task;
@@ -22,7 +22,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,14 +33,14 @@ public class SøknadService {
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
     private final HttpClient client;
-    private final SoknadRepository soknadRepository;
+    private final SøknadRepository søknadRepository;
     private final TaskRepository taskRepository;
 
-    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, StsRestClient stsRestClient, SoknadRepository soknadRepository, TaskRepository taskRepository) {
+    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, StsRestClient stsRestClient, SøknadRepository søknadRepository, TaskRepository taskRepository) {
         this.client = HttpClientUtil.create();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.stsRestClient = stsRestClient;
-        this.soknadRepository = soknadRepository;
+        this.søknadRepository = søknadRepository;
         this.taskRepository = taskRepository;
     }
 
@@ -59,7 +58,7 @@ public class SøknadService {
         soknad.setVedlegg(vedlegg);
         soknad.setFnr(søknadDto.getFnr());
 
-        soknadRepository.save(soknad);
+        søknadRepository.save(soknad);
 
         final var task = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad.getId().toString());
 
@@ -69,7 +68,7 @@ public class SøknadService {
     }
 
     public void sendTilSak(String søknadId) {
-        Soknad søknad = soknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
+        Soknad søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
         String søknadJson = søknad != null ? søknad.getSoknadJson() : "";
 
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
