@@ -67,9 +67,10 @@ public class SøknadService {
 
     }
 
-    public void sendTilSak(String søknadId) {
-        Soknad søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
-        String søknadJson = søknad != null ? søknad.getSoknadJson() : "";
+    public void sendTilSak(String payload) {
+        Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
+        
+        String søknadJson = søknad != null ? søknad.getSoknadJson() : payload;
 
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
             .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
