@@ -25,7 +25,6 @@ public class TaskLogg {
     @Column(name = "node")
     private String node;
 
-    @Lob
     @Column(name = "feilmelding", updatable = false, columnDefinition = "text")
     private String feilmelding;
 

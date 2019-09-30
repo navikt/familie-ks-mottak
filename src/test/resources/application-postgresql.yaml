@@ -1,6 +1,6 @@
 no.nav.security.oidc:
-  issuers: intern
-  issuer.intern:
+  issuers: selvbetjening
+  issuer.selvbetjening:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
@@ -16,7 +16,7 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mottak
+    url: jdbc:postgresql://localhost:5432/postgres
     hikari:
       password: mottak
       username: mottak
@@ -37,7 +37,7 @@ spring:
 
 
 server:
-  port: 8083
+  port: 8084
 
 FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
 FAMILIE_KS_SAK_API_URL: http://localhost:8086/api

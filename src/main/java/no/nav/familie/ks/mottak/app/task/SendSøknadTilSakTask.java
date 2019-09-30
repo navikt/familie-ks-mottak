@@ -25,7 +25,7 @@ public class SendSøknadTilSakTask implements AsyncTask {
 
     @Override
     public void doTask(Task task) {
-        søknadService.sendTilSak(task.getPayload().getBytes());
+        søknadService.sendTilSak(task.getPayload());
     }
 
     @Override
