@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
 import no.nav.familie.prosessering.TaskFeil;
+import no.nav.familie.prosessering.domene.Status;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.slf4j.Logger;
@@ -92,7 +93,10 @@ class TaskWorker {
             secureLog.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
-            feiledeTasks.get(taskDetails.getType()).increment();
+            // lager metrikker på tasks som har feilet max antall ganger.
+            if (taskDetails.getStatus() == Status.FEILET) {
+                feiledeTasks.get(taskDetails.getType()).increment();
+            }
             secureLog.warn("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e);
             taskRepository.save(taskDetails);
         } finally {
