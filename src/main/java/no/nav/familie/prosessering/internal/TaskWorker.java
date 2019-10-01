@@ -30,6 +30,7 @@ class TaskWorker {
 
     private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
     private static final Logger log = LoggerFactory.getLogger(TaskWorker.class);
+    private static final Logger secureLog = LoggerFactory.getLogger("secureLogger");
     private final TaskRepository taskRepository;
     private Map<String, AsyncTask> tasktypeMap = new HashMap<>();
     private Map<String, Integer> maxAntallFeilMap = new HashMap<>();
@@ -70,7 +71,7 @@ class TaskWorker {
         initLogContext(taskDetails);
         try {
 
-            log.info("Behandler task='{}'", taskDetails);
+            secureLog.trace("Behandler task='{}'", taskDetails);
             taskDetails.behandler();
             taskDetails = taskRepository.saveAndFlush(taskDetails);
 
@@ -85,14 +86,14 @@ class TaskWorker {
             task.onCompletion(taskDetails);
 
             taskDetails.ferdigstill();
-            log.info("Ferdigstiller task='{}'", taskDetails);
+            secureLog.trace("Ferdigstiller task='{}'", taskDetails);
             taskRepository.saveAndFlush(taskDetails);
             taskRepository.flush();
-            log.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
+            secureLog.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
             feiledeTasks.get(taskDetails.getType()).increment();
-            log.info("Feilet kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e.getMessage());
+            secureLog.warn("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e);
             taskRepository.save(taskDetails);
         } finally {
             clearLogContext();

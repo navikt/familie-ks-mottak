@@ -73,11 +73,8 @@ public class TaskFeil {
                 this.feilmelding = cause.getMessage();
             }
 
-            if (feil.getCause() != null) {
-                // her brukes original exception (ikke unwrapped) slik at vi får med hele historikken hvor eksakt dette inntraff
-                this.stackTrace = getStacktraceAsString(feil.getCause());// bruker original exception uansett (inkludert wrapping exceptions)
-            }
-
+            // her brukes original exception (ikke unwrapped) slik at vi får med hele historikken hvor eksakt dette inntraff
+            this.stackTrace = getStacktraceAsString(feil);// bruker original exception uansett (inkludert wrapping exceptions)
         }
 
         this.taskName = taskInfo.getType();

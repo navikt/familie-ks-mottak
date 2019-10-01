@@ -41,19 +41,19 @@ public class TaskExecutorService {
         final var minCapacity = 2;
         if (pollingSize > minCapacity) {
             final var tasks = taskProsesseringRepository.finnAlleTasksKlareForProsessering(PageRequest.of(0, pollingSize));
-            log.info("Pollet {} tasks med max {}", tasks.size(), maxAntall);
+            log.trace("Pollet {} tasks med max {}", tasks.size(), maxAntall);
 
             tasks.forEach(this::executeWork);
         } else {
-            log.info("Pollet ingen tasks siden kapasiteten var {} < {}", pollingSize, minCapacity);
+            log.trace("Pollet ingen tasks siden kapasiteten var {} < {}", pollingSize, minCapacity);
         }
-        log.info("Ferdig med polling, venter {} ms til neste kjøring.", POLLING_DELAY);
+        log.trace("Ferdig med polling, venter {} ms til neste kjøring.", POLLING_DELAY);
     }
 
     private int calculatePollingSize(int maxAntall) {
         final var remainingCapacity = ((ThreadPoolTaskExecutor) taskExecutor).getThreadPoolExecutor().getQueue().remainingCapacity();
         final var pollingSize = Math.min(remainingCapacity, maxAntall);
-        log.info("Ledig kapasitet i kø {}, poller etter {}", remainingCapacity, pollingSize);
+        log.trace("Ledig kapasitet i kø {}, poller etter {}", remainingCapacity, pollingSize);
         return pollingSize;
     }
 
