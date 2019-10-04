@@ -41,7 +41,6 @@ class TaskWorker {
     public TaskWorker(TaskRepository taskRepository, List<AsyncTask> taskTyper) {
         this.taskRepository = taskRepository;
         taskTyper.forEach(this::kategoriserTask);
-        tasktypeMap.keySet().forEach(this::initMetricCounters);
     }
 
     private void kategoriserTask(AsyncTask task) {
@@ -50,10 +49,8 @@ class TaskWorker {
         Objects.requireNonNull(annotation, "annotasjon mangler");
         tasktypeMap.put(annotation.taskType(), task);
         maxAntallFeilMap.put(annotation.taskType(), annotation.maxAntallFeil());
-    }
 
-    private void initMetricCounters(String taskType) {
-        feiledeTasks.put(taskType, Metrics.counter("mottak.kontantstotte.feilede.tasks", "status", taskType, "beskrivelse", "Tasktyper i mottak"));
+        feiledeTasks.put(annotation.taskType(), Metrics.counter("mottak.kontantstotte.feilede.tasks", "status", annotation.taskType(), "beskrivelse", annotation.beskrivelse()));
     }
 
     @Async("taskExecutor")

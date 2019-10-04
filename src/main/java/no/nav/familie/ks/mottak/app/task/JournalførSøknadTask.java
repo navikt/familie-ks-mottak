@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-@TaskBeskrivelse(taskType = JournalførSøknadTask.JOURNALFØR_SØKNAD)
+@TaskBeskrivelse(taskType = JournalførSøknadTask.JOURNALFØR_SØKNAD, beskrivelse = "Jornalfør søknad")
 public class JournalførSøknadTask implements AsyncTask {
 
     public static final String JOURNALFØR_SØKNAD = "journalførSøknad";
