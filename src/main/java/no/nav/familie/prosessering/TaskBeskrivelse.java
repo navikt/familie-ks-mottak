@@ -22,4 +22,11 @@ public @interface TaskBeskrivelse {
      * @return typen
      */
     String taskType();
+
+    /**
+     * Beskrivelse for task typen
+     *
+     * @return beskrivelen
+     */
+    String beskrivelse();
 }

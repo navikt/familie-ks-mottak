@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-@TaskBeskrivelse(taskType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, maxAntallFeil = 20)
+@TaskBeskrivelse(taskType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, maxAntallFeil = 20, beskrivelse = "Hent saksnummer fra joark")
 public class HentSaksnummerFraJoarkTask implements AsyncTask {
 
     public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";

@@ -136,7 +136,8 @@ jobs:
               --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --resource=./app-preprod.yaml
+              --resource=./app-preprod.yaml \
+              --ref=$CIRCLE_BRANCH
 
   deploy_prod:
     executor: nais-deployer
@@ -157,7 +158,8 @@ jobs:
               --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --resource=./app-prod.yaml
+              --resource=./app-prod.yaml \
+              --ref=$CIRCLE_BRANCH
 
 workflows:
   version: 2

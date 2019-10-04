@@ -1,8 +1,11 @@
 package no.nav.familie.prosessering.internal;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
 import no.nav.familie.prosessering.TaskFeil;
+import no.nav.familie.prosessering.domene.Status;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.slf4j.Logger;
@@ -32,6 +35,7 @@ class TaskWorker {
     private final TaskRepository taskRepository;
     private Map<String, AsyncTask> tasktypeMap = new HashMap<>();
     private Map<String, Integer> maxAntallFeilMap = new HashMap<>();
+    private final HashMap<String, Counter> feiledeTasks = new HashMap<>();
 
     @Autowired
     public TaskWorker(TaskRepository taskRepository, List<AsyncTask> taskTyper) {
@@ -45,8 +49,9 @@ class TaskWorker {
         Objects.requireNonNull(annotation, "annotasjon mangler");
         tasktypeMap.put(annotation.taskType(), task);
         maxAntallFeilMap.put(annotation.taskType(), annotation.maxAntallFeil());
-    }
 
+        feiledeTasks.put(annotation.taskType(), Metrics.counter("mottak.kontantstotte.feilede.tasks", "status", annotation.taskType(), "beskrivelse", annotation.beskrivelse()));
+    }
 
     @Async("taskExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -85,6 +90,10 @@ class TaskWorker {
             secureLog.info("Fullført kjøring av task '{}', kjøretid={} ms", taskDetails, (System.currentTimeMillis() - startTidspunkt));
         } catch (Exception e) {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
+            // lager metrikker på tasks som har feilet max antall ganger.
+            if (taskDetails.getStatus() == Status.FEILET) {
+                feiledeTasks.get(taskDetails.getType()).increment();
+            }
             secureLog.warn("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e);
             taskRepository.save(taskDetails);
         } finally {
