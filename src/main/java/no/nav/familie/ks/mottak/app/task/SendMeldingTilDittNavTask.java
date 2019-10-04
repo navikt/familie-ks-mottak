@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@TaskBeskrivelse(taskType = SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV)
+@TaskBeskrivelse(taskType = SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, beskrivelse = "Send melding til ditt nav")
 public class SendMeldingTilDittNavTask implements AsyncTask {
 
     public static final String SEND_MELDING_TIL_DITT_NAV= "sendMeldingTilDittNav";
