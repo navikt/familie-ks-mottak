@@ -133,7 +133,7 @@ public class SøknadService {
             List<Dokument> dokumenter = new ArrayList<>();
             dokumenter.add(dokumentType(søknad));
             søknad.getVedlegg().forEach(vedlegg -> dokumenter.add(dokumentType(vedlegg)));
-            return sendTilOppslag(new ArkiverDokumentRequest(søknad.getFnr(), "TODO", false, dokumenter));
+            return sendTilOppslag(new ArkiverDokumentRequest(søknad.getFnr(), false, dokumenter));
         } catch (NumberFormatException e) {
             throw new RuntimeException("Deprecated");
         }
