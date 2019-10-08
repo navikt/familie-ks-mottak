@@ -141,7 +141,7 @@ public class SøknadService {
             søknadRepository.save(søknad);
 
         } catch (NumberFormatException e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Støtter ikke innsending av søknad på det gamle formatet når vi skal journalføre selv.");
         }
     }
 
