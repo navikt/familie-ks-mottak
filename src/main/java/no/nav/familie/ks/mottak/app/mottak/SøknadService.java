@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 public class SøknadService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SøknadService.class);
+    private static final Logger SECURELOG = LoggerFactory.getLogger("secureLogger");
 
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
@@ -140,7 +141,7 @@ public class SøknadService {
             søknadRepository.save(søknad);
 
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Deprecated");
+            throw new IllegalStateException();
         }
     }
 
@@ -156,14 +157,14 @@ public class SøknadService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
-                LOG.warn("Innsending til dokarkiv feilet. Responskode: {}. Feilmelding: {}",
+                SECURELOG.warn("Innsending til dokarkiv feilet. Responskode: {}. Feilmelding: {}",
                     response.statusCode(), response.headers().firstValue("message"));
                 throw new IllegalStateException("Innsending til dokarkiv feilet.");
             } else {
                 return ArkiverDokumentResponseKt.toArkiverDokumentResponse(response.body());
             }
         } catch (IOException | InterruptedException e) {
-            LOG.warn("Ukjent feil ved tjenestekall mot '" + oppslagServiceUri + "'. " + e.getMessage());
+            SECURELOG.warn("Ukjent feil ved tjenestekall mot '" + oppslagServiceUri + "'. " + e.getMessage());
             throw new IllegalStateException("Innsending til dokarkiv feilet.", e);
         }
     }
