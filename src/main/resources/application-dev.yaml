@@ -20,6 +20,7 @@ logging:
   config: "classpath:logback-test.xml"
 
 FAMILIE_KS_SAK_API_URL: http://localhost:8083/api
+FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
 
 server:
   port: 8084

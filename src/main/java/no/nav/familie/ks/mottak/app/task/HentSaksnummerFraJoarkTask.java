@@ -1,5 +1,6 @@
 package no.nav.familie.ks.mottak.app.task;
 
+import no.nav.familie.ks.mottak.app.mottak.HentSaksnummerService;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
@@ -16,17 +17,19 @@ public class HentSaksnummerFraJoarkTask implements AsyncTask {
     public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";
     private TaskRepository taskRepository;
     private SøknadService søknadService;
+    private HentSaksnummerService hentSaksnummerService;
 
 
     @Autowired
-    public HentSaksnummerFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository) {
+    public HentSaksnummerFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository, HentSaksnummerService hentSaksnummerService) {
         this.taskRepository = taskRepository;
         this.søknadService = søknadService;
+        this.hentSaksnummerService = hentSaksnummerService;
     }
 
     @Override
     public void doTask(Task task) {
-        //søknadService.sendTilSak(task.getPayload().getBytes());
+        hentSaksnummerService.hentSaksnummer(task.getPayload());
     }
 
     @Override

@@ -11,3 +11,4 @@ spring:
 
 
 FAMILIE_KS_SAK_API_URL: http://familie-ks-sak/api
+FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag/api
