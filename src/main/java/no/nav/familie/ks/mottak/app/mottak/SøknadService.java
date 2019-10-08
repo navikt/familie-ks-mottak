@@ -127,13 +127,18 @@ public class SøknadService {
         }
     }
 
-    public ArkiverDokumentResponse journalførSøknad(String payload) {
+    public void journalførSøknad(String payload) {
         try {
             Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
             List<Dokument> dokumenter = new ArrayList<>();
             dokumenter.add(dokumentType(søknad));
             søknad.getVedlegg().forEach(vedlegg -> dokumenter.add(dokumentType(vedlegg)));
-            return sendTilOppslag(new ArkiverDokumentRequest(søknad.getFnr(), false, dokumenter));
+
+            var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), false, dokumenter);
+            String journalpostID = sendTilOppslag(arkiverDokumentRequest).getJournalpostId();
+            søknad.setJournalpostID(journalpostID);
+            søknadRepository.save(søknad);
+
         } catch (NumberFormatException e) {
             throw new RuntimeException("Deprecated");
         }

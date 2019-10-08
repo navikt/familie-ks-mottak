@@ -27,8 +27,7 @@ public class JournalførSøknadTask implements AsyncTask {
 
     @Override
     public void doTask(Task task) {
-        String journalpostId = søknadService.journalførSøknad(task.getPayload()).getJournalpostId();
-        task.setPayload(journalpostId);
+        søknadService.journalførSøknad(task.getPayload());
     }
 
     @Override
