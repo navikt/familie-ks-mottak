@@ -45,8 +45,6 @@ public class SøknadService {
     private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
 
-    private boolean skalJournalføreSelv = false;
-
     public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri,
                          @Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
                          StsRestClient stsRestClient, SøknadRepository søknadRepository,
@@ -61,7 +59,7 @@ public class SøknadService {
     }
 
     @Transactional
-    public void lagreSoknadOgLagTask(SøknadDto søknadDto) {
+    public void lagreSoknadOgLagTask(SøknadDto søknadDto, boolean skalJournalføreSelv) {
         Soknad soknad = new Soknad();
         soknad.setSoknadJson(søknadDto.getSoknad());
         List<Vedlegg> vedlegg = søknadDto.getVedlegg().stream().map(vedleggDto -> {

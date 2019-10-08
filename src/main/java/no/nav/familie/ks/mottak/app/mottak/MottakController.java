@@ -26,8 +26,8 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknadmedvedlegg", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity mottaSoknadMedVedlegg(@RequestBody SøknadDto søknad) {
-        søknadService.lagreSoknadOgLagTask(søknad);
+    public ResponseEntity mottaSoknadMedVedlegg(@RequestBody SøknadDto søknad, @RequestHeader String journalførSelv) {
+        søknadService.lagreSoknadOgLagTask(søknad, Boolean.parseBoolean(journalførSelv));
         return new ResponseEntity(HttpStatus.OK);
     }
 }
