@@ -8,10 +8,13 @@ import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
+import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
+import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.eclipse.jetty.http.HttpHeader;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +27,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,14 +38,21 @@ public class SøknadService {
 
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
+    private final URI oppslagServiceUri;
     private final HttpClient client;
     private final SøknadRepository søknadRepository;
     private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
 
-    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri, StsRestClient stsRestClient, SøknadRepository søknadRepository, TaskRepository taskRepository, ObjectMapper objectMapper) {
+    private boolean skalJournalføreSelv = false;
+
+    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri,
+                         @Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+                         StsRestClient stsRestClient, SøknadRepository søknadRepository,
+                         TaskRepository taskRepository, ObjectMapper objectMapper) {
         this.client = HttpClientUtil.create();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
+        this.oppslagServiceUri = URI.create(oppslagServiceUri + "/api/arkiv");
         this.stsRestClient = stsRestClient;
         this.søknadRepository = søknadRepository;
         this.taskRepository = taskRepository;
@@ -64,7 +75,12 @@ public class SøknadService {
 
         søknadRepository.save(soknad);
 
-        final var task = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad.getId().toString());
+        final Task task;
+        if (skalJournalføreSelv) {
+            task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString());
+        } else {
+            task = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, soknad.getId().toString());
+        }
 
         taskRepository.save(task);
     }
@@ -109,5 +125,51 @@ public class SøknadService {
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException("Innsending til sak feilet.", e);
         }
+    }
+
+    public ArkiverDokumentResponse journalførSøknad(String payload) {
+        try {
+            Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
+            List<Dokument> dokumenter = new ArrayList<>();
+            dokumenter.add(dokumentType(søknad));
+            søknad.getVedlegg().forEach(vedlegg -> dokumenter.add(dokumentType(vedlegg)));
+            return sendTilOppslag(new ArkiverDokumentRequest(søknad.getFnr(), "TODO", false, dokumenter));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Deprecated");
+        }
+    }
+
+    private ArkiverDokumentResponse sendTilOppslag(ArkiverDokumentRequest arkiverDokumentRequest) {
+        String payload = ArkiverDokumentRequestKt.toJson(arkiverDokumentRequest);
+        HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
+            .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(payload))
+            .uri(oppslagServiceUri)
+            .build();
+        LOG.info("Sender søknad til " + oppslagServiceUri);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != HttpStatus.OK.value()) {
+                LOG.warn("Innsending til dokarkiv feilet. Responskode: {}. Feilmelding: {}",
+                    response.statusCode(), response.headers().firstValue("message"));
+                throw new IllegalStateException("Innsending til dokarkiv feilet.");
+            } else {
+                return ArkiverDokumentResponseKt.toArkiverDokumentResponse(response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            LOG.warn("Ukjent feil ved tjenestekall mot '" + oppslagServiceUri + "'. " + e.getMessage());
+            throw new IllegalStateException("Innsending til dokarkiv feilet.", e);
+        }
+    }
+
+    @NotNull
+    private Dokument dokumentType(Vedlegg vedlegg) {
+        return new Dokument(vedlegg.getData(), FilType.PDFA, vedlegg.getFilnavn(), DokumentType.KONTANTSTØTTE_SØKNAD_VEDLEGG);
+    }
+
+    @NotNull
+    private Dokument dokumentType(Soknad søknad) {
+        return new Dokument(søknad.getSoknadJson().getBytes(), FilType.JSON, "soknad", DokumentType.KONTANTSTØTTE_SØKNAD);
     }
 }
