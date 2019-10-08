@@ -9,6 +9,7 @@ import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.app.mottak.SøknadDto;
 import no.nav.familie.ks.mottak.app.mottak.VedleggDto;
+import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.Task;
@@ -107,7 +108,16 @@ public class MottaSøknadIntegrasjonsTest {
         assertThat(tasks.get(0).getType()).isEqualTo(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK);
     }
 
-    private HttpResponse<String> utførRequest(SøknadDto input) {
+    @Test
+    public void mottak_av_søknad_med_journalføring_togglet_på_genererer_journal_task() {
+        response = utførRequest(lagSøknadDtoMedHoveddokOgVedlegg(), true);
+        List<Task> tasks = taskRepository.findAll();
+
+        assertThat(tasks.size()).isEqualTo(2);
+        assertThat(tasks.get(1).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
+    }
+
+    private HttpResponse<String> utførRequest(SøknadDto input, boolean skalJournalFøreSelv) {
         HttpClient client = HttpClientUtil.create();
 
         SignedJWT signedJWT = JwtTokenGenerator.createSignedJWT(INNLOGGET_BRUKER);
@@ -116,6 +126,7 @@ public class MottaSøknadIntegrasjonsTest {
             HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/soknadmedvedlegg"))
                 .header(HttpHeader.CONTENT_TYPE.asString(), MediaType.APPLICATION_JSON)
                 .header(OIDCConstants.AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
+                .header("journalforSelv", Boolean.toString(skalJournalFøreSelv))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(input)))
                 .build();
 
@@ -123,6 +134,10 @@ public class MottaSøknadIntegrasjonsTest {
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private HttpResponse<String> utførRequest(SøknadDto input) {
+        return utførRequest(input, false);
     }
 
     private SøknadDto lagSøknadDtoMedHoveddokOgVedlegg() {
