@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -108,6 +109,7 @@ public class MottaSøknadIntegrasjonsTest {
         assertThat(tasks.get(0).getType()).isEqualTo(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK);
     }
 
+    @DirtiesContext
     @Test
     public void mottak_av_søknad_med_journalføring_togglet_på_genererer_journal_task() {
         response = utførRequest(lagSøknadDtoMedHoveddokOgVedlegg(), true);
@@ -115,6 +117,8 @@ public class MottaSøknadIntegrasjonsTest {
 
         assertThat(tasks.size()).isEqualTo(2);
         assertThat(tasks.get(1).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
+
+        setupIsDone = false;
     }
 
     private HttpResponse<String> utførRequest(SøknadDto input, boolean skalJournalFøreSelv) {
