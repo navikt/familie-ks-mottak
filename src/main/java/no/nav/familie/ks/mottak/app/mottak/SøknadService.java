@@ -115,10 +115,10 @@ public class SøknadService {
 
         try {
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != HttpStatus.CREATED.value()) {
+            if (response.statusCode() != HttpStatus.OK.value()) {
                 LOG.warn("Innsending til sak feilet. Responskode: {}. Feilmelding: {}", response.statusCode(), response.body());
 
-                throw new IllegalStateException("Innsending til sak feilet.");
+                throw new IllegalStateException("Innsending til sak feilet. Status: " + response.statusCode() + " " + response.body());
             }
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException("Innsending til sak feilet.", e);
@@ -153,7 +153,7 @@ public class SøknadService {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() != HttpStatus.OK.value()) {
+            if (response.statusCode() != HttpStatus.CREATED.value()) {
                 throw new IllegalStateException("Innsending til dokarkiv feilet.");
             } else {
                 return ArkiverDokumentResponseKt.toArkiverDokumentResponse(response.body());
