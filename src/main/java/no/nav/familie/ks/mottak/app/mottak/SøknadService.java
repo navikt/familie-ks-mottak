@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 public class SøknadService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SøknadService.class);
-    private static final Logger SECURELOG = LoggerFactory.getLogger("secureLogger");
 
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
@@ -51,7 +50,7 @@ public class SøknadService {
                          TaskRepository taskRepository, ObjectMapper objectMapper) {
         this.client = HttpClientUtil.create();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
-        this.oppslagServiceUri = URI.create(oppslagServiceUri + "/api/arkiv");
+        this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv");
         this.stsRestClient = stsRestClient;
         this.søknadRepository = søknadRepository;
         this.taskRepository = taskRepository;
@@ -116,7 +115,7 @@ public class SøknadService {
 
         try {
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != HttpStatus.OK.value()) {
+            if (response.statusCode() != HttpStatus.CREATED.value()) {
                 LOG.warn("Innsending til sak feilet. Responskode: {}. Feilmelding: {}", response.statusCode(), response.body());
 
                 throw new IllegalStateException("Innsending til sak feilet.");
@@ -134,7 +133,7 @@ public class SøknadService {
             søknad.getVedlegg().forEach(vedlegg -> dokumenter.add(dokumentType(vedlegg)));
 
             var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), false, dokumenter);
-            String journalpostID = sendTilOppslag(arkiverDokumentRequest).getJournalpostId();
+            String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
             søknad.setJournalpostID(journalpostID);
             søknadRepository.save(søknad);
 
@@ -143,7 +142,7 @@ public class SøknadService {
         }
     }
 
-    private ArkiverDokumentResponse sendTilOppslag(ArkiverDokumentRequest arkiverDokumentRequest) {
+    private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
         String payload = ArkiverDokumentRequestKt.toJson(arkiverDokumentRequest);
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
             .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
@@ -155,14 +154,11 @@ public class SøknadService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
-                SECURELOG.warn("Innsending til dokarkiv feilet. Responskode: {}. Feilmelding: {}",
-                    response.statusCode(), response.headers().firstValue("message"));
                 throw new IllegalStateException("Innsending til dokarkiv feilet.");
             } else {
                 return ArkiverDokumentResponseKt.toArkiverDokumentResponse(response.body());
             }
         } catch (IOException | InterruptedException e) {
-            SECURELOG.warn("Ukjent feil ved tjenestekall mot '" + oppslagServiceUri + "'. " + e.getMessage());
             throw new IllegalStateException("Innsending til dokarkiv feilet.", e);
         }
     }

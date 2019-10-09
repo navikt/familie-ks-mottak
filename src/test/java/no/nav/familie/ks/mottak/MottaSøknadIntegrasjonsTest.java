@@ -117,7 +117,6 @@ public class MottaSøknadIntegrasjonsTest {
 
         assertThat(tasks.size()).isEqualTo(2);
         assertThat(tasks.get(1).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
-
         setupIsDone = false;
     }
 
