@@ -104,7 +104,7 @@ public class SøknadService {
         try {
             sendTilSakRequest = objectMapper.writeValueAsBytes(new SendTilSakDto(søknadJson, saksnummer));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Kan ikke konvertere søknad til request for " + payload);
+            throw new RuntimeException("Kan ikke konvertere søknad til request");
         }
 
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
