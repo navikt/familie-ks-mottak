@@ -14,7 +14,6 @@ import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.eclipse.jetty.http.HttpHeader;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -128,10 +127,9 @@ public class SøknadService {
     public void journalførSøknad(String payload) {
         try {
             Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
-            List<Dokument> dokumenter = new ArrayList<>();
-            dokumenter.add(dokumentType(søknad));
-            søknad.getVedlegg().forEach(vedlegg -> dokumenter.add(dokumentType(vedlegg)));
-
+            List<Dokument> dokumenter = søknad.getVedlegg().stream()
+                .map(this::tilDokument)
+                .collect(Collectors.toList());
             var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), false, dokumenter);
             String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
             søknad.setJournalpostID(journalpostID);
@@ -163,13 +161,10 @@ public class SøknadService {
         }
     }
 
-    @NotNull
-    private Dokument dokumentType(Vedlegg vedlegg) {
-        return new Dokument(vedlegg.getData(), FilType.PDFA, vedlegg.getFilnavn(), DokumentType.KONTANTSTØTTE_SØKNAD_VEDLEGG);
+    private Dokument tilDokument(Vedlegg vedlegg) {
+        DokumentType dokumentType = vedlegg.getFilnavn().equalsIgnoreCase("hovedskjema") ?
+            DokumentType.KONTANTSTØTTE_SØKNAD : DokumentType.KONTANTSTØTTE_SØKNAD_VEDLEGG;
+        return new Dokument(vedlegg.getData(), FilType.PDFA, vedlegg.getFilnavn(), dokumentType);
     }
 
-    @NotNull
-    private Dokument dokumentType(Soknad søknad) {
-        return new Dokument(søknad.getSoknadJson().getBytes(), FilType.JSON, "soknad", DokumentType.KONTANTSTØTTE_SØKNAD);
-    }
 }
