@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,15 +81,15 @@ public class SøknadService {
         taskRepository.save(task);
     }
 
-    public void sendTilSak(String payload) {
+    public void sendTilSak(String søknadId) {
         String søknadJson;
         String saksnummer = null;
         try {
-            Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
+            Soknad søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
             søknadJson = søknad != null ? søknad.getSoknadJson() : "";
             saksnummer = søknad != null ? søknad.getSaksnummer() : null;
         } catch (NumberFormatException e) {
-            søknadJson = payload;
+            søknadJson = søknadId;
         }
 
         if (saksnummer == null) { //TODO slettes når vi har tatt over journalføring
@@ -130,7 +129,7 @@ public class SøknadService {
             List<Dokument> dokumenter = søknad.getVedlegg().stream()
                 .map(this::tilDokument)
                 .collect(Collectors.toList());
-            var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), false, dokumenter);
+            var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
             String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
             søknad.setJournalpostID(journalpostID);
             søknadRepository.save(søknad);

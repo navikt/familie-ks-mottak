@@ -36,17 +36,17 @@ public class HentSaksnummerService {
     }
 
 
-    public void hentSaksnummer(String payload) {
+    public void hentSaksnummer(String søknadId) {
         Soknad søknad = null;
         try {
-            søknad = søknadRepository.findById(Long.valueOf(payload)).orElseThrow(() -> new RuntimeException("Finner ikke søknad for " + payload));
+            søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElseThrow(() -> new RuntimeException("Finner ikke søknad med id " + søknadId));
         } catch (NumberFormatException e) {
             throw new RuntimeException("Kan ikke hente Søknad for payload");
         }
         String journalpostID = søknad.getJournalpostID();
         Optional<String> saksnummer = hentSaksnummerFraOppslag(journalpostID);
 
-        søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException("Finner ikke saksnummer for journalpostId=" + journalpostID + " payload=" + payload)));
+        søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException("Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
         søknadRepository.save(søknad);
     }
 
