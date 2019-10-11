@@ -73,7 +73,7 @@ public class HentSaksnummerServiceTest {
             service.hentSaksnummer(SØKNAD_ID);
         });
 
-        assertThat(e.getMessage()).isEqualTo("Finner ikke søknad for " + SØKNAD_ID);
+        assertThat(e.getMessage()).isEqualTo("Finner ikke søknad med id " + SØKNAD_ID);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class HentSaksnummerServiceTest {
             service.hentSaksnummer(SØKNAD_ID);
         });
 
-        assertThat(e.getMessage()).isEqualTo("Finner ikke saksnummer for journalpostId=null payload=" + SØKNAD_ID);
+        assertThat(e.getMessage()).isEqualTo("Finner ikke saksnummer for journalpostId=null, søknadId=" + SØKNAD_ID);
     }
 
     @Test
