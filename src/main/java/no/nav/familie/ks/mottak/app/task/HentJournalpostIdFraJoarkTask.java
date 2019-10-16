@@ -9,32 +9,32 @@ import no.nav.familie.prosessering.domene.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Service
-@TaskBeskrivelse(taskType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, maxAntallFeil = 20, beskrivelse = "Hent saksnummer fra joark")
-public class HentSaksnummerFraJoarkTask implements AsyncTask {
+@TaskBeskrivelse(taskType = HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK, beskrivelse = "Hent journapostId fra joark basert på kanalreferanseId")
+public class HentJournalpostIdFraJoarkTask implements AsyncTask {
 
-    public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";
+    public static final String HENT_JOURNALPOSTID_FRA_JOARK = "hentJournalpostIdFraJoarkTask";
     private TaskRepository taskRepository;
-    private SøknadService søknadService;
     private HentJournalpostService hentJournalpostService;
 
-
     @Autowired
-    public HentSaksnummerFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository, HentJournalpostService hentJournalpostService) {
+    public HentJournalpostIdFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository, HentJournalpostService hentJournalpostService) {
         this.taskRepository = taskRepository;
-        this.søknadService = søknadService;
         this.hentJournalpostService = hentJournalpostService;
     }
 
     @Override
     public void doTask(Task task) {
-        hentJournalpostService.hentSaksnummer(task.getPayload());
+        hentJournalpostService.hentJournalpostId(task.getPayload(), task.getCallId());
     }
 
     @Override
     public void onCompletion(Task task){
-        Task nesteTask = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload());
+        LocalDateTime startTidspunkt = LocalDateTime.now().plusMinutes(15);
+        Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), startTidspunkt);
         taskRepository.save(nesteTask);
     }
 }
