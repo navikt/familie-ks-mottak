@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 public class HentJournalpostIdFraJoarkTask implements AsyncTask {
 
     public static final String HENT_JOURNALPOSTID_FRA_JOARK = "hentJournalpostIdFraJoarkTask";
-    private TaskRepository taskRepository;
-    private HentJournalpostService hentJournalpostService;
+    private final TaskRepository taskRepository;
+    private final HentJournalpostService hentJournalpostService;
 
     @Autowired
     public HentJournalpostIdFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository, HentJournalpostService hentJournalpostService) {
@@ -33,8 +33,13 @@ public class HentJournalpostIdFraJoarkTask implements AsyncTask {
 
     @Override
     public void onCompletion(Task task){
-        LocalDateTime startTidspunkt = LocalDateTime.now().plusMinutes(15);
-        Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), startTidspunkt);
-        taskRepository.save(nesteTask);
+        if (hentJournalpostService.harJournalpostId(task.getPayload())) {
+            LocalDateTime startTidspunkt = LocalDateTime.now().plusMinutes(15);
+            Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), startTidspunkt);
+            taskRepository.save(nesteTask);
+        } else {
+            Task nesteTask = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK,task.getPayload()); //FIXME Når callid er propagert rett fra web til joark så kan vi sende bare til HentSaksnummerFraJoarkTask
+            taskRepository.save(nesteTask);
+        }
     }
 }

@@ -21,7 +21,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_seq")
     @SequenceGenerator(name = "task_seq")
     private Long id;
-    
+
     @Column(name = "payload", updatable = false, columnDefinition = "text")
     private String payload;
 
@@ -171,6 +171,7 @@ public class Task {
                 ", opprettetTidspunkt=" + opprettetTidspunkt +
                 ", triggertid=" + triggerTid +
                 ", versjon=" + versjon +
+                ", type=" + type +
                 '}';
     }
 }

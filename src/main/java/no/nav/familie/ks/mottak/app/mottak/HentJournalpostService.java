@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -41,7 +42,7 @@ public class HentJournalpostService {
     public void hentSaksnummer(String søknadId) {
         Soknad søknad = hentSoknad(søknadId);
         String journalpostID = søknad.getJournalpostID();
-        Optional<String> saksnummer = hentFraUrl( oppslagUrl + "/journalpost/%s/sak", journalpostID);
+        Optional<String> saksnummer = hentFraUrl(oppslagUrl + "/journalpost/%s/sak", journalpostID);
 
         søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException("Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
         søknadRepository.save(søknad);
@@ -50,9 +51,19 @@ public class HentJournalpostService {
     public void hentJournalpostId(String søknadId, String callId) {
         Soknad søknad = hentSoknad(søknadId);
 
-        Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
-        søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
-        søknadRepository.save(søknad);
+        try {
+            Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
+            søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
+            søknadRepository.save(søknad);
+        } catch (RestClientException e) { //FIXME slett try catch block når CallId er propargert fra web til joark
+            LOG.warn("Midlertidig ignorerer feil ved henting av journalpostId ved bruk av CallId");
+        }
+    }
+
+    @Deprecated(forRemoval = true) ////FIXME slett når CallId er propargert fra web til joark
+    public boolean harJournalpostId(String søknadId) {
+        Soknad søknad = hentSoknad(søknadId);
+        return søknad.getJournalpostID() != null;
     }
 
     private Soknad hentSoknad(String søknadId) {
@@ -65,7 +76,7 @@ public class HentJournalpostService {
         return søknad;
     }
 
-    private Optional<String> hentFraUrl(String urlformat, String... searchParams) {
+    private Optional<String> hentFraUrl(String urlformat, Object... searchParams) {
         if (searchParams == null || Arrays.asList(searchParams).contains(null)) {
             return Optional.empty();
         }
