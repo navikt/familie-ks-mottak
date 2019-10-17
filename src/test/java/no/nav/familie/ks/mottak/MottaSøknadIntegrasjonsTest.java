@@ -9,6 +9,7 @@ import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.app.mottak.SøknadDto;
 import no.nav.familie.ks.mottak.app.mottak.VedleggDto;
+import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
@@ -106,7 +107,7 @@ public class MottaSøknadIntegrasjonsTest {
         List<Task> tasks = taskRepository.findAll();
 
         assertThat(tasks.size()).isEqualTo(1);
-        assertThat(tasks.get(0).getType()).isEqualTo(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK);
+        assertThat(tasks.get(0).getType()).isEqualTo(HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK);
     }
 
     @DirtiesContext
