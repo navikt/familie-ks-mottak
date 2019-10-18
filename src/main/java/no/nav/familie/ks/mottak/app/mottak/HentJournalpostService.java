@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -51,19 +50,10 @@ public class HentJournalpostService {
     public void hentJournalpostId(String søknadId, String callId) {
         Soknad søknad = hentSoknad(søknadId);
 
-        try {
-            Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
-            søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
-            søknadRepository.save(søknad);
-        } catch (RestClientException e) { //FIXME slett try catch block når CallId er propargert fra web til joark
-            LOG.warn("Midlertidig ignorerer feil ved henting av journalpostId ved bruk av CallId");
-        }
-    }
+        Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
+        søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
+        søknadRepository.save(søknad);
 
-    @Deprecated(forRemoval = true) ////FIXME slett når CallId er propargert fra web til joark
-    public boolean harJournalpostId(String søknadId) {
-        Soknad søknad = hentSoknad(søknadId);
-        return søknad.getJournalpostID() != null;
     }
 
     private Soknad hentSoknad(String søknadId) {
