@@ -91,7 +91,6 @@ public class SøknadService {
             søknadJson = søknad != null ? søknad.getSoknadJson() : "";
             saksnummer = søknad != null ? søknad.getSaksnummer() : null;
             journalpostID = søknad != null ? søknad.getJournalpostID() : null;
-            LOG.info("JournalpostID er: " + journalpostID);
         } catch (NumberFormatException e) {
             søknadJson = søknadId;
         }
