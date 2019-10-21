@@ -13,6 +13,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -53,7 +56,6 @@ public class HentJournalpostService {
         Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
         søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
         søknadRepository.save(søknad);
-
     }
 
     private Soknad hentSoknad(String søknadId) {
@@ -73,7 +75,15 @@ public class HentJournalpostService {
         URI uri = URI.create(String.format(urlformat, searchParams));
 
         HttpEntity entity = lagRequestEntityMedSikkerhetsheader();
-        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = null;
+        try {
+            response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        } catch (HttpClientErrorException.NotFound notFound) {
+            throw notFound;
+        } catch (HttpStatusCodeException e) {
+            LOG.warn("Feil mot {} {} {}", uri, e.getStatusCode(), e.getResponseBodyAsString());
+            throw new RuntimeException(String.format("Error mot %s status=%s body=%s", uri, e.getStatusCode(), e.getResponseBodyAsByteArray()), e);
+        }
 
         return Optional.ofNullable(response.getBody());
     }
