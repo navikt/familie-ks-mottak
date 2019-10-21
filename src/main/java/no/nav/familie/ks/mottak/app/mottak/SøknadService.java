@@ -85,10 +85,12 @@ public class SøknadService {
     public void sendTilSak(String søknadId) {
         String søknadJson;
         String saksnummer = null;
+        String journalpostID = null;
         try {
             Soknad søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
             søknadJson = søknad != null ? søknad.getSoknadJson() : "";
             saksnummer = søknad != null ? søknad.getSaksnummer() : null;
+            journalpostID = søknad != null ? søknad.getJournalpostID() : null;
         } catch (NumberFormatException e) {
             søknadJson = søknadId;
         }
@@ -100,7 +102,7 @@ public class SøknadService {
 
         byte[] sendTilSakRequest;
         try {
-            sendTilSakRequest = objectMapper.writeValueAsBytes(new SendTilSakDto(søknadJson, saksnummer));
+            sendTilSakRequest = objectMapper.writeValueAsBytes(new SendTilSakDto(søknadJson, saksnummer, journalpostID));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Kan ikke konvertere søknad til request");
         }

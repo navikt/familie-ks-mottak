@@ -8,10 +8,14 @@ public class SendTilSakDto {
 
     private String saksnummer;
 
+    private String journalpostID;
+
     @JsonCreator
-    public SendTilSakDto(@JsonProperty("søknadJson") String søknadJson, @JsonProperty("saksnummer") String saksnummer) {
+    public SendTilSakDto(@JsonProperty("søknadJson") String søknadJson, @JsonProperty("saksnummer") String saksnummer,
+                         @JsonProperty("journalpostID") String journalpostID) {
         this.søknadJson = søknadJson;
         this.saksnummer = saksnummer;
+        this.journalpostID = journalpostID;
     }
 
 
@@ -21,5 +25,9 @@ public class SendTilSakDto {
 
     public String getSaksnummer() {
         return saksnummer;
+    }
+
+    public String getJournalpostID() {
+        return journalpostID;
     }
 }
