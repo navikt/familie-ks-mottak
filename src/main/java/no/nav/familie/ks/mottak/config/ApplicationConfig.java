@@ -1,6 +1,7 @@
 package no.nav.familie.ks.mottak.config;
 
 import no.nav.familie.log.filter.LogFilter;
+import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringBootConfiguration;
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories({"no.nav.familie"})
 @EntityScan({"no.nav.familie"})
 @ComponentScan({"no.nav.familie"})
+@EnableJwtTokenValidation
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

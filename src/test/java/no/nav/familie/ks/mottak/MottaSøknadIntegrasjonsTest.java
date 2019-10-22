@@ -11,13 +11,11 @@ import no.nav.familie.ks.mottak.app.mottak.SøknadDto;
 import no.nav.familie.ks.mottak.app.mottak.VedleggDto;
 import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
-import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
-import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.test.support.JwtTokenGenerator;
-import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
+import no.nav.security.token.support.test.JwtTokenGenerator;
+import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.eclipse.jetty.http.HttpHeader;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +38,7 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("dev")
@@ -129,7 +128,7 @@ public class MottaSøknadIntegrasjonsTest {
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/soknadmedvedlegg"))
                 .header(HttpHeader.CONTENT_TYPE.asString(), MediaType.APPLICATION_JSON)
-                .header(OIDCConstants.AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
+                .header(AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
                 .header("journalforSelv", Boolean.toString(skalJournalFøreSelv))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(input)))
                 .build();
