@@ -64,7 +64,7 @@ public class HentJournalpostServiceTest {
             service.hentSaksnummer(payload);
         });
 
-        assertThat(e.getMessage()).isEqualTo("Kan ikke hente Søknad for payload");
+        assertThat(e.getMessage()).isEqualTo("Kan ikke hente Søknad for søknadid=" + payload);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class HentJournalpostServiceTest {
             service.hentSaksnummer(SØKNAD_ID);
         });
 
-        assertThat(e.getMessage()).isEqualTo("Finner ikke søknad med id " + SØKNAD_ID);
+        assertThat(e.getMessage()).isEqualTo("Finner ikke søknad med id=" + SØKNAD_ID);
     }
 
     @Test

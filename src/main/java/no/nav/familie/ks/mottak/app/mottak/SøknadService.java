@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.HttpRequestUtil;
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
-import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
-import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.eclipse.jetty.http.HttpHeader;
@@ -83,22 +82,11 @@ public class SøknadService {
     }
 
     public void sendTilSak(String søknadId) {
-        String søknadJson;
-        String saksnummer = null;
-        String journalpostID = null;
-        try {
-            Soknad søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElse(null);
-            søknadJson = søknad != null ? søknad.getSoknadJson() : "";
-            saksnummer = søknad != null ? søknad.getSaksnummer() : null;
-            journalpostID = søknad != null ? søknad.getJournalpostID() : null;
-        } catch (NumberFormatException e) {
-            søknadJson = søknadId;
-        }
+        Soknad søknad = hentSoknad(søknadId);
+        String søknadJson = søknad.getSoknadJson();
+        String saksnummer = søknad.getSaksnummer();
+        String journalpostID = søknad.getJournalpostID();
 
-        if (saksnummer == null) { //TODO slettes når vi har tatt over journalføring
-            LOG.info("Genererer saksnummer for å støtte journalføring gjennom dokmot");
-            saksnummer = Long.toString(System.currentTimeMillis());
-        }
 
         byte[] sendTilSakRequest;
         try {
@@ -126,20 +114,25 @@ public class SøknadService {
         }
     }
 
-    public void journalførSøknad(String payload) {
-        try {
-            Soknad søknad = søknadRepository.findById(Long.valueOf(payload)).orElse(null);
-            List<Dokument> dokumenter = søknad.getVedlegg().stream()
-                .map(this::tilDokument)
-                .collect(Collectors.toList());
-            var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
-            String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
-            søknad.setJournalpostID(journalpostID);
-            søknadRepository.save(søknad);
+    public void journalførSøknad(String søknadId) {
+        Soknad søknad = hentSoknad(søknadId);
+        List<Dokument> dokumenter = søknad.getVedlegg().stream()
+            .map(this::tilDokument)
+            .collect(Collectors.toList());
+        var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
+        String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
+        søknad.setJournalpostID(journalpostID);
+        søknadRepository.save(søknad);
+    }
 
+    private Soknad hentSoknad(String søknadId) {
+        Soknad søknad;
+        try {
+            søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElseThrow(() -> new RuntimeException("Finner ikke søknad med id=" + søknadId));
         } catch (NumberFormatException e) {
-            throw new IllegalStateException("Støtter ikke innsending av søknad på det gamle formatet når vi skal journalføre selv.");
+            throw new IllegalArgumentException("Kan ikke hente Søknad for søknadid=" + søknadId);
         }
+        return søknad;
     }
 
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
@@ -154,7 +147,7 @@ public class SøknadService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != HttpStatus.CREATED.value()) {
-                throw new IllegalStateException("Innsending til dokarkiv feilet.");
+                throw new IllegalStateException("Innsending til dokarkiv feilet. " + response.statusCode() + " " + response.body());
             } else {
                 return ArkiverDokumentResponseKt.toArkiverDokumentResponse(response.body());
             }
