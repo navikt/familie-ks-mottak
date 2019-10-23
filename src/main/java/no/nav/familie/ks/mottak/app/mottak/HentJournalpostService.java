@@ -3,7 +3,6 @@ package no.nav.familie.ks.mottak.app.mottak;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
-import no.nav.familie.ks.mottak.util.LocalSts;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
