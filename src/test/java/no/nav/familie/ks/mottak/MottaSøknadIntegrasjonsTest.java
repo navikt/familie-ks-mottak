@@ -42,8 +42,7 @@ import java.util.List;
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore
-@ActiveProfiles("dev")
+@ActiveProfiles("integrasjonstest")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class})
 public class MottaSøknadIntegrasjonsTest {
@@ -125,8 +124,7 @@ public class MottaSøknadIntegrasjonsTest {
     private HttpResponse<String> utførRequest(SøknadDto input, boolean skalJournalFøreSelv) {
         HttpClient client = HttpClientUtil.create();
 
-        JWTClaimsSet jwtClaimsSet = JwtTokenGenerator.buildClaimSet(INNLOGGET_BRUKER, "selvbetjening","aud-localhost", "Level4", 3600);
-        SignedJWT signedJWT = JwtTokenGenerator.createSignedJWT(jwtClaimsSet);
+        SignedJWT signedJWT = JwtTokenGenerator.createSignedJWT(INNLOGGET_BRUKER);
 
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/soknadmedvedlegg"))
