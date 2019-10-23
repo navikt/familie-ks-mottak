@@ -28,7 +28,9 @@ class TaskController(
         }
         .fold(
                 onSuccess = { Ressurs.success(data = it) },
-                onFailure = { e -> Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
+                onFailure = { e ->
+                    logger.error("Henting av tasker feilet", e)
+                    Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
         )
 
         return ResponseEntity.ok(ressurs)
