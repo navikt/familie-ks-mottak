@@ -24,13 +24,14 @@ class TaskController(
 
         val ressurs: Ressurs = Result.runCatching {
             taskRepository.finnAlleFeiledeTasksTilFrontend()
-                    .mapNotNull { it.toRestTask(søknadRepository) }
+                    .map { it.toRestTask(søknadRepository) }
         }
         .fold(
-                onSuccess = { Ressurs.success(data = it) },
-                onFailure = { e ->
-                    logger.error("Henting av tasker feilet", e)
-                    Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
+            onSuccess = { Ressurs.success(data = it) },
+            onFailure = { e ->
+                logger.error("Henting av tasker feilet", e)
+                Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e)
+            }
         )
 
         return ResponseEntity.ok(ressurs)
@@ -38,20 +39,19 @@ class TaskController(
 
     @PutMapping(path = ["/task/rekjor"])
     fun rekjørTask(@RequestParam taskId: Long?): ResponseEntity<Ressurs> {
-        logger.info("Rekjører task {}", taskId)
-
         return when (taskId) {
             null -> {
-                taskRepository.finnAlleFeiledeTasksTilFrontend().mapNotNull { taskRepository.save(it.klarTilPlukk()) }
+                taskRepository.finnAlleFeiledeTasksTilFrontend().map { taskRepository.save(it.klarTilPlukk()) }
+                logger.info("Rekjører alle feilede tasks")
 
                 val ressurs: Ressurs = Result.runCatching {
-                    taskRepository.finnAlleFeiledeTasksTilFrontend().mapNotNull {
+                    taskRepository.finnAlleFeiledeTasksTilFrontend().map {
                         it.toRestTask(søknadRepository)
                     }
                 }
                 .fold(
-                        onSuccess = { Ressurs.success(data = it) },
-                        onFailure = { e -> Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
+                    onSuccess = { Ressurs.success(data = it) },
+                    onFailure = { e -> Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
                 )
 
                 ResponseEntity.ok(ressurs)
@@ -62,17 +62,17 @@ class TaskController(
                 return when (task.isPresent) {
                     true -> {
                         taskRepository.save(task.get().klarTilPlukk())
+                        logger.info("Rekjører task {}", taskId)
 
                         val ressurs: Ressurs = Result.runCatching {
                             taskRepository.finnAlleFeiledeTasksTilFrontend()
-                                    .mapNotNull { it.toRestTask(søknadRepository) }
+                                    .map { it.toRestTask(søknadRepository) }
                         }
                         .fold(
-                                onSuccess = { Ressurs.success(data = it) },
-                                onFailure = { e ->
-                                    Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.",
-                                                    e)
-                                }
+                            onSuccess = { Ressurs.success(data = it) },
+                            onFailure = { e ->
+                                Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e)
+                            }
                         )
 
                         ResponseEntity.ok(ressurs)
