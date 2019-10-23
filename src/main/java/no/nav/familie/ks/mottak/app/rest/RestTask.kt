@@ -12,7 +12,7 @@ data class RestTask(
         val søkerFødselsnummer: String)
 
 fun Task.toRestTask(søknadRepository: SøknadRepository): RestTask {
-    val søknad: Optional<Soknad> = søknadRepository.findById(this.id)
+    val søknad: Optional<Soknad> = søknadRepository.findById(this.payload.toLong())
 
     return when (søknad.isPresent) {
         true -> RestTask(
