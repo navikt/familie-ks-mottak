@@ -24,7 +24,7 @@ class TaskController(
 
         val ressurs: Ressurs = Result.runCatching {
             taskRepository.finnAlleFeiledeTasksTilFrontend()
-                    .mapNotNull { it.toRestTask(søknadRepository.findById(it.id).get()) }
+                    .mapNotNull { it.toRestTask(søknadRepository) }
         }
         .fold(
                 onSuccess = { Ressurs.success(data = it) },
@@ -46,7 +46,7 @@ class TaskController(
 
                 val ressurs: Ressurs = Result.runCatching {
                     taskRepository.finnAlleFeiledeTasksTilFrontend().mapNotNull {
-                        it.toRestTask(søknadRepository.findById(it.id).get())
+                        it.toRestTask(søknadRepository)
                     }
                 }
                 .fold(
@@ -65,7 +65,7 @@ class TaskController(
 
                         val ressurs: Ressurs = Result.runCatching {
                             taskRepository.finnAlleFeiledeTasksTilFrontend()
-                                    .mapNotNull { it.toRestTask(søknadRepository.findById(it.id).get()) }
+                                    .mapNotNull { it.toRestTask(søknadRepository) }
                         }
                         .fold(
                                 onSuccess = { Ressurs.success(data = it) },
