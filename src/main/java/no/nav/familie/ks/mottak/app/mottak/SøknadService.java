@@ -27,6 +27,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,7 +87,8 @@ public class SøknadService {
         String søknadJson = søknad.getSoknadJson();
         String saksnummer = søknad.getSaksnummer();
         String journalpostID = søknad.getJournalpostID();
-
+        Objects.requireNonNull(saksnummer, "Saksnummer er null");
+        Objects.requireNonNull(journalpostID, "journalpostId er null");
 
         byte[] sendTilSakRequest;
         try {
