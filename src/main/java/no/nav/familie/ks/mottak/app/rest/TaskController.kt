@@ -1,5 +1,6 @@
 package no.nav.familie.ks.mottak.app.rest
 
+import no.nav.familie.ks.kontrakter.sak.Ressurs
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
