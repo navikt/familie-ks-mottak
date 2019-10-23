@@ -42,7 +42,6 @@ import java.util.List;
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore
 @ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class})

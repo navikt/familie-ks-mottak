@@ -1,33 +1,85 @@
 package no.nav.familie.ks.mottak.app.rest
 
+import no.nav.familie.ks.mottak.app.domene.SøknadRepository
+import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api")
-@ProtectedWithClaims(issuer = "azuread" )
-class TaskController (
-    private val taskRepository: TaskRepository) {
+@ProtectedWithClaims(issuer = "azuread")
+class TaskController(
+        private val taskRepository: TaskRepository,
+        private val søknadRepository: SøknadRepository) {
 
     @GetMapping(path = ["/task/feilede"])
-    fun fagsak(): ResponseEntity<Ressurs> {
+    fun task(): ResponseEntity<Ressurs> {
         logger.info("Henter feilede tasker")
 
-        val ressurs: Ressurs = Result.runCatching { taskRepository.finnAlleFeiledeTasksTilFrontend() }
-            .fold(
+        val ressurs: Ressurs = Result.runCatching {
+            taskRepository.finnAlleFeiledeTasksTilFrontend()
+                    .map { it.toRestTask(søknadRepository.findById(it.id).get()) }
+        }
+        .fold(
                 onSuccess = { Ressurs.success(data = it) },
                 onFailure = { e -> Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
-            )
+        )
 
         return ResponseEntity.ok(ressurs)
     }
+
+    @PutMapping(path = ["/task/rekjor"])
+    fun rekjørTask(@RequestParam taskId: Long?): ResponseEntity<Ressurs> {
+        logger.info("Rekjører task {}", taskId)
+
+        return when (taskId) {
+            null -> {
+                taskRepository.finnAlleFeiledeTasksTilFrontend().map { taskRepository.save(it.klarTilPlukk()) }
+
+                val ressurs: Ressurs = Result.runCatching {
+                    taskRepository.finnAlleFeiledeTasksTilFrontend().map {
+                        it.toRestTask(søknadRepository.findById(it.id).get())
+                    }
+                }
+                .fold(
+                        onSuccess = { Ressurs.success(data = it) },
+                        onFailure = { e -> Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
+                )
+
+                ResponseEntity.ok(ressurs)
+            }
+            else -> {
+                val task: Optional<Task> = taskRepository.findById(taskId)
+
+                return when (task.isPresent) {
+                    true -> {
+                        taskRepository.save(task.get().klarTilPlukk())
+
+                        val ressurs: Ressurs = Result.runCatching {
+                            taskRepository.finnAlleFeiledeTasksTilFrontend()
+                                    .map { it.toRestTask(søknadRepository.findById(it.id).get()) }
+                        }
+                        .fold(
+                                onSuccess = { Ressurs.success(data = it) },
+                                onFailure = { e ->
+                                    Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.",
+                                                    e)
+                                }
+                        )
+
+                        ResponseEntity.ok(ressurs)
+                    }
+                    false -> ResponseEntity.ok(Ressurs.failure("Fant ikke task med task id $taskId"))
+                }
+            }
+        }
+    }
+
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(TaskController::class.java)
