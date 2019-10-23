@@ -9,9 +9,9 @@ data class RestTask(
     val saksnummer: String?,
     val søkerFødselsnummer: String)
 
-fun Task.toRestTask(søknad: Soknad) = RestTask(
+fun Task.toRestTask(søknad: Soknad?) = RestTask(
     task = this,
-    journalpostID = søknad.journalpostID,
-    saksnummer = søknad.saksnummer,
-    søkerFødselsnummer = søknad.fnr
+    journalpostID = søknad?.journalpostID,
+    saksnummer = søknad?.saksnummer,
+    søkerFødselsnummer = søknad?.fnr?:"ukjent"
 )

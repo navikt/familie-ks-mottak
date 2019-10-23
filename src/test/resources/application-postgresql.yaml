@@ -5,8 +5,6 @@ credential:
 logging:
   config: "classpath:logback-test.xml"
 
-
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres

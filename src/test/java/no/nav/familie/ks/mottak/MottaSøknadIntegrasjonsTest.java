@@ -2,6 +2,7 @@ package no.nav.familie.ks.mottak;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
@@ -124,7 +125,8 @@ public class MottaSøknadIntegrasjonsTest {
     private HttpResponse<String> utførRequest(SøknadDto input, boolean skalJournalFøreSelv) {
         HttpClient client = HttpClientUtil.create();
 
-        SignedJWT signedJWT = JwtTokenGenerator.createSignedJWT(INNLOGGET_BRUKER);
+        JWTClaimsSet jwtClaimsSet = JwtTokenGenerator.buildClaimSet(INNLOGGET_BRUKER, "selvbetjening","aud-localhost", "Level4", 3600);
+        SignedJWT signedJWT = JwtTokenGenerator.createSignedJWT(jwtClaimsSet);
 
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/soknadmedvedlegg"))
