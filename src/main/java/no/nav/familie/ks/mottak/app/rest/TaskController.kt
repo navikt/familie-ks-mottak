@@ -41,7 +41,7 @@ class TaskController(
     fun rekjørTask(@RequestParam taskId: Long?): ResponseEntity<Ressurs> {
         return when (taskId) {
             null -> {
-                taskRepository.finnAlleFeiledeTasksTilFrontend().map { taskRepository.save(it.klarTilPlukk()) }
+                taskRepository.finnAlleFeiledeTasksTilFrontend().map { taskRepository.saveAndFlush(it.klarTilPlukk()) }
                 logger.info("Rekjører alle feilede tasks")
 
                 val ressurs: Ressurs = Result.runCatching {
@@ -61,7 +61,7 @@ class TaskController(
 
                 return when (task.isPresent) {
                     true -> {
-                        taskRepository.save(task.get().klarTilPlukk())
+                        taskRepository.saveAndFlush(task.get().klarTilPlukk())
                         logger.info("Rekjører task {}", taskId)
 
                         val ressurs: Ressurs = Result.runCatching {
