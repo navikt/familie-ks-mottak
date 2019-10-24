@@ -26,4 +26,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT t FROM Task t WHERE t.status IN ('FEILET')")
     List<Task> finnAlleFeiledeTasks();
+
+    @Query("SELECT t FROM Task t WHERE t.status IN ('FEILET')")
+    List<Task> finnAlleFeiledeTasksTilFrontend();
 }

@@ -2,6 +2,7 @@ package no.nav.familie.ks.mottak;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
@@ -11,15 +12,14 @@ import no.nav.familie.ks.mottak.app.mottak.SøknadDto;
 import no.nav.familie.ks.mottak.app.mottak.VedleggDto;
 import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
-import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
-import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.test.support.JwtTokenGenerator;
-import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
+import no.nav.security.token.support.test.JwtTokenGenerator;
+import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.eclipse.jetty.http.HttpHeader;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URI;
@@ -40,9 +39,10 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("dev")
+@ActiveProfiles("integrasjonstest")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class})
 public class MottaSøknadIntegrasjonsTest {
@@ -129,7 +129,7 @@ public class MottaSøknadIntegrasjonsTest {
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/soknadmedvedlegg"))
                 .header(HttpHeader.CONTENT_TYPE.asString(), MediaType.APPLICATION_JSON)
-                .header(OIDCConstants.AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
+                .header(AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
                 .header("journalforSelv", Boolean.toString(skalJournalFøreSelv))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(input)))
                 .build();
