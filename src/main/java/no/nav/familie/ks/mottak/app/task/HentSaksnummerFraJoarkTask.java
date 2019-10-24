@@ -35,7 +35,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTask {
         try {
             hentJournalpostService.hentSaksnummer(task.getPayload());
         } catch (HttpClientErrorException.NotFound notFound) {
-            LOG.info("Hent saksnummer returnerte 404 responsebody={}" + notFound.getResponseBodyAsString());
+            LOG.info("Hent saksnummer returnerte 404 responsebody={}", notFound.getResponseBodyAsString());
             task.setTriggerTid(LocalDateTime.now().plusMinutes(15));
             taskRepository.save(task);
             throw notFound;
