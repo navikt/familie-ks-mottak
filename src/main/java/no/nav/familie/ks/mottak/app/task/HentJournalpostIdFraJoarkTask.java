@@ -1,15 +1,12 @@
 package no.nav.familie.ks.mottak.app.task;
 
 import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
-import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 
 @Service
@@ -21,7 +18,7 @@ public class HentJournalpostIdFraJoarkTask implements AsyncTask {
     private final HentJournalpostService hentJournalpostService;
 
     @Autowired
-    public HentJournalpostIdFraJoarkTask(SøknadService søknadService, TaskRepository taskRepository, HentJournalpostService hentJournalpostService) {
+    public HentJournalpostIdFraJoarkTask(TaskRepository taskRepository, HentJournalpostService hentJournalpostService) {
         this.taskRepository = taskRepository;
         this.hentJournalpostService = hentJournalpostService;
     }
@@ -33,8 +30,7 @@ public class HentJournalpostIdFraJoarkTask implements AsyncTask {
 
     @Override
     public void onCompletion(Task task) {
-        LocalDateTime startTidspunkt = LocalDateTime.now().plusMinutes(15);
-        Task nesteTask = Task.nyTaskMedStartFremITid(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.getPayload(), startTidspunkt);
+        Task nesteTask = Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.getPayload());
         taskRepository.save(nesteTask);
     }
 }
