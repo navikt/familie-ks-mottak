@@ -62,6 +62,14 @@ public class TaskLogg {
         return type;
     }
 
+    public String getNode() {
+        return node;
+    }
+
+    public LocalDateTime getOpprettetTidspunkt() {
+        return opprettetTidspunkt;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.opprettetTidspunkt = LocalDateTime.now();
