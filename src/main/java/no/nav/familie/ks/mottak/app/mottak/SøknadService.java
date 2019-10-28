@@ -107,7 +107,7 @@ public class SøknadService {
         try {
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.OK.value()) {
-                LOG.warn("Innsending til sak feilet. Responskode: {}. Feilmelding: {}", response.statusCode(), response.body());
+                LOG.warn("Innsending til sak feilet. Responskode: {}", response.statusCode());
 
                 throw new IllegalStateException("Innsending til sak feilet. Status: " + response.statusCode() + " " + response.body());
             }
