@@ -25,7 +25,6 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknadmedvedlegg", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Unprotected
     public ResponseEntity mottaSoknadMedVedlegg(@RequestBody SøknadDto søknad,
                                                 @Nullable
                                                 @RequestHeader("journalforSelv") String journalførSelv) {
