@@ -21,5 +21,8 @@ logging:
 FAMILIE_KS_SAK_API_URL: http://localhost:8083/api
 FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
 
+#Brukes til tilgangskontroll av familie-ks-mottak-frontend
+MOTTAK_ROLLE: ROLE_GI_MEG_TILGANG
+
 server:
   port: 8084
