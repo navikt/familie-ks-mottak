@@ -2,6 +2,7 @@ package no.nav.familie.ks.mottak.app.rest
 
 import no.nav.familie.sikkerhet.OIDCUtil
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
@@ -22,7 +23,7 @@ class UserAuthorizationFilter(@Value("\${MOTTAK_ROLLE:group1}") val påkrevdRoll
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.requestURI.substring(request.contextPath.length)
-        return path.startsWith("/api/soknadmedvedlegg")
+        return path.startsWith("/api/soknadmedvedlegg") || path.startsWith("/internal/status/")
     }
 
     private fun ourIssuer () = oidcUtil.claimSet()
