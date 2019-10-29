@@ -1,0 +1,8 @@
+ALTER TABLE TASK
+    ADD COLUMN AVVIKSTYPE varchar(50);
+
+ALTER TABLE TASK_LOGG
+    ADD COLUMN ENDRET_AV varchar(100) DEFAULT 'VL';
+
+ALTER TABLE TASK_LOGG
+    rename COLUMN feilmelding to melding;

@@ -2,6 +2,8 @@ package no.nav.familie.ks.mottak.app.rest
 
 import no.nav.familie.ks.kontrakter.sak.Ressurs
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository
+import no.nav.familie.prosessering.domene.Avvikstype
+import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.Logger
@@ -15,60 +17,72 @@ class RestTaskService(
     private val taskRepository: TaskRepository,
     private val søknadRepository: SøknadRepository) {
 
-    fun hentFeiledeTasks(): Ressurs {
-        logger.info("Henter feilede tasker")
+    fun hentTasks(status: Status, saksbehandlerId: String): Ressurs {
+        logger.info("$saksbehandlerId henter feilede tasker")
 
         return Result.runCatching {
-            taskRepository.finnAlleFeiledeTasksTilFrontend()
+            taskRepository.finnTasksTilFrontend(status)
                     .map { it.toRestTask(søknadRepository) }
         }
         .fold(
             onSuccess = { Ressurs.success(data = it) },
             onFailure = { e ->
                 logger.error("Henting av tasker feilet", e)
-                Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e)
+                Ressurs.failure("Henting av tasker med status '$status', feilet.", e)
             }
         )
     }
 
     @Transactional
-    fun rekjørTask(taskId: Long?): Ressurs {
-        return when (taskId) {
-            null -> {
-                taskRepository.finnAlleFeiledeTasksTilFrontend().map { taskRepository.saveAndFlush(it.klarTilPlukk()) }
-                logger.info("Rekjører alle feilede tasks")
+    fun rekjørTask(taskId: Long, saksbehandlerId: String): Ressurs {
+        val task: Optional<Task> = taskRepository.findById(taskId)
 
-                Result.runCatching {
-                    taskRepository.finnAlleFeiledeTasksTilFrontend().map {
-                        it.toRestTask(søknadRepository)
-                    }
-                }
-                .fold(
-                    onSuccess = { Ressurs.success(data = it) },
-                    onFailure = { e -> Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e) }
-                )
+        return when (task.isPresent) {
+            true -> {
+                taskRepository.save(task.get().klarTilPlukk( saksbehandlerId ))
+                logger.info("$saksbehandlerId rekjører task $taskId")
+
+                Ressurs.success(data = "")
             }
-            else -> {
-                val task: Optional<Task> = taskRepository.findById(taskId)
+            false -> Ressurs.failure("Fant ikke task med task id $taskId")
+        }
+    }
 
-                return when (task.isPresent) {
-                    true -> {
-                        taskRepository.saveAndFlush(task.get().klarTilPlukk())
-                        logger.info("Rekjører task {}", taskId)
+    @Transactional
+    fun rekjørTasks(status: Status,  saksbehandlerId: String): Ressurs {
+        logger.info("$saksbehandlerId rekjører alle tasks med status $status")
 
-                        Result.runCatching {
-                            taskRepository.finnAlleFeiledeTasksTilFrontend()
-                                    .map { it.toRestTask(søknadRepository) }
-                        }
-                        .fold(
-                            onSuccess = { Ressurs.success(data = it) },
-                            onFailure = { e ->
-                                Ressurs.failure("Henting av tasker som har status 'FEILET', feilet.", e)
-                            }
-                        )
+        return Result.runCatching {
+            taskRepository.finnTasksTilFrontend(status).map { taskRepository.save(it.klarTilPlukk(saksbehandlerId )) }
+        }
+        .fold(
+            onSuccess = { Ressurs.success(data = "") },
+            onFailure = { e ->
+                logger.error("Rekjøring av tasker med status '$status' feilet", e)
+                Ressurs.failure("Rekjøring av tasker med status '$status' feilet", e)
+            }
+        )
+    }
+
+    @Transactional
+    fun avvikshåndterTask(taskId: Long, avvikstype: Avvikstype, årsak: String, saksbehandlerId: String): Ressurs {
+        val task: Optional<Task> = taskRepository.findById(taskId)
+
+        return when (task.isPresent) {
+            false -> Ressurs.failure("Fant ikke task med id $taskId.")
+            true -> {
+                logger.info("$saksbehandlerId setter task $taskId til avvikshåndtert", taskId)
+
+                Result.runCatching { taskRepository.save(task.get().avvikshåndter(avvikstype, årsak, saksbehandlerId)) }
+                .fold(
+                    onSuccess = {
+                        Ressurs.success(data = "")
+                    },
+                    onFailure = { e ->
+                        logger.error("Avvikshåndtering av $taskId feilet", e)
+                        Ressurs.failure("Avvikshåndtering av $taskId feilet", e)
                     }
-                    false -> Ressurs.failure("Fant ikke task med task id $taskId")
-                }
+                )
             }
         }
     }
