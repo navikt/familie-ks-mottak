@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import static no.nav.familie.prosessering.domene.TaskLogg.BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
+
 @Entity
 @Table(name = "TASK")
 public class Task {
@@ -28,6 +30,10 @@ public class Task {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status = Status.UBEHANDLET;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "avvikstype", updatable = false)
+    private Avvikstype avvikstype;
 
     @Column(name = "opprettet_tid", nullable = false, updatable = false)
     private LocalDateTime opprettetTidspunkt; // NOSONAR
@@ -88,15 +94,22 @@ public class Task {
         return this;
     }
 
+    public Task avvikshåndter(Avvikstype avviksType, String årsak, String endretAv) {
+        this.status = Status.AVVIKS_HÅNDTERT;
+        this.avvikstype = avviksType;
+        this.logg.add(new TaskLogg(this, LoggType.AVVIKS_HÅNDTERT, årsak, endretAv));
+        return this;
+    }
+
     public Task behandler() {
         this.status = Status.BEHANDLER;
         this.logg.add(new TaskLogg(this, LoggType.BEHANDLER));
         return this;
     }
 
-    public Task klarTilPlukk() {
+    public Task klarTilPlukk(String endretAv) {
         this.status = Status.KLAR_TIL_PLUKK;
-        this.logg.add(new TaskLogg(this, LoggType.KLAR_TIL_PLUKK));
+        this.logg.add(new TaskLogg(this, LoggType.KLAR_TIL_PLUKK, null, endretAv));
         return this;
     }
 
@@ -132,6 +145,10 @@ public class Task {
         return status;
     }
 
+    public Avvikstype getAvvikstype() {
+        return avvikstype;
+    }
+
     public LocalDateTime getOpprettetTidspunkt () {
         return opprettetTidspunkt;
     }
@@ -146,7 +163,7 @@ public class Task {
 
     public Task feilet(TaskFeil feil, int maxAntallFeil) {
         try {
-            this.logg.add(new TaskLogg(this, LoggType.FEILET, feil.writeValueAsString()));
+            this.logg.add(new TaskLogg(this, LoggType.FEILET, feil.writeValueAsString(), BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES));
         } catch (IOException e) {
             this.logg.add(new TaskLogg(this, LoggType.FEILET));
         }

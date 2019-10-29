@@ -5,6 +5,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static no.nav.familie.prosessering.domene.TaskLogg.BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
+
 @Service
 public class ScheduledTasksService {
 
@@ -19,6 +21,6 @@ public class ScheduledTasksService {
     public void retryFeilendeTask() {
         final var tasks = taskRepository.finnAlleFeiledeTasks();
 
-        tasks.forEach(it -> taskRepository.save(it.klarTilPlukk()));
+        tasks.forEach(it -> taskRepository.save(it.klarTilPlukk(BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES)));
     }
 }

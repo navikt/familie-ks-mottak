@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Table(name = "TASK_LOGG")
 public class TaskLogg {
 
+    public static final String BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES = "VL";
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_logg_seq")
     @SequenceGenerator(name = "task_logg_seq")
@@ -18,6 +20,9 @@ public class TaskLogg {
     @JoinColumn(name = "task_id")
     private Task task;
 
+    @Column(name = "endret_av", nullable = false, updatable = false)
+    private String endretAv;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, updatable = false)
     private LoggType type;
@@ -25,8 +30,8 @@ public class TaskLogg {
     @Column(name = "node")
     private String node;
 
-    @Column(name = "feilmelding", updatable = false, columnDefinition = "text")
-    private String feilmelding;
+    @Column(name = "melding", updatable = false, columnDefinition = "text")
+    private String melding;
 
     @Column(name = "opprettet_tid", nullable = false, updatable = false)
     private LocalDateTime opprettetTidspunkt; // NOSONAR
@@ -45,17 +50,23 @@ public class TaskLogg {
 
     public TaskLogg(Task task, LoggType type) {
         this();
+        this.endretAv = BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
         this.task = task;
         this.type = type;
     }
 
-    public TaskLogg(Task task, LoggType type, String feilmelding) {
+    public TaskLogg(Task task, LoggType type, String melding, String endretAv) {
         this(task, type);
-        this.feilmelding = feilmelding;
+        this.melding = melding;
+        this.endretAv = endretAv;
     }
 
-    public String getFeilmelding() {
-        return feilmelding;
+    public String getEndretAv() {
+        return endretAv;
+    }
+
+    public String getMelding() {
+        return melding;
     }
 
     public LoggType getType() {
