@@ -28,6 +28,9 @@ class TaskController(
     fun task(@RequestHeader status: Status): ResponseEntity<Ressurs> {
         logger.info("påkrevd rolle er: $påkrevdeRolle")
         logger.info("Grupper er: " + oidcUtil.groups.toString())
+        for (group: String in oidcUtil.groups) {
+            logger.info("Gruppe er: $group")
+        }
         when (oidcUtil.groups.contains(påkrevdeRolle)) {
             true -> return ResponseEntity.ok(restTaskService.hentTasks(status, hentBrukernavn()))
             false -> return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne appen!"))
