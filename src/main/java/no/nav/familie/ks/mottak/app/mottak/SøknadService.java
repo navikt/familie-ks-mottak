@@ -2,6 +2,7 @@ package no.nav.familie.ks.mottak.app.mottak;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.http.azure.AccessTokenClient;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.HttpRequestUtil;
 import no.nav.familie.http.sts.StsRestClient;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,8 @@ public class SøknadService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SøknadService.class);
 
+    private AccessTokenClient accessTokenClient;
+    private String familieKsSakScope;
     private final StsRestClient stsRestClient;
     private final URI sakServiceUri;
     private final URI oppslagServiceUri;
@@ -43,10 +47,15 @@ public class SøknadService {
     private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
 
-    public SøknadService(@Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri,
-                         @Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
-                         StsRestClient stsRestClient, SøknadRepository søknadRepository,
-                         TaskRepository taskRepository, ObjectMapper objectMapper) {
+    public SøknadService(
+                        AccessTokenClient accessTokenClient,
+                        @Value("${FAMILIE_KS_SAK_SCOPE}") String familieKsSakScope,
+                        @Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri,
+                        @Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+                        StsRestClient stsRestClient, SøknadRepository søknadRepository,
+                        TaskRepository taskRepository, ObjectMapper objectMapper) {
+        this.familieKsSakScope = familieKsSakScope;
+        this.accessTokenClient = accessTokenClient;
         this.client = HttpClientUtil.create();
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv");
@@ -54,6 +63,21 @@ public class SøknadService {
         this.søknadRepository = søknadRepository;
         this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
+    }
+
+    public void getTest() {
+        HttpRequest request = HttpRequestUtil.createRequest("Bearer " + accessTokenClient.getAccessToken(familieKsSakScope).access_token)
+                                             .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
+                                             .GET()
+                                             .uri(URI.create(sakServiceUri + "/mottak/test"))
+                                             .build();
+
+        try {
+            HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            LOG.info(String.valueOf(response.statusCode()));
+        } catch (IOException | InterruptedException e) {
+            throw new IllegalStateException("Innsending til sak feilet.", e);
+        }
     }
 
     @Transactional
@@ -97,7 +121,7 @@ public class SøknadService {
             throw new RuntimeException("Kan ikke konvertere søknad til request");
         }
 
-        HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
+        HttpRequest request = HttpRequestUtil.createRequest("Bearer " + accessTokenClient.getAccessToken(familieKsSakScope).access_token)
             .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
             .POST(HttpRequest.BodyPublishers.ofByteArray(sendTilSakRequest))
             .uri(sakServiceUri)

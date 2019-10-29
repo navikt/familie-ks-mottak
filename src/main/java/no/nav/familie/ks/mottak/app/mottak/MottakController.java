@@ -30,4 +30,9 @@ public class MottakController {
         søknadService.lagreSoknadOgLagTask(søknad, Boolean.parseBoolean(journalførSelv));
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @GetMapping(value = "/test")
+    public void getTest() {
+        søknadService.getTest();
+    }
 }

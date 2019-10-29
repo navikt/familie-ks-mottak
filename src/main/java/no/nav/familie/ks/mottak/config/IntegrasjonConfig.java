@@ -1,6 +1,7 @@
 package no.nav.familie.ks.mottak.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.http.azure.AccessTokenClient;
 import no.nav.familie.http.sts.StsRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +29,11 @@ public class IntegrasjonConfig {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplateBuilder()
-            .setConnectTimeout(Duration.ofSeconds(5))
-            .setReadTimeout(Duration.ofSeconds(5))
-            .build();
+    @Autowired
+    public AccessTokenClient accessTokenClient(RestTemplate restTemplateMedProxy,
+                                               @Value("${AAD_URL}") URI aadAccessTokenUrl,
+                                               @Value("${CLIENT_ID}") String clientId,
+                                               @Value("${CLIENT_SECRET}") String clientSecret) {
+        return new AccessTokenClient(aadAccessTokenUrl, clientId, clientSecret, restTemplateMedProxy);
     }
 }

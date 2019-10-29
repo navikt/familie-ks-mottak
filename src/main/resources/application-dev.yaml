@@ -8,6 +8,8 @@ no.nav.security.jwt:
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
 
+AAD_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+
 spring:
   jpa:
     show-sql: false
