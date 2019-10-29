@@ -22,7 +22,7 @@ class UserAuthorizationFilter(@Value("\${MOTTAK_ROLLE:group1}") val påkrevdRoll
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.requestURI.substring(request.contextPath.length)
-        return !path.startsWith("/api/soknadmedvedlegg")
+        return path.startsWith("/api/soknadmedvedlegg")
     }
 
     private fun ourIssuer () = oidcUtil.claimSet()
