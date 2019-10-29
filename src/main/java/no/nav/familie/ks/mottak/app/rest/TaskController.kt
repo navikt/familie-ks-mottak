@@ -16,50 +16,27 @@ import org.springframework.web.bind.annotation.*
 class TaskController(
         private val restTaskService: RestTaskService, private val oidcUtil: OIDCUtil) {
 
-
-    @Value("\${MOTTAK_ROLLE}")
-    lateinit var påkrevdeRolle: String
-
     fun hentBrukernavn(): String {
         return oidcUtil.getClaim("preferred_username")
     }
 
     @GetMapping(path = ["/task"])
     fun task(@RequestHeader status: Status): ResponseEntity<Ressurs> {
-        logger.info("påkrevd rolle er: $påkrevdeRolle")
-        logger.info("Grupper er: " + oidcUtil.groups.toString())
-        when (oidcUtil.claimSet().getAsList("groups").contains(påkrevdeRolle)) {
-            true -> return ResponseEntity.ok(restTaskService.hentTasks(status, hentBrukernavn()))
-            false -> return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne appen!"))
-        }
+        return ResponseEntity.ok(restTaskService.hentTasks(status, hentBrukernavn()))
     }
 
     @PutMapping(path = ["/task/rekjor"])
     fun rekjørTask(@RequestParam taskId: Long): ResponseEntity<Ressurs> {
-        when (oidcUtil.groups.contains(påkrevdeRolle)) {
-            true -> return ResponseEntity.ok(restTaskService.rekjørTask(taskId, hentBrukernavn()))
-            false -> return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne appen!"))
-        }
+        return ResponseEntity.ok(restTaskService.rekjørTask(taskId, hentBrukernavn()))
     }
 
     @PutMapping(path = ["task/rekjørAlle"])
     fun rekjørTasks(@RequestHeader status: Status): ResponseEntity<Ressurs> {
-        when (oidcUtil.groups.contains(påkrevdeRolle)) {
-            true -> return ResponseEntity.ok(restTaskService.rekjørTasks(status, hentBrukernavn()))
-            false -> return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne appen!"))
-        }
+        return ResponseEntity.ok(restTaskService.rekjørTasks(status, hentBrukernavn()))
     }
 
     @PutMapping(path = ["/task/avvikshaandter"])
     fun avvikshåndterTask(@RequestParam taskId: Long, @RequestBody avvikshåndterDTO: AvvikshåndterDTO): ResponseEntity<Ressurs> {
-        when (oidcUtil.groups.contains(påkrevdeRolle)) {
-            true -> return ResponseEntity.ok(restTaskService.avvikshåndterTask(taskId, avvikshåndterDTO.avvikstype, avvikshåndterDTO.årsak, hentBrukernavn()))
-            false -> return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne appen!"))
-        }
-
-    }
-
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(TaskController::class.java)
+        return ResponseEntity.ok(restTaskService.avvikshåndterTask(taskId, avvikshåndterDTO.avvikstype, avvikshåndterDTO.årsak, hentBrukernavn()))
     }
 }
