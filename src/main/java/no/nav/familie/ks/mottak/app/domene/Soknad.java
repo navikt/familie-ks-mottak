@@ -24,7 +24,7 @@ public class Soknad {
     @Column(name = "fnr")
     private String fnr;
 
-    @OneToMany(mappedBy = "soknad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "soknad", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id asc")
     private List<Vedlegg> vedlegg = new ArrayList<>();
 
