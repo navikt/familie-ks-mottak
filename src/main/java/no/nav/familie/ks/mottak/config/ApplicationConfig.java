@@ -1,6 +1,7 @@
 package no.nav.familie.ks.mottak.config;
 
 import no.nav.familie.log.filter.LogFilter;
+import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories({"no.nav.familie"})
 @EntityScan({"no.nav.familie"})
 @ComponentScan({"no.nav.familie"})
+@EnableOAuth2Client(cacheEnabled = true)
 @EnableJwtTokenValidation
 public class ApplicationConfig {
 

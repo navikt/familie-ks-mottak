@@ -31,9 +31,11 @@ public class IntegrasjonConfig {
     @Bean
     @Autowired
     public AccessTokenClient accessTokenClient(RestTemplate restTemplateMedProxy,
-                                               @Value("${AAD_URL}") URI aadAccessTokenUrl,
+                                               @Value("${AZURE_TOKEN_URL}") String aadAccessTokenUrl,
                                                @Value("${CLIENT_ID}") String clientId,
                                                @Value("${CLIENT_SECRET}") String clientSecret) {
-        return new AccessTokenClient(aadAccessTokenUrl, clientId, clientSecret, restTemplateMedProxy);
+        final var aadAccessTokenUri = URI.create(aadAccessTokenUrl);
+
+        return new AccessTokenClient(aadAccessTokenUri, clientId, clientSecret, restTemplateMedProxy);
     }
 }
