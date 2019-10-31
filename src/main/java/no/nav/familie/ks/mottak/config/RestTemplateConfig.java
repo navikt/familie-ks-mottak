@@ -9,14 +9,13 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 @Configuration
-@Profile("!dev")
 public class RestTemplateConfig {
 
     @Bean
     public RestTemplate restTemplateMedProxy() {
         return new RestTemplateBuilder()
-                .additionalCustomizers(new NaisProxyCustomizer())
-                .build();
+            .additionalCustomizers(new NaisProxyCustomizer())
+            .build();
     }
 
     @Bean
