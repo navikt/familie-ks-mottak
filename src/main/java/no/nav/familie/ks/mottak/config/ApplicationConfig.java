@@ -20,8 +20,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories({"no.nav.familie"})
 @EntityScan({"no.nav.familie"})
 @ComponentScan({"no.nav.familie"})
-@EnableOAuth2Client(cacheEnabled = true)
 @EnableJwtTokenValidation
+@EnableOAuth2Client(cacheEnabled = true)
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

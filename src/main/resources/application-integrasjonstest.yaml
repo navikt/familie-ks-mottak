@@ -6,6 +6,7 @@ no.nav.security.jwt:
   client:
     registration:
       ks-sak-onbehalfof:
+        resource-url: ${FAMILIE_KS_SAK_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: ${KS_SAK_SCOPE}
@@ -14,6 +15,7 @@ no.nav.security.jwt:
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
       ks-oppslag-clientcredentials:
+        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
         scope: ${KS_OPPSLAG_SCOPE}

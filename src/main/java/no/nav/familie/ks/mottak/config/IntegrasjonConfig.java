@@ -27,15 +27,4 @@ public class IntegrasjonConfig {
 
         return new StsRestClient(objectMapper, stsFullUrl, stsUsername, stsPassword);
     }
-
-    @Bean
-    @Autowired
-    public AccessTokenClient accessTokenClient(RestTemplate restTemplateMedProxy,
-                                               @Value("${AZURE_TOKEN_URL}") String aadAccessTokenUrl,
-                                               @Value("${CLIENT_ID}") String clientId,
-                                               @Value("${CLIENT_SECRET}") String clientSecret) {
-        final var aadAccessTokenUri = URI.create(aadAccessTokenUrl);
-
-        return new AccessTokenClient(aadAccessTokenUri, clientId, clientSecret, restTemplateMedProxy);
-    }
 }
