@@ -28,21 +28,18 @@ public class JournalføringService extends BaseService {
 
     private final URI oppslagServiceUri;
     private final SøknadService søknadService;
-    private final SøknadRepository søknadRepository;
 
     public JournalføringService(
         @Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagServiceUri,
         RestTemplateBuilder restTemplateBuilder,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,
-        SøknadRepository søknadRepository,
         SøknadService søknadService) {
 
         super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService);
 
         this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv");
         this.søknadService = søknadService;
-        this.søknadRepository = søknadRepository;
     }
 
     public void journalførSøknad(String søknadId) {
@@ -53,7 +50,7 @@ public class JournalføringService extends BaseService {
         var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
         String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
         søknad.setJournalpostID(journalpostID);
-        søknadRepository.save(søknad);
+        søknadService.lagreSøknad(søknad);
     }
 
 

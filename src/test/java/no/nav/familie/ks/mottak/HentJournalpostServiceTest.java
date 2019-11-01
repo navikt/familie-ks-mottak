@@ -54,7 +54,7 @@ public class HentJournalpostServiceTest {
     @BeforeEach
     public void setUp() {
         new JacksonJsonConfig().objectMapper();
-        service = new HentJournalpostService(OPPSLAG_BASE_URL, stsRestClient, søknadRepository, restTemplate);
+        service = new HentJournalpostService(OPPSLAG_BASE_URL, søknadRepository);
     }
 
     @ParameterizedTest

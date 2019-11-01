@@ -12,7 +12,7 @@ no.nav.security.jwt:
       ks-sak-onbehalfof:
         resource-url: ${FAMILIE_KS_SAK_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        grant-type: client_credentials
         scope: ${KS_SAK_SCOPE}
         authentication:
           client-id: ${CLIENT_ID}
@@ -21,7 +21,7 @@ no.nav.security.jwt:
       ks-oppslag-clientcredentials:
         resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        grant-type: client_credentials
         scope: ${KS_OPPSLAG_SCOPE}
         authentication:
           client-id: ${CLIENT_ID}

@@ -3,6 +3,7 @@ package no.nav.familie.ks.mottak.app.mottak;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
+import no.nav.familie.ks.mottak.util.LocalSts;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,46 +26,38 @@ import java.util.Optional;
 public class HentJournalpostService {
     private static final Logger LOG = LoggerFactory.getLogger(HentJournalpostService.class);
 
-    private final StsRestClient stsRestClient;
     private final String oppslagUrl;
-    private final SøknadRepository søknadRepository;
+    private final StsRestClient stsRestClient;
+    private final SøknadService søknadService;
     private final RestTemplate restTemplate;
 
     @Autowired
     public HentJournalpostService(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagUrl,
-                                  StsRestClient stsRestClient, SøknadRepository søknadRepository, RestTemplate restTemplate) {
+                                  StsRestClient stsRestClient,
+                                  SøknadService søknadService,
+                                  RestTemplate restTemplate) {
         this.oppslagUrl = oppslagUrl;
         this.stsRestClient = stsRestClient;
-        this.søknadRepository = søknadRepository;
+        this.søknadService = søknadService;
         this.restTemplate = restTemplate;
     }
 
 
     public void hentSaksnummer(String søknadId) {
-        Soknad søknad = hentSoknad(søknadId);
+        Soknad søknad = søknadService.hentSoknad(søknadId);
         String journalpostID = søknad.getJournalpostID();
         Optional<String> saksnummer = hentFraUrl(oppslagUrl + "/journalpost/%s/sak", journalpostID);
 
         søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException("Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
-        søknadRepository.save(søknad);
+        søknadService.lagreSøknad(søknad);
     }
 
     public void hentJournalpostId(String søknadId, String callId) {
-        Soknad søknad = hentSoknad(søknadId);
+        Soknad søknad = søknadService.hentSoknad(søknadId);
 
         Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
         søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
-        søknadRepository.save(søknad);
-    }
-
-    private Soknad hentSoknad(String søknadId) {
-        Soknad søknad;
-        try {
-            søknad = søknadRepository.findById(Long.valueOf(søknadId)).orElseThrow(() -> new RuntimeException("Finner ikke søknad med id=" + søknadId));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Kan ikke hente Søknad for søknadid=" + søknadId);
-        }
-        return søknad;
+        søknadService.lagreSøknad(søknad);
     }
 
     private Optional<String> hentFraUrl(String urlformat, Object... searchParams) {

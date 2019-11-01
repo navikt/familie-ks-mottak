@@ -1,6 +1,8 @@
 package no.nav.familie.ks.mottak.config;
 
 import no.nav.familie.http.client.NavHttpHeaders;
+import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import no.nav.familie.ks.mottak.app.mottak.SendTilSakDto;
 import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
@@ -13,7 +15,6 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.net.http.HttpRequest;
 import java.util.Optional;
 
 public class BaseService {
@@ -36,7 +37,15 @@ public class BaseService {
 
     }
 
-    protected <T> ResponseEntity<T> postRequest(URI uri, HttpRequest.BodyPublisher requestBody, Class<T> responseType) {
+    protected ResponseEntity<Ressurs> postRequest(URI uri, SendTilSakDto requestBody) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+
+        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), Ressurs.class);
+    }
+
+    protected <T> ResponseEntity<T> postRequest(URI uri, java.net.http.HttpRequest.BodyPublisher requestBody, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
