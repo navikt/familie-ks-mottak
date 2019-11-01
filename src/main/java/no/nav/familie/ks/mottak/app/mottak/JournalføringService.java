@@ -38,14 +38,14 @@ public class JournalføringService extends BaseService {
 
     public JournalføringService(
         @Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagServiceUri,
-        RestTemplateBuilder restTemplateBuilder,
+        RestTemplateBuilder restTemplateBuilderMedProxy,
         RestTemplate restTemplate,
         StsRestClient stsRestClient,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,
         SøknadService søknadService) {
 
-        super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService);
+        super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
         this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv");
         this.søknadService = søknadService;

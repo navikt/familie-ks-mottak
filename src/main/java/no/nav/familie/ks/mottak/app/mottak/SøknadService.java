@@ -37,13 +37,13 @@ public class SøknadService extends BaseService {
 
     public SøknadService(
         @Value("${FAMILIE_KS_SAK_API_URL}") URI sakServiceUri,
-        RestTemplateBuilder restTemplateBuilder,
+        RestTemplateBuilder restTemplateBuilderMedProxy,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,
         SøknadRepository søknadRepository,
         TaskRepository taskRepository) {
 
-        super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService);
+        super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
         this.sakServiceUri = URI.create(sakServiceUri + "/mottak/dokument");
         this.søknadRepository = søknadRepository;
