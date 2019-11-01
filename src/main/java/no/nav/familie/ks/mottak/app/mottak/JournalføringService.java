@@ -31,7 +31,7 @@ public class JournalføringService extends BaseService {
     private final SøknadRepository søknadRepository;
 
     public JournalføringService(
-        @Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+        @Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagServiceUri,
         RestTemplateBuilder restTemplateBuilder,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,

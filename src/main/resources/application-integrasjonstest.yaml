@@ -15,7 +15,7 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
       ks-oppslag-clientcredentials:
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        grant-type: client_credentials
         scope: ${KS_OPPSLAG_SCOPE}
         authentication:
           client-id: ${CLIENT_ID}
