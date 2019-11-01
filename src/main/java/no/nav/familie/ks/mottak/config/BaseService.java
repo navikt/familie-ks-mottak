@@ -45,14 +45,6 @@ public class BaseService {
         return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), Ressurs.class);
     }
 
-    protected <T> ResponseEntity<T> postRequest(URI uri, java.net.http.HttpRequest.BodyPublisher requestBody, Class<T> responseType) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
-
-        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
-    }
-
     private ClientHttpRequestInterceptor bearerTokenInterceptor(){
         return (request, body, execution) -> {
             OAuth2AccessTokenResponse response =

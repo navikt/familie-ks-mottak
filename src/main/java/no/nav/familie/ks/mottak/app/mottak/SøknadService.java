@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class SøknadService extends BaseService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SøknadService.class);
-    private static final String OAUTH2_CLIENT_CONFIG_KEY = "ks-sak-onbehalfof";
+    private static final String OAUTH2_CLIENT_CONFIG_KEY = "ks-sak-clientcredentials";
 
     private final URI sakServiceUri;
     private final SøknadRepository søknadRepository;
@@ -107,7 +107,7 @@ public class SøknadService extends BaseService {
         }
     }
 
-    Soknad lagreSøknad(Soknad søknad) {
-        return søknadRepository.save(søknad);
+    public Soknad lagreSøknad(Soknad søknad) {
+        return søknadRepository.saveAndFlush(søknad);
     }
 }
