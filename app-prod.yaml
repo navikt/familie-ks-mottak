@@ -24,7 +24,7 @@ spec:
     enabled: true
   replicas:
     min: 2
-    max: 4
+    max: 2
     cpuThresholdPercentage: 50
   resources:
     limits:
@@ -32,7 +32,7 @@ spec:
       cpu: "1"
     requests:
       memory: 512Mi
-      cpu: 500m
+      cpu: 200m
   secureLogs:
     enabled: true
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
@@ -40,3 +40,5 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
+    - name: JAVA_OPTS
+      value: -Xmx512m
