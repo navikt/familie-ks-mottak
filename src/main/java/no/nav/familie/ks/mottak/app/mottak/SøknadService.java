@@ -116,6 +116,7 @@ public class SøknadService {
         }
     }
 
+
     public void journalførSøknad(String søknadId) {
         Soknad søknad = hentSoknad(søknadId);
         List<Dokument> dokumenter = søknad.getVedlegg().stream()
@@ -124,7 +125,8 @@ public class SøknadService {
         var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
         String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
         søknad.setJournalpostID(journalpostID);
-        søknadRepository.save(søknad);
+        søknad.getVedlegg().clear();
+        søknadRepository.saveAndFlush(søknad);
     }
 
     private Soknad hentSoknad(String søknadId) {
@@ -140,7 +142,7 @@ public class SøknadService {
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
         String payload = ArkiverDokumentRequestKt.toJson(arkiverDokumentRequest);
         HttpRequest request = HttpRequestUtil.createRequest("Bearer " + stsRestClient.getSystemOIDCToken())
-            .header(HttpHeader.CONTENT_TYPE.asString(), "application/json")
+            .header(HttpHeader.CONTENT_TYPE.asString(), "application/json; charset=utf-8")
             .POST(HttpRequest.BodyPublishers.ofString(payload))
             .uri(oppslagServiceUri)
             .build();
