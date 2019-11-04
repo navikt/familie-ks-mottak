@@ -28,10 +28,10 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
-      memory: 1024Mi
+      memory: 2048Mi
       cpu: "1"
     requests:
-      memory: 512Mi
+      memory: 1024Mi
       cpu: 200m
   secureLogs:
     enabled: true
@@ -41,4 +41,4 @@ spec:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
     - name: JAVA_OPTS
-      value: "-Xmx512M"
+      value: "-Xmx1g"
