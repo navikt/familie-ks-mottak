@@ -19,7 +19,7 @@ public class DevLauncher {
     public static void main(String... args) {
         new SpringApplicationBuilder(ApplicationConfig.class)
             //.profiles("postgresql")
-            .profiles("dev")
+            .profiles("integrasjonstest")
             .run(args);
     }
 }

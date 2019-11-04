@@ -34,7 +34,24 @@ public class BaseService {
             .interceptors(bearerTokenInterceptor())
             .build();
         this.oAuth2AccessTokenService = oAuth2AccessTokenService;
+    }
 
+    protected <T> ResponseEntity<T> getRequest(URI uri, Class<T> responseType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+
+        return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), responseType);
+    }
+
+    protected <T> ResponseEntity<T> postRequest(URI uri,
+                                                java.net.http.HttpRequest.BodyPublisher requestBody,
+                                                Class<T> responseType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+
+        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
 
     protected ResponseEntity<Ressurs> postRequest(URI uri, SendTilSakDto requestBody) {
@@ -49,6 +66,7 @@ public class BaseService {
         return (request, body, execution) -> {
             OAuth2AccessTokenResponse response =
                 oAuth2AccessTokenService.getAccessToken(clientProperties);
+            System.out.println(response.getAccessToken());
             request.getHeaders().setBearerAuth(response.getAccessToken());
             return execution.execute(request, body);
         };

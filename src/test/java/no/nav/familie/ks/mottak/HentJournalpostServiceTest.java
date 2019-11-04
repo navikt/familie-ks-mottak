@@ -1,19 +1,21 @@
 package no.nav.familie.ks.mottak;
 
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.domene.TaskRepository;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,14 +32,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class HentJournalpostServiceTest {
+class HentJournalpostServiceTest {
 
     private static final String JOURNALPOST_ID = "567";
     private static final String SØKNAD_ID = "1234";
     private static final String SAKSNUMMER = "4321";
     private static final String OPPSLAG_BASE_URL = "http://junit/api";
     private static final String HENT_SAKSNUMMER_URL = OPPSLAG_BASE_URL + "/journalpost/" + JOURNALPOST_ID + "/sak";
-    public static final String CALL_ID = "CallId";
+    private static final String CALL_ID = "CallId";
     private static final String HENT_JOURNAPOST_URL = OPPSLAG_BASE_URL + "/journalpost/kanalreferanseid/" + CALL_ID;
 
 
@@ -50,25 +52,29 @@ public class HentJournalpostServiceTest {
     @Mock
     private SøknadService søknadService;
     @Mock
-    private StsRestClient stsRestClient;
-    @Mock
     private RestTemplate restTemplate;
+    @Mock
+    private RestTemplateBuilder restTemplateBuilder;
+    @Mock
+    ClientConfigurationProperties clientConfigurationProperties;
+    @Mock
+    OAuth2AccessTokenService oAuth2AccessTokenService;
 
     @BeforeEach
-    public void setUp() {
-        hentJournalpostService = new HentJournalpostService(OPPSLAG_BASE_URL, stsRestClient, søknadService, søknadRepository, restTemplate);
+    void setUp() {
+        hentJournalpostService = new HentJournalpostService(OPPSLAG_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    public void hent_saksnummer_skal_kaste_feil_hvis_payload_ikke_er_nummer(String payload) {
+    void hent_saksnummer_skal_kaste_feil_hvis_payload_ikke_er_nummer(String payload) {
         RuntimeException e = assertThrows(RuntimeException.class, () -> hentJournalpostService.hentSaksnummer(payload));
 
         assertThat(e.getMessage()).isEqualTo("Kan ikke hente Søknad for søknadid=" + payload);
     }
 
     @Test
-    public void hent_saksnummer_skal_kaste_feil_hvis_søknad_ikke_eksisterer() {
+    void hent_saksnummer_skal_kaste_feil_hvis_søknad_ikke_eksisterer() {
         when(søknadRepository.findById(Long.valueOf(SØKNAD_ID))).thenReturn(Optional.empty());
 
         RuntimeException e = assertThrows(RuntimeException.class, () -> {
@@ -79,7 +85,7 @@ public class HentJournalpostServiceTest {
     }
 
     @Test
-    public void hent_saksnummer_skal_kaste_feil_hvis_søknad_mangler_journalpostID() {
+    void hent_saksnummer_skal_kaste_feil_hvis_søknad_mangler_journalpostID() {
         when(søknadRepository.findById(Long.valueOf(SØKNAD_ID))).thenReturn(Optional.of(new Soknad()));
 
         RuntimeException e = assertThrows(RuntimeException.class, () -> {
@@ -90,7 +96,7 @@ public class HentJournalpostServiceTest {
     }
 
     @Test
-    public void hent_saksnummer_skal_lagre_saksnummer_på_søknad() {
+    void hent_saksnummer_skal_lagre_saksnummer_på_søknad() {
         Soknad søknad = new Soknad();
         søknad.setJournalpostID(JOURNALPOST_ID);
 
@@ -108,7 +114,7 @@ public class HentJournalpostServiceTest {
     }
 
     @Test
-    public void hent_journalpost_skal_lagre_saksnummer_på_søknad() {
+    void hent_journalpost_skal_lagre_saksnummer_på_søknad() {
         Soknad søknad = new Soknad();
 
         when(søknadRepository.findById(1234L)).thenReturn(Optional.of(søknad));
@@ -125,7 +131,7 @@ public class HentJournalpostServiceTest {
     }
 
     @Test
-    public void hent_journalpost_skal_kaste_feil_hvis_søknad_mangler_callId() {
+    void hent_journalpost_skal_kaste_feil_hvis_søknad_mangler_callId() {
         when(søknadRepository.findById(Long.valueOf(SØKNAD_ID))).thenReturn(Optional.of(new Soknad()));
 
         RuntimeException e = assertThrows(RuntimeException.class, () -> hentJournalpostService.hentJournalpostId(SØKNAD_ID, null));

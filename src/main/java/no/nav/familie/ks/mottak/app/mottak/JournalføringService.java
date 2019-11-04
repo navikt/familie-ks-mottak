@@ -1,10 +1,8 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
 import no.nav.familie.http.client.NavHttpHeaders;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
-import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.config.BaseService;
 import no.nav.familie.log.mdc.MDCConstants;
@@ -18,7 +16,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -33,14 +30,10 @@ public class JournalføringService extends BaseService {
 
     private final URI oppslagServiceUri;
     private final SøknadService søknadService;
-    private final StsRestClient stsRestClient;
-    private final RestTemplate restTemplate;
 
     public JournalføringService(
         @Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagServiceUri,
         RestTemplateBuilder restTemplateBuilderMedProxy,
-        RestTemplate restTemplate,
-        StsRestClient stsRestClient,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,
         SøknadService søknadService) {
@@ -49,8 +42,6 @@ public class JournalføringService extends BaseService {
 
         this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv");
         this.søknadService = søknadService;
-        this.stsRestClient = stsRestClient;
-        this.restTemplate = restTemplate;
     }
 
     public void journalførSøknad(String søknadId) {
@@ -62,15 +53,6 @@ public class JournalføringService extends BaseService {
         String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
         søknad.setJournalpostID(journalpostID);
         søknadService.lagreSøknad(søknad);
-    }
-
-    private <T> ResponseEntity<T> postRequest(URI uri, java.net.http.HttpRequest.BodyPublisher requestBody, Class<T> responseType) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(stsRestClient.getSystemOIDCToken());
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
-
-        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
 
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {

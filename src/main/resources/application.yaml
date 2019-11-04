@@ -24,6 +24,7 @@ spring:
 
 logging:
   config: "classpath:logback-spring.xml"
+logging.level.no.nav.security: DEBUG
 
 management:
   endpoint.health.show-details: always
