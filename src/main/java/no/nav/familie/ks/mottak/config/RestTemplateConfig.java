@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 @Configuration
+@Profile("!dev")
 public class RestTemplateConfig {
 
     @Bean

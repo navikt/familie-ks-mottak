@@ -4,6 +4,7 @@ import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
+import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
@@ -12,14 +13,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -31,7 +42,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = UnitTestLauncher.class)
+@ActiveProfiles("integrasjonstest")
 class HentJournalpostServiceTest {
 
     private static final String JOURNALPOST_ID = "567";
@@ -51,14 +64,15 @@ class HentJournalpostServiceTest {
     private SøknadRepository søknadRepository;
     @Mock
     private SøknadService søknadService;
-    @Mock
+    @Autowired
     private RestTemplate restTemplate;
-    @Mock
+    @Autowired
     private RestTemplateBuilder restTemplateBuilder;
-    @Mock
-    ClientConfigurationProperties clientConfigurationProperties;
-    @Mock
-    OAuth2AccessTokenService oAuth2AccessTokenService;
+
+    @Autowired
+    private ClientConfigurationProperties clientConfigurationProperties;
+    @Autowired
+    private OAuth2AccessTokenService oAuth2AccessTokenService;
 
     @BeforeEach
     void setUp() {

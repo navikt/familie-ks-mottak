@@ -1,12 +1,12 @@
 no.nav.security.jwt:
   issuer.selvbetjening:
-    discoveryurl: http://metadata
+    discoveryurl: http://localhost:8080/metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
   issuer.azuread:
-    discoveryurl: http://metadata
-    accepted_audience: aud-localhost
-    cookie_name: localhost-idtoken
+    discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+    accepted_audience: ${KS_MOTTAK_FRONTEND_CLIENT_ID}
+    cookie_name: azure_token
   client:
     registration:
       ks-sak-clientcredentials:

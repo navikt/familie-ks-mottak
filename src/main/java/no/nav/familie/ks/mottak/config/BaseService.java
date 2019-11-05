@@ -66,7 +66,6 @@ public class BaseService {
         return (request, body, execution) -> {
             OAuth2AccessTokenResponse response =
                 oAuth2AccessTokenService.getAccessToken(clientProperties);
-            System.out.println(response.getAccessToken());
             request.getHeaders().setBearerAuth(response.getAccessToken());
             return execution.execute(request, body);
         };
