@@ -201,10 +201,17 @@
             <version>4.4.12</version>
         </dependency>
 
+
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
             <version>2.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <version>5.6.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
