@@ -1,8 +1,8 @@
 package no.nav.familie.ks.mottak.app.rest
 
 import no.nav.familie.ks.kontrakter.sak.Ressurs
-import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.sikkerhet.OIDCUtil
+import no.nav.familie.prosessering.domene.Status
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 @ProtectedWithClaims(issuer = "azuread")
 class TaskController(
-        private val restTaskService: RestTaskService,
-        private val oidcUtil: OIDCUtil) {
+        private val restTaskService: RestTaskService, private val oidcUtil: OIDCUtil) {
 
     fun hentBrukernavn(): String {
         return oidcUtil.getClaim("preferred_username")
