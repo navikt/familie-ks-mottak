@@ -57,12 +57,10 @@ public class JournalføringService extends BaseService {
     }
 
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
-        String payload = ArkiverDokumentRequestKt.toJson(arkiverDokumentRequest);
         LOG.info("Sender søknad til " + oppslagServiceUri);
         try {
-            LOG.info(payload);
             ResponseEntity<String>
-                response = postRequest(oppslagServiceUri, HttpRequest.BodyPublishers.ofString(payload), String.class);
+                response = postRequest(oppslagServiceUri, arkiverDokumentRequest, String.class);
 
             if (response.getStatusCode().isError()) {
                 LOG.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}", response.getStatusCode(), response.getBody());

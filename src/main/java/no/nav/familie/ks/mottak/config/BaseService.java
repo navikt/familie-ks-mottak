@@ -1,6 +1,7 @@
 package no.nav.familie.ks.mottak.config;
 
 import no.nav.familie.http.client.NavHttpHeaders;
+import no.nav.familie.ks.kontrakter.dokarkiv.api.ArkiverDokumentRequest;
 import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.mottak.app.mottak.SendTilSakDto;
 import no.nav.familie.log.mdc.MDCConstants;
@@ -45,7 +46,7 @@ public class BaseService {
     }
 
     protected <T> ResponseEntity<T> postRequest(URI uri,
-                                                java.net.http.HttpRequest.BodyPublisher requestBody,
+                                                ArkiverDokumentRequest requestBody,
                                                 Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
