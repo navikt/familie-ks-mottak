@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(
     classes = {ApplicationConfig.class})
 @DataJpaTest(excludeAutoConfiguration = {FlywayAutoConfiguration.class})
-@ActiveProfiles("dev")
+@ActiveProfiles("integrasjonstest")
 public class AsyncTaskTest {
     @MockBean
     private SøknadService søknadService;

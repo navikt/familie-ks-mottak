@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doThrow;
 @ContextConfiguration(
     classes = {ApplicationConfig.class})
 @DataJpaTest(excludeAutoConfiguration = {FlywayAutoConfiguration.class})
-@ActiveProfiles("dev")
+@ActiveProfiles("integrasjonstest")
 public class TaskWorkerTest {
 
     @MockBean
