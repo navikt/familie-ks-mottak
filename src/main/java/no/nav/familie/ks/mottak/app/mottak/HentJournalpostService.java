@@ -63,6 +63,7 @@ public class HentJournalpostService extends BaseService {
 
         Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
         søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
+        søknad.getVedlegg().clear();
         søknadService.lagreSøknad(søknad);
     }
 

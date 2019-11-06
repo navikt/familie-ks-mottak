@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.net.URI;
 import java.util.List;
@@ -87,13 +88,10 @@ public class SøknadService extends BaseService {
         LOG.info("Sender søknad til {}", sakServiceUri);
         try {
             SendTilSakDto sendTilSakDto = new SendTilSakDto(søknadJson, saksnummer, journalpostID);
-            ResponseEntity response = postRequest(sakServiceUri, sendTilSakDto);
-
-            if (response.getStatusCode().isError()) {
-                LOG.warn("Innsending til sak feilet. Responskode: {}, body: {}", response.getStatusCode(), response.getBody());
-
-                throw new IllegalStateException("Innsending til sak feilet. Status: " + response.getStatusCode() + ", body: " + response.getBody());
-            }
+            postRequest(sakServiceUri, sendTilSakDto);
+        } catch (RestClientResponseException e) {
+            LOG.warn("Innsending til sak feilet. Responskode: {}, body: {}", e.getRawStatusCode(), e.getResponseBodyAsString());
+            throw new IllegalStateException("Innsending til sak feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);
         } catch (RestClientException e) {
             throw new IllegalStateException("Innsending til sak feilet.", e);
         }

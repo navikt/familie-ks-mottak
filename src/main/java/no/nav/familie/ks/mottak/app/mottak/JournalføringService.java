@@ -16,6 +16,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -62,13 +63,10 @@ public class JournalføringService extends BaseService {
             ResponseEntity<String>
                 response = postRequest(oppslagServiceUri, arkiverDokumentRequest, String.class);
 
-            if (response.getStatusCode().isError()) {
-                LOG.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}", response.getStatusCode(), response.getBody());
-
-                throw new IllegalStateException("Innsending til dokarkiv feilet. Responskode: " + response.getStatusCode() + ", body: " + response.getBody());
-            } else {
-                return ArkiverDokumentResponseKt.toArkiverDokumentResponse(Objects.requireNonNull(response.getBody()));
-            }
+            return ArkiverDokumentResponseKt.toArkiverDokumentResponse(Objects.requireNonNull(response.getBody()));
+        } catch (RestClientResponseException e) {
+            LOG.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}", e.getRawStatusCode(), e.getResponseBodyAsString());
+            throw new IllegalStateException("Innsending til dokarkiv feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);
         } catch (RestClientException e) {
             throw new IllegalStateException("Innsending til dokarkiv feilet.", e);
         }
