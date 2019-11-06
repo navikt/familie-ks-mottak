@@ -2,6 +2,7 @@ no.nav.security.jwt:
   issuer.selvbetjening:
     discoveryurl: https://login.microsoftonline.com/NAVtestB2C.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten_ver1
     acceptedaudience: ${ACCEPTEDAUDIENCE} #Ligger i vault
+    proxyurl: http://webproxy-nais.nav.no:8088
     cookie_name: selvbetjening-idtoken
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
