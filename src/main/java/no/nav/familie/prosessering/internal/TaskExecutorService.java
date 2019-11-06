@@ -58,6 +58,8 @@ public class TaskExecutorService {
     }
 
     private void executeWork(Task task) {
+        task.plukker();
+        taskProsesseringRepository.saveAndFlush(task);
         worker.doTask(task.getId());
     }
 }
