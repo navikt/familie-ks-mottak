@@ -1,7 +1,6 @@
 package no.nav.familie.ks.mottak;
 
 import com.google.common.net.MediaType;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
@@ -20,7 +19,6 @@ import org.mockserver.model.StringBody;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,8 +37,6 @@ public class JournalførSøknadTaskTest {
 
     public static final Long SØKNAD_ID = 1L;
     public static final String DOKARKIV_POST_JSON = "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"},{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
-    @MockBean
-    private StsRestClient stsRestClient;
 
     @Autowired
     private TaskRepository repository;
@@ -53,7 +49,6 @@ public class JournalførSøknadTaskTest {
 
     @Rule
     public MockServerRule mockServerRule = new MockServerRule(this, 18085);
-
 
     @Test
     @Sql("classpath:søknad_med_vedlegg.sql")

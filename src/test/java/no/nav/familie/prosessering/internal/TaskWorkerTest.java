@@ -1,6 +1,5 @@
 package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
@@ -33,8 +32,6 @@ public class TaskWorkerTest {
 
     @MockBean
     private SøknadService søknadService;
-    @MockBean
-    private StsRestClient stsRestClient;
     @MockBean
     private SendSøknadTilSakTask task;
     @Autowired
