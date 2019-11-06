@@ -52,6 +52,7 @@ public class JournalføringService extends BaseService {
         var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
         String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
         søknad.setJournalpostID(journalpostID);
+        søknad.getVedlegg().clear();
         søknadService.lagreSøknad(søknad);
     }
 
@@ -59,6 +60,7 @@ public class JournalføringService extends BaseService {
         String payload = ArkiverDokumentRequestKt.toJson(arkiverDokumentRequest);
         LOG.info("Sender søknad til " + oppslagServiceUri);
         try {
+            LOG.info(payload);
             ResponseEntity<String>
                 response = postRequest(oppslagServiceUri, HttpRequest.BodyPublishers.ofString(payload), String.class);
 
