@@ -27,7 +27,7 @@ class TaskController(
         return ResponseEntity.ok(restTaskService.rekjørTask(taskId, hentBrukernavn()))
     }
 
-    @PutMapping(path = ["task/rekjørAlle"])
+    @PutMapping(path = ["task/rekjorAlle"])
     fun rekjørTasks(@RequestHeader status: Status): ResponseEntity<Ressurs> {
         return ResponseEntity.ok(restTaskService.rekjørTasks(status, hentBrukernavn()))
     }
