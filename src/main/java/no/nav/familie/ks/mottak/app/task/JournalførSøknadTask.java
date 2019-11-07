@@ -1,5 +1,6 @@
 package no.nav.familie.ks.mottak.app.task;
 
+import no.nav.familie.ks.mottak.app.mottak.JournalføringService;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTask;
 import no.nav.familie.prosessering.TaskBeskrivelse;
@@ -16,18 +17,18 @@ public class JournalførSøknadTask implements AsyncTask {
 
     public static final String JOURNALFØR_SØKNAD = "journalførSøknad";
     private TaskRepository taskRepository;
-    private SøknadService søknadService;
+    private JournalføringService journalføringService;
 
 
     @Autowired
-    public JournalførSøknadTask(SøknadService søknadService, TaskRepository taskRepository) {
+    public JournalførSøknadTask(JournalføringService journalføringService, TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.søknadService = søknadService;
+        this.journalføringService = journalføringService;
     }
 
     @Override
     public void doTask(Task task) {
-        søknadService.journalførSøknad(task.getPayload());
+        journalføringService.journalførSøknad(task.getPayload());
     }
 
     @Override

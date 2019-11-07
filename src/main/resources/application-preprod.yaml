@@ -2,12 +2,33 @@ no.nav.security.jwt:
   issuer.selvbetjening:
     discoveryurl: https://login.microsoftonline.com/NAVtestB2C.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten_ver1
     acceptedaudience: ${ACCEPTEDAUDIENCE} #Ligger i vault
+    proxyurl: http://webproxy-nais.nav.no:8088
     cookie_name: selvbetjening-idtoken
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
     accepted_audience: ${KS_MOTTAK_FRONTEND_CLIENT_ID}
     proxyurl: http://webproxy-nais.nav.no:8088
     cookie_name: azure_token
+  client:
+    registration:
+      ks-sak-clientcredentials:
+        resource-url: ${FAMILIE_KS_SAK_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${KS_SAK_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      ks-oppslag-clientcredentials:
+        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${KS_OPPSLAG_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 
 spring:
   datasource:

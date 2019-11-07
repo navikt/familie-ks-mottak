@@ -33,10 +33,6 @@ management:
     path-mapping:
       info: "status/isAlive"
   metrics.export.prometheus.enabled: true
-  metrics.web.server.auto-time-requests: true
-
-http.proxy: http://webproxy-nais.nav.no:8088
-STS_URL: http://security-token-service.default.svc.nais.local
 
 FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag/api
 FAMILIE_KS_SAK_API_URL: http://familie-ks-sak/api

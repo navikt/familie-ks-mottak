@@ -1,6 +1,5 @@
 package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
@@ -16,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,15 +25,13 @@ import static org.mockito.Mockito.doThrow;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-    classes = {ApplicationConfig.class},
-    loader = AnnotationConfigContextLoader.class)
+    classes = {ApplicationConfig.class})
 @DataJpaTest(excludeAutoConfiguration = {FlywayAutoConfiguration.class})
+@ActiveProfiles("integrasjonstest")
 public class TaskWorkerTest {
 
     @MockBean
     private SøknadService søknadService;
-    @MockBean
-    private StsRestClient stsRestClient;
     @MockBean
     private SendSøknadTilSakTask task;
     @Autowired

@@ -3,6 +3,26 @@ no.nav.security.jwt:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
+  client:
+    registration:
+      ks-sak-clientcredentials:
+        resource-url: ${FAMILIE_KS_SAK_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${KS_SAK_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      ks-oppslag-clientcredentials:
+        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${KS_OPPSLAG_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 
 spring:
   jpa:

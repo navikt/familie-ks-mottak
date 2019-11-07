@@ -1,23 +1,24 @@
 package no.nav.familie.ks.mottak;
 
 import com.google.common.net.MediaType;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
-import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockserver.junit.MockServerRule;
-import org.mockserver.model.*;
+import org.mockserver.model.Header;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
+import org.mockserver.model.StringBody;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,17 +28,15 @@ import java.util.Optional;
 import static no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK;
 import static no.nav.familie.log.mdc.MDCConstants.MDC_CALL_ID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockserver.model.JsonBody.json;
 
-@ActiveProfiles("integrasjonstest")
+@Ignore
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_KS_OPPSLAG_API_URL=http://localhost:18085/api"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { UnitTestLauncher.class, TokenGeneratorConfiguration.class }, properties = {"FAMILIE_KS_OPPSLAG_API_URL=http://localhost:18085/api"})
+@ActiveProfiles("integrasjonstest")
 public class JournalførSøknadTaskTest {
 
     public static final Long SØKNAD_ID = 1L;
     public static final String DOKARKIV_POST_JSON = "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"},{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
-    @MockBean
-    private StsRestClient stsRestClient;
 
     @Autowired
     private TaskRepository repository;
@@ -50,7 +49,6 @@ public class JournalførSøknadTaskTest {
 
     @Rule
     public MockServerRule mockServerRule = new MockServerRule(this, 18085);
-
 
     @Test
     @Sql("classpath:søknad_med_vedlegg.sql")
