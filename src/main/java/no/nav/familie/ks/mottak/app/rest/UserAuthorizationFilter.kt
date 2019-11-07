@@ -2,7 +2,6 @@ package no.nav.familie.ks.mottak.app.rest
 
 import no.nav.familie.sikkerhet.OIDCUtil
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain

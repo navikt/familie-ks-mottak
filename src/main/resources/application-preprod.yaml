@@ -6,7 +6,7 @@ no.nav.security.jwt:
     cookie_name: selvbetjening-idtoken
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-    accepted_audience: ${KS_MOTTAK_FRONTEND_CLIENT_ID}
+    accepted_audience: ${CLIENT_ID}
     proxyurl: http://webproxy-nais.nav.no:8088
     cookie_name: azure_token
   client:
