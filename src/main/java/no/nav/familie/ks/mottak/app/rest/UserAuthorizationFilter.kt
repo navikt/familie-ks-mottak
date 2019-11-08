@@ -25,6 +25,6 @@ class UserAuthorizationFilter(@Value("\${MOTTAK_ROLLE:group1}") val påkrevdRoll
         return path.startsWith("/api/soknadmedvedlegg") || path.startsWith("/internal/")
     }
 
-    private fun ourIssuer () = oidcUtil.claimSet()
-    private fun currentUserGroups() = ourIssuer().getAsList("groups")
+    private fun ourIssuer () = oidcUtil.getClaimAsList("groups")
+    private fun currentUserGroups() = ourIssuer()
 }
