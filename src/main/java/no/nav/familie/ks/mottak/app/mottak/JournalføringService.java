@@ -2,6 +2,7 @@ package no.nav.familie.ks.mottak.app.mottak;
 
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
+import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.config.BaseService;
@@ -60,10 +61,10 @@ public class JournalføringService extends BaseService {
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
         LOG.info("Sender søknad til " + oppslagServiceUri);
         try {
-            ResponseEntity<String>
-                response = postRequest(oppslagServiceUri, arkiverDokumentRequest, String.class);
+            ResponseEntity<Ressurs>
+                response = postRequest(oppslagServiceUri, arkiverDokumentRequest, Ressurs.class);
 
-            return ArkiverDokumentResponseKt.toArkiverDokumentResponse(Objects.requireNonNull(response.getBody()));
+            return response.getBody().convert(ArkiverDokumentResponse.class);
         } catch (RestClientResponseException e) {
             LOG.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}", e.getRawStatusCode(), e.getResponseBodyAsString());
             throw new IllegalStateException("Innsending til dokarkiv feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);

@@ -79,7 +79,7 @@ public class HentJournalpostService extends BaseService {
             ResponseEntity<Ressurs> response = getRequest(uri, Ressurs.class);
             Assert.notNull(response.getBody(), "Finner ikke ressurs");
             Assert.notNull(response.getBody().getData(), "Ressurs mangler data");
-            Assert.isTrue(response.getBody().getStatus().equals(Ressurs.Status.SUKSESS), "status ok");
+            Assert.isTrue(response.getBody().getStatus().equals(Ressurs.Status.SUKSESS), String.format("Ressurs returnerer %s men har http status kode %s", response.getBody().getStatus(), response.getStatusCode()));
             return Optional.ofNullable(response.getBody().getData().get(fieldName).textValue());
         } catch (HttpClientErrorException.NotFound notFound) {
             throw notFound;

@@ -7,22 +7,21 @@ import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockserver.integration.ClientAndServer;
-import org.mockserver.model.Header;
-import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +54,7 @@ class HentJournalpostServiceTest {
     @Autowired
     private OAuth2AccessTokenService oAuth2AccessTokenService;
 
-    private ClientAndServer mockServer;
+    private MockWebServer server;
 
     @BeforeEach
     void setUp() {
@@ -63,13 +62,15 @@ class HentJournalpostServiceTest {
     }
 
     @AfterAll
-    void tearDown() {
-        mockServer.stop();
+    void tearDown() throws IOException {
+
+        server.shutdown();
     }
 
     @BeforeAll
-    void inti() {
-        mockServer = ClientAndServer.startClientAndServer(18085);
+    void inti() throws IOException {
+        server = new MockWebServer();
+        server.start(18085);
         hentJournalpostService = new HentJournalpostService(OPPSLAG_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
     }
 
@@ -104,19 +105,13 @@ class HentJournalpostServiceTest {
 
     @Test
     void hent_saksnummer_skal_lagre_saksnummer_på_søknad() {
-        mockServer
-            .when(
-                HttpRequest
-                    .request()
-                    .withMethod("GET")
-                    .withPath("/api/journalpost")
-                    .withQueryStringParameter("journalpostId", JOURNALPOST_ID)
-            )
-            .respond(
-                HttpResponse.response("{\"data\": {\"saksnummer\": \"4321\"},\"status\": \"SUKSESS\",\"melding\": \"OK\"}").withStatusCode(200).withHeaders(
-                ).withStatusCode(200).withHeaders(
-                    new Header("Content-Type", "application/json; charset=utf-8"))
-            );
+        MockResponse response = new MockResponse()
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .setResponseCode(200)
+            .setBody("{\"data\": {\"saksnummer\": \"4321\"},\"status\": \"SUKSESS\",\"melding\": \"OK\"}");
+
+
+        server.enqueue(response);
 
         Soknad søknad = new Soknad();
         søknad.setJournalpostID(JOURNALPOST_ID);
@@ -132,20 +127,12 @@ class HentJournalpostServiceTest {
 
     @Test
     void hent_journalpost_skal_lagre_journalpostid_på_søknad() {
-        mockServer
-            .when(
-                HttpRequest
-                    .request()
-                    .withMethod("GET")
-                    .withPath("/api/journalpost")
-                    .withQueryStringParameter("kanalReferanseId", "CallId")
-            )
-            .respond(
-                HttpResponse.response("{\"data\": {\"journalpostId\": \"567\"},\"status\": \"SUKSESS\",\"melding\": \"OK\"}").withStatusCode(200).withHeaders(
-                ).withStatusCode(200).withHeaders(
-                    new Header("Content-Type", "application/json; charset=utf-8"))
-            );
+        MockResponse response = new MockResponse()
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .setResponseCode(200)
+            .setBody("{\"data\": {\"journalpostId\": \"567\"},\"status\": \"SUKSESS\",\"melding\": \"OK\"}");
 
+        server.enqueue(response);
 
         when(søknadRepository.findById(1234L)).thenReturn(Optional.of(new Soknad()));
         ArgumentCaptor<Soknad> captorSøknad = ArgumentCaptor.forClass(Soknad.class);
