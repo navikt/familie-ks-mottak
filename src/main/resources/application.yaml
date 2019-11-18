@@ -1,7 +1,6 @@
 server:
   servlet:
     context-path: /
-
 spring:
   autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   main.banner-mode: "off"
@@ -21,6 +20,10 @@ spring:
           use_jdbc_metadata_defaults: false
   flyway:
     enabled: true
+  http:
+    encoding:
+      charset: UTF-8
+
 
 logging:
   config: "classpath:logback-spring.xml"
@@ -33,6 +36,9 @@ management:
     path-mapping:
       info: "status/isAlive"
   metrics.export.prometheus.enabled: true
+  health:
+    db:
+      enabled: true
 
 FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag/api
 FAMILIE_KS_SAK_API_URL: http://familie-ks-sak/api
