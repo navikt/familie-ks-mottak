@@ -34,7 +34,7 @@ management:
     exposure.include: info, health, metrics, prometheus
     base-path: "/internal"
     path-mapping:
-      info: "status/isAlive"
+      health: "status/isAlive"
   metrics.export.prometheus.enabled: true
   health:
     db:
