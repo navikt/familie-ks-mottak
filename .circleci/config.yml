@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Hent dependencies
           command: |
-            mvn dependency:go-offline
+            mvn --settings .circleci/maven-settings.xml dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
