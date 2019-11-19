@@ -4,6 +4,7 @@ import no.nav.familie.ks.kontrakter.sak.Ressurs
 import no.nav.familie.sikkerhet.OIDCUtil
 import no.nav.familie.prosessering.domene.Status
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -18,6 +19,7 @@ class TaskController(
     }
 
     @GetMapping(path = ["/task"])
+    @Unprotected
     fun task(@RequestHeader status: Status): ResponseEntity<Ressurs> {
         return ResponseEntity.ok(restTaskService.hentTasks(status, hentBrukernavn()))
     }
