@@ -5,7 +5,7 @@ no.nav.security.jwt:
     cookie_name: localhost-idtoken
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-    accepted_audience: ${KS_MOTTAK_FRONTEND_CLIENT_ID}
+    accepted_audience: ${CLIENT_ID}
     cookie_name: azure_token
   client:
     registration:
@@ -46,7 +46,7 @@ FAMILIE_KS_SAK_API_URL: http://localhost:8083/api
 FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
 
 #Brukes til tilgangskontroll av familie-ks-mottak-frontend
-MOTTAK_ROLLE: ROLE_GI_MEG_TILGANG
+MOTTAK_ROLLE: group1
 
 server:
   port: 8084

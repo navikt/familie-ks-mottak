@@ -2,7 +2,6 @@ package no.nav.familie.ks.mottak.app.rest
 
 import no.nav.familie.sikkerhet.OIDCUtil
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
@@ -26,6 +25,6 @@ class UserAuthorizationFilter(@Value("\${MOTTAK_ROLLE:group1}") val påkrevdRoll
         return path.startsWith("/api/soknadmedvedlegg") || path.startsWith("/internal/")
     }
 
-    private fun ourIssuer () = oidcUtil.claimSet()
-    private fun currentUserGroups() = ourIssuer().getAsList("groups")
+    private fun ourIssuer () = oidcUtil.getClaimAsList("groups")
+    private fun currentUserGroups() = ourIssuer()
 }
