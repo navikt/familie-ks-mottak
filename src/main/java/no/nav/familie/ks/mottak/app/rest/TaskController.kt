@@ -19,7 +19,6 @@ class TaskController(
     }
 
     @GetMapping(path = ["/task"])
-    @Unprotected
     fun task(@RequestHeader status: Status): ResponseEntity<Ressurs> {
         return ResponseEntity.ok(restTaskService.hentTasks(status, hentBrukernavn()))
     }
