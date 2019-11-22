@@ -1,25 +1,22 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
-import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
+import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.config.BaseService;
-import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.net.URI;
-import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,7 +38,7 @@ public class JournalføringService extends BaseService {
 
         super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
-        this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv");
+        this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv/v1");
         this.søknadService = søknadService;
     }
 
@@ -60,10 +57,10 @@ public class JournalføringService extends BaseService {
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
         LOG.info("Sender søknad til " + oppslagServiceUri);
         try {
-            ResponseEntity<String>
-                response = postRequest(oppslagServiceUri, arkiverDokumentRequest, String.class);
+            ResponseEntity<Ressurs>
+                response = postRequest(oppslagServiceUri, arkiverDokumentRequest, Ressurs.class);
 
-            return ArkiverDokumentResponseKt.toArkiverDokumentResponse(Objects.requireNonNull(response.getBody()));
+            return Objects.requireNonNull(response.getBody()).convert(ArkiverDokumentResponse.class);
         } catch (RestClientResponseException e) {
             LOG.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}", e.getRawStatusCode(), e.getResponseBodyAsString());
             throw new IllegalStateException("Innsending til dokarkiv feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);

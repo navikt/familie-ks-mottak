@@ -1,5 +1,7 @@
 package no.nav.familie.prosessering.domene;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -18,6 +20,7 @@ public class TaskLogg {
 
     @ManyToOne
     @JoinColumn(name = "task_id")
+    @JsonIgnore
     private Task task;
 
     @Column(name = "endret_av", nullable = false, updatable = false)

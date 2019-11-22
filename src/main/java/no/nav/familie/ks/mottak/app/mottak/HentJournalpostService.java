@@ -1,5 +1,6 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
+import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.config.BaseService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -52,7 +54,7 @@ public class HentJournalpostService extends BaseService {
     public void hentSaksnummer(String søknadId) {
         Soknad søknad = hentSoknad(søknadId);
         String journalpostID = søknad.getJournalpostID();
-        Optional<String> saksnummer = hentFraUrl(oppslagUrl + "/journalpost/%s/sak", journalpostID);
+        Optional<String> saksnummer = hentFraUrl(oppslagUrl + "/journalpost/sak?journalpostId=%s", "saksnummer", journalpostID);
 
         søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException("Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
         søknadService.lagreSøknad(søknad);
@@ -61,26 +63,29 @@ public class HentJournalpostService extends BaseService {
     public void hentJournalpostId(String søknadId, String callId) {
         Soknad søknad = hentSoknad(søknadId);
 
-        Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost/kanalreferanseid/%s", callId);
+        Optional<String> journalpostId = hentFraUrl(oppslagUrl + "/journalpost?kanalReferanseId=%s", "journalpostId", callId);
         søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
         søknad.getVedlegg().clear();
         søknadService.lagreSøknad(søknad);
     }
 
-    private Optional<String> hentFraUrl(String urlformat, Object... searchParams) {
+    private Optional<String> hentFraUrl(String urlformat, String fieldName, Object... searchParams) {
         if (searchParams == null || Arrays.asList(searchParams).contains(null)) {
             return Optional.empty();
         }
         URI uri = URI.create(String.format(urlformat, searchParams));
 
         try {
-            ResponseEntity<String> response = getRequest(uri, String.class);
-            return Optional.ofNullable(response.getBody());
+            ResponseEntity<Ressurs> response = getRequest(uri, Ressurs.class);
+            Assert.notNull(response.getBody(), "Finner ikke ressurs");
+            Assert.notNull(response.getBody().getData(), "Ressurs mangler data");
+            Assert.isTrue(response.getBody().getStatus().equals(Ressurs.Status.SUKSESS), String.format("Ressurs returnerer %s men har http status kode %s", response.getBody().getStatus(), response.getStatusCode()));
+            return Optional.ofNullable(response.getBody().getData().get(fieldName).textValue());
         } catch (HttpClientErrorException.NotFound notFound) {
             throw notFound;
         } catch (HttpStatusCodeException e) {
             LOG.warn("Feil mot {} {} {}", uri, e.getStatusCode(), e.getResponseBodyAsString());
-            throw new RuntimeException(String.format("Error mot %s status=%s body=%s", uri, e.getStatusCode(), e.getResponseBodyAsByteArray()), e);
+            throw new RuntimeException(String.format("Error mot %s status=%s body=%s", uri, e.getStatusCode(), e.getResponseBodyAsString()), e);
         }
     }
 }
