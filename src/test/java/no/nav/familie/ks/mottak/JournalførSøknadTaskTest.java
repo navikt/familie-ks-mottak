@@ -13,10 +13,10 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -61,7 +61,8 @@ public class JournalførSøknadTaskTest {
     }
 
     @Test
-    @Sql("classpath:søknad_med_vedlegg.sql")
+    @Sql("classpath:sql-testdata/søknad_med_vedlegg.sql")
+    @DirtiesContext
     public void skal_hente_journalpost_id_og_slette_vedlegg() throws IOException, InterruptedException {
         MockResponse response = new MockResponse()
             .addHeader("Content-Type", "application/json; charset=utf-8")
