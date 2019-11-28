@@ -52,7 +52,7 @@ public class Task {
     private Long versjon;
 
     // Setter fetch til eager fordi asynctask ikke får lastet disse hvis ikke den er prelastet.
-    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<TaskLogg> logg = new ArrayList<>();
 
     Task() {
