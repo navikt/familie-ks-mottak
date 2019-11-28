@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 @Service
 public class JournalføringService extends BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(JournalføringService.class);
-    private static final String OAUTH2_CLIENT_CONFIG_KEY = "ks-oppslag-clientcredentials";
+    private static final String OAUTH2_CLIENT_CONFIG_KEY = "integrasjoner-clientcredentials";
 
     private final URI oppslagServiceUri;
     private final SøknadService søknadService;
 
     public JournalføringService(
-        @Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagServiceUri,
+        @Value("${FAMILIE_INTEGRASJONER_API_URL}") String oppslagServiceUri,
         RestTemplateBuilder restTemplateBuilderMedProxy,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,

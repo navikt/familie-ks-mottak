@@ -23,13 +23,13 @@ import java.util.Optional;
 @Service
 public class HentJournalpostService extends BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(HentJournalpostService.class);
-    private static final String OAUTH2_CLIENT_CONFIG_KEY = "ks-oppslag-clientcredentials";
+    private static final String OAUTH2_CLIENT_CONFIG_KEY = "integrasjoner-clientcredentials";
 
     private final String oppslagUrl;
     private final SøknadService søknadService;
     private final SøknadRepository søknadRepository;
 
-    public HentJournalpostService(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") String oppslagUrl,
+    public HentJournalpostService(@Value("${FAMILIE_INTEGRASJONER_API_URL}") String oppslagUrl,
                                   RestTemplateBuilder restTemplateBuilderMedProxy,
                                   ClientConfigurationProperties clientConfigurationProperties,
                                   OAuth2AccessTokenService oAuth2AccessTokenService,

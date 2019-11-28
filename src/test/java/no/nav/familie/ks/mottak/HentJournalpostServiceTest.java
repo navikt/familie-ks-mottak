@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_KS_OPPSLAG_API_URL=http://localhost:18085/api"})
+@SpringBootTest(classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"})
 @ActiveProfiles({"integrasjonstest", "mock-oauth"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HentJournalpostServiceTest {
