@@ -26,11 +26,11 @@ public class JournalføringService extends BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(JournalføringService.class);
     private static final String OAUTH2_CLIENT_CONFIG_KEY = "integrasjoner-clientcredentials";
 
-    private final URI oppslagServiceUri;
+    private final URI integrasjonServiceUri;
     private final SøknadService søknadService;
 
     public JournalføringService(
-        @Value("${FAMILIE_INTEGRASJONER_API_URL}") String oppslagServiceUri,
+        @Value("${FAMILIE_INTEGRASJONER_API_URL}") String integrasjonServiceUri,
         RestTemplateBuilder restTemplateBuilderMedProxy,
         ClientConfigurationProperties clientConfigurationProperties,
         OAuth2AccessTokenService oAuth2AccessTokenService,
@@ -38,7 +38,7 @@ public class JournalføringService extends BaseService {
 
         super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
-        this.oppslagServiceUri = URI.create(oppslagServiceUri + "/arkiv/v1");
+        this.integrasjonServiceUri = URI.create(integrasjonServiceUri + "/arkiv/v1");
         this.søknadService = søknadService;
     }
 
@@ -55,10 +55,10 @@ public class JournalføringService extends BaseService {
     }
 
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
-        LOG.info("Sender søknad til " + oppslagServiceUri);
+        LOG.info("Sender søknad til " + integrasjonServiceUri);
         try {
             ResponseEntity<Ressurs>
-                response = postRequest(oppslagServiceUri, arkiverDokumentRequest, Ressurs.class);
+                response = postRequest(integrasjonServiceUri, arkiverDokumentRequest, Ressurs.class);
 
             return Objects.requireNonNull(response.getBody()).convert(ArkiverDokumentResponse.class);
         } catch (RestClientResponseException e) {
