@@ -20,11 +20,11 @@ no.nav.security.jwt:
           client-id: ${CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
-      ks-oppslag-clientcredentials:
-        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+      integrasjoner-clientcredentials:
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: ${KS_OPPSLAG_SCOPE}
+        scope: ${INTEGRASJONER_SCOPE}
         authentication:
           client-id: ${CLIENT_ID}
           client-secret: ${CLIENT_SECRET}

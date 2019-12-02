@@ -40,7 +40,7 @@ management:
     db:
       enabled: true
 
-FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag/api
+FAMILIE_INTEGRASJONER_API_URL: http://familie-integrasjoner/api
 FAMILIE_KS_SAK_API_URL: http://familie-ks-sak/api
 
 CREDENTIAL_USERNAME: INVALID_USERNAME
