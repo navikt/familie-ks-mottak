@@ -60,6 +60,10 @@ public class TaskExecutorService {
     private void executeWork(Task task) {
         task.plukker();
         taskProsesseringRepository.saveAndFlush(task);
-        worker.doTask(task.getId());
+        try {
+            worker.doTask(task.getId());
+        } catch (Exception e) {
+            log.error("task feilet før behandling. Vil bli liggende igjen med status PLUKKET. {}", task, e);
+        }
     }
 }
