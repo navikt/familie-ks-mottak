@@ -92,6 +92,7 @@ class TaskWorker {
             taskDetails.feilet(new TaskFeil(taskDetails, e), maxAntallFeil);
             // lager metrikker på tasks som har feilet max antall ganger.
             if (taskDetails.getStatus() == Status.FEILET) {
+                log.error(taskDetails.getType() + " har feilet " + maxAntallFeil + " ganger.");
                 feiledeTasks.get(taskDetails.getType()).increment();
             }
             secureLog.warn("Fullført kjøring av task '{}', kjøretid={} ms, feilmelding='{}'", taskDetails, (System.currentTimeMillis() - startTidspunkt), e);
