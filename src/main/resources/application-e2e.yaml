@@ -29,6 +29,10 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 spring:
+  cloud:
+    vault:
+      database:
+        role: familie
   datasource:
     url: jdbc:postgresql://postgres-mottak:5432/familieksmottak
     hikari:
