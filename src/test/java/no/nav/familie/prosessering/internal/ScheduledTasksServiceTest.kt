@@ -16,7 +16,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [UnitTestLauncher::class, TokenGeneratorConfiguration::class], properties = ["FAMILIE_KS_OPPSLAG_API_URL=http://localhost:18085/api"])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [UnitTestLauncher::class, TokenGeneratorConfiguration::class], properties = ["FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"])
 @ActiveProfiles("integrasjonstest", "mock-oauth")
 class ScheduledTasksServiceTest {
 

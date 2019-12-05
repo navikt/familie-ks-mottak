@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_KS_OPPSLAG_API_URL=http://localhost:18085/api"})
+@SpringBootTest(classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"})
 @ActiveProfiles({"integrasjonstest", "mock-oauth"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HentJournalpostServiceTest {
@@ -38,7 +38,7 @@ class HentJournalpostServiceTest {
     private static final String JOURNALPOST_ID = "567";
     private static final String SØKNAD_ID = "1234";
     private static final String SAKSNUMMER = "4321";
-    private static final String OPPSLAG_BASE_URL = "http://localhost:18085/api";
+    private static final String INTEGRASJONER_BASE_URL = "http://localhost:18085/api";
     private static final String CALL_ID = "CallId";
 
 
@@ -58,7 +58,7 @@ class HentJournalpostServiceTest {
 
     @BeforeEach
     void setUp() {
-        hentJournalpostService = new HentJournalpostService(OPPSLAG_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
+        hentJournalpostService = new HentJournalpostService(INTEGRASJONER_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
     }
 
     @AfterAll
@@ -71,7 +71,7 @@ class HentJournalpostServiceTest {
     void inti() throws IOException {
         server = new MockWebServer();
         server.start(18085);
-        hentJournalpostService = new HentJournalpostService(OPPSLAG_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
+        hentJournalpostService = new HentJournalpostService(INTEGRASJONER_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
     }
 
     @ParameterizedTest
