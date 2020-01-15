@@ -30,7 +30,8 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"})
+@SpringBootTest(classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class},
+                properties = {"FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"})
 @ActiveProfiles({"integrasjonstest", "mock-oauth"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HentJournalpostServiceTest {
@@ -58,7 +59,12 @@ class HentJournalpostServiceTest {
 
     @BeforeEach
     void setUp() {
-        hentJournalpostService = new HentJournalpostService(INTEGRASJONER_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
+        hentJournalpostService = new HentJournalpostService(INTEGRASJONER_BASE_URL,
+                                                            restTemplateBuilder,
+                                                            clientConfigurationProperties,
+                                                            oAuth2AccessTokenService,
+                                                            søknadService,
+                                                            søknadRepository);
     }
 
     @AfterAll
@@ -71,7 +77,12 @@ class HentJournalpostServiceTest {
     void inti() throws IOException {
         server = new MockWebServer();
         server.start(18085);
-        hentJournalpostService = new HentJournalpostService(INTEGRASJONER_BASE_URL, restTemplateBuilder, clientConfigurationProperties, oAuth2AccessTokenService, søknadService, søknadRepository);
+        hentJournalpostService = new HentJournalpostService(INTEGRASJONER_BASE_URL,
+                                                            restTemplateBuilder,
+                                                            clientConfigurationProperties,
+                                                            oAuth2AccessTokenService,
+                                                            søknadService,
+                                                            søknadRepository);
     }
 
     @ParameterizedTest
@@ -123,33 +134,5 @@ class HentJournalpostServiceTest {
 
         verify(søknadService, times(1)).lagreSøknad(captorSøknad.capture());
         assertThat(captorSøknad.getValue().getSaksnummer()).isEqualTo(SAKSNUMMER);
-    }
-
-    @Test
-    void hent_journalpost_skal_lagre_journalpostid_på_søknad() {
-        MockResponse response = new MockResponse()
-            .addHeader("Content-Type", "application/json; charset=utf-8")
-            .setResponseCode(200)
-            .setBody("{\"data\": {\"journalpostId\": \"567\"},\"status\": \"SUKSESS\",\"melding\": \"OK\"}");
-
-        server.enqueue(response);
-
-        when(søknadRepository.findById(1234L)).thenReturn(Optional.of(new Soknad()));
-        ArgumentCaptor<Soknad> captorSøknad = ArgumentCaptor.forClass(Soknad.class);
-
-        hentJournalpostService.hentJournalpostId(SØKNAD_ID, CALL_ID);
-
-        verify(søknadService, times(1)).lagreSøknad(captorSøknad.capture());
-        assertThat(captorSøknad.getValue().getJournalpostID()).isEqualTo(JOURNALPOST_ID);
-    }
-
-    @Test
-    void hent_journalpost_skal_kaste_feil_hvis_søknad_mangler_callId() {
-        when(søknadRepository.findById(Long.valueOf(SØKNAD_ID))).thenReturn(Optional.of(new Soknad()));
-
-
-        RuntimeException e = assertThrows(RuntimeException.class, () -> hentJournalpostService.hentJournalpostId(SØKNAD_ID, null));
-
-        assertThat(e.getMessage()).isEqualTo("Finner ikke journalpost for kanalReferanseId=null, søknadId=" + SØKNAD_ID);
     }
 }
