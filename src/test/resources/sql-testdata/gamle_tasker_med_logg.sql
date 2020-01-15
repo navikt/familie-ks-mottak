@@ -1,8 +1,8 @@
-INSERT INTO task (id, payload, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) VALUES (1000000, '1002352', 'FERDIG', 2, '2019-10-24 10:38:13.819', 'hentJournalpostIdFraJoarkTask', 'callId=CallId_1571906292358_2053169736
+INSERT INTO task (id, payload, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) VALUES (1000000, '1002352', 'FERDIG', 2, '2019-10-24 10:38:13.819', 'journalførSøknad', 'callId=CallId_1571906292358_2053169736
 ', '2019-10-24 10:38:13.818236', null);
 INSERT INTO task (id, payload, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) VALUES (1000002, '1002351', 'KLAR_TIL_PLUKK', 4, '2019-10-24 10:15:44.061', 'hentSaksnummerFraJoark', 'callId=CallId_1571904940794_1993984421
 ', '2019-10-24 10:45:59.678770', null);
-INSERT INTO task (id, payload, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) VALUES (1000003, '1002351', 'FERDIG', 2, '2019-10-24 10:15:42.453', 'hentJournalpostIdFraJoarkTask', 'callId=CallId_1571904940794_1993984421
+INSERT INTO task (id, payload, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) VALUES (1000003, '1002351', 'FERDIG', 2, '2019-10-24 10:15:42.453', 'journalførSøknad', 'callId=CallId_1571904940794_1993984421
 ', '2019-10-24 10:15:42.453038', null);
 
 INSERT INTO task_logg (id, task_id, type, node, opprettet_tid, melding, endret_av) VALUES (40010, 1000000, 'UBEHANDLET', 'familie-ks-mottak-5fd7d6649b-gnx4j', '2019-10-24 10:38:13.819', null, 'VL');

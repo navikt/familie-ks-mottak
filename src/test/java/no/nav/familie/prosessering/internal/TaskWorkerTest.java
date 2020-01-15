@@ -1,9 +1,7 @@
 package no.nav.familie.prosessering.internal;
 
-import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
-import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.SendSøknadTilSakTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.Status;
@@ -81,17 +79,5 @@ public class TaskWorkerTest {
 
         henvendelse1 = repository.findById(henvendelse1.getId()).orElseThrow();
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.FEILET);
-    }
-
-
-    @Test
-    public void skal_hente_journalpost_id_og_slette_vedlegg() {
-        Soknad soknad = new Soknad();
-        soknad = søknadRepository.saveAndFlush(soknad);
-        var task = Task.nyTask(HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK, soknad.getId().toString());
-        repository.saveAndFlush(task);
-        assertThat(task.getStatus()).isEqualTo(Status.UBEHANDLET);
-
-        worker.doActualWork(task.getId());
     }
 }

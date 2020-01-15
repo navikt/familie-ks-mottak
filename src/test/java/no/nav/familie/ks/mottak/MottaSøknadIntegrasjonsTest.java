@@ -2,7 +2,6 @@ package no.nav.familie.ks.mottak;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
@@ -10,7 +9,6 @@ import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.app.mottak.SøknadDto;
 import no.nav.familie.ks.mottak.app.mottak.VedleggDto;
-import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
 import no.nav.familie.prosessering.domene.Task;
@@ -19,7 +17,6 @@ import no.nav.security.token.support.test.JwtTokenGenerator;
 import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.eclipse.jetty.http.HttpHeader;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +41,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("integrasjonstest")
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+                classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class})
 public class MottaSøknadIntegrasjonsTest {
 
     private static final String INNLOGGET_BRUKER = "12345678911";
@@ -107,7 +105,7 @@ public class MottaSøknadIntegrasjonsTest {
         List<Task> tasks = taskRepository.findAll();
 
         assertThat(tasks.size()).isEqualTo(1);
-        assertThat(tasks.get(0).getType()).isEqualTo(HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK);
+        assertThat(tasks.get(0).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
     }
 
     @DirtiesContext
@@ -128,11 +126,11 @@ public class MottaSøknadIntegrasjonsTest {
 
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/soknadmedvedlegg"))
-                .header(HttpHeader.CONTENT_TYPE.asString(), MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
-                .header("journalforSelv", Boolean.toString(skalJournalFøreSelv))
-                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(input)))
-                .build();
+                                             .header(HttpHeader.CONTENT_TYPE.asString(), MediaType.APPLICATION_JSON)
+                                             .header(AUTHORIZATION_HEADER, "Bearer " + signedJWT.serialize())
+                                             .header("journalforSelv", Boolean.toString(skalJournalFøreSelv))
+                                             .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(input)))
+                                             .build();
 
             return client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {

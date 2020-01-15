@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Service
 public class HentJournalpostService extends BaseService {
+
     private static final Logger LOG = LoggerFactory.getLogger(HentJournalpostService.class);
     private static final String OAUTH2_CLIENT_CONFIG_KEY = "integrasjoner-clientcredentials";
 
@@ -45,7 +46,8 @@ public class HentJournalpostService extends BaseService {
 
     private Soknad hentSoknad(String søknadId) {
         try {
-            return søknadRepository.findById(Long.valueOf(søknadId)).orElseThrow(() -> new RuntimeException("Finner ikke søknad med id=" + søknadId));
+            return søknadRepository.findById(Long.valueOf(søknadId))
+                                   .orElseThrow(() -> new RuntimeException("Finner ikke søknad med id=" + søknadId));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Kan ikke hente Søknad for søknadid=" + søknadId);
         }
@@ -54,18 +56,11 @@ public class HentJournalpostService extends BaseService {
     public void hentSaksnummer(String søknadId) {
         Soknad søknad = hentSoknad(søknadId);
         String journalpostID = søknad.getJournalpostID();
-        Optional<String> saksnummer = hentFraUrl(integrasjonServiceUri + "/journalpost/sak?journalpostId=%s", "saksnummer", journalpostID);
+        Optional<String> saksnummer =
+            hentFraUrl(integrasjonServiceUri + "/journalpost/sak?journalpostId=%s", "saksnummer", journalpostID);
 
-        søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException("Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
-        søknadService.lagreSøknad(søknad);
-    }
-
-    public void hentJournalpostId(String søknadId, String callId) {
-        Soknad søknad = hentSoknad(søknadId);
-
-        Optional<String> journalpostId = hentFraUrl(integrasjonServiceUri + "/journalpost?kanalReferanseId=%s", "journalpostId", callId);
-        søknad.setJournalpostID(journalpostId.orElseThrow(() -> new RuntimeException("Finner ikke journalpost for kanalReferanseId=" + callId + ", søknadId=" + søknadId)));
-        søknad.getVedlegg().clear();
+        søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException(
+            "Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
         søknadService.lagreSøknad(søknad);
     }
 
@@ -79,13 +74,19 @@ public class HentJournalpostService extends BaseService {
             ResponseEntity<Ressurs> response = getRequest(uri, Ressurs.class);
             Assert.notNull(response.getBody(), "Finner ikke ressurs");
             Assert.notNull(response.getBody().getData(), "Ressurs mangler data");
-            Assert.isTrue(response.getBody().getStatus().equals(Ressurs.Status.SUKSESS), String.format("Ressurs returnerer %s men har http status kode %s", response.getBody().getStatus(), response.getStatusCode()));
+            Assert.isTrue(response.getBody().getStatus().equals(Ressurs.Status.SUKSESS),
+                          String.format("Ressurs returnerer %s men har http status kode %s",
+                                        response.getBody().getStatus(),
+                                        response.getStatusCode()));
             return Optional.ofNullable(response.getBody().getData().get(fieldName).textValue());
         } catch (HttpClientErrorException.NotFound notFound) {
             throw notFound;
         } catch (HttpStatusCodeException e) {
             LOG.warn("Feil mot {} {} {}", uri, e.getStatusCode(), e.getResponseBodyAsString());
-            throw new RuntimeException(String.format("Error mot %s status=%s body=%s", uri, e.getStatusCode(), e.getResponseBodyAsString()), e);
+            throw new RuntimeException(String.format("Error mot %s status=%s body=%s",
+                                                     uri,
+                                                     e.getStatusCode(),
+                                                     e.getResponseBodyAsString()), e);
         }
     }
 }

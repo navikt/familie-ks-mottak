@@ -1,10 +1,8 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
-import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
-import no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.ks.mottak.config.BaseService;
 import no.nav.familie.prosessering.domene.Task;
@@ -15,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -52,7 +49,7 @@ public class SøknadService extends BaseService {
     }
 
     @Transactional
-    public void lagreSoknadOgLagTask(SøknadDto søknadDto, boolean skalJournalføreSelv) {
+    public void lagreSoknadOgLagTask(SøknadDto søknadDto) {
         Soknad soknad = new Soknad();
         soknad.setSoknadJson(søknadDto.getSoknad());
         List<Vedlegg> vedlegg = søknadDto.getVedlegg().stream().map(vedleggDto -> {
@@ -67,12 +64,7 @@ public class SøknadService extends BaseService {
 
         lagreSøknad(soknad);
 
-        final Task task;
-        if (skalJournalføreSelv) {
-            task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString());
-        } else {
-            task = Task.nyTask(HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK, soknad.getId().toString());
-        }
+        final Task task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString());
 
         taskRepository.save(task);
     }
@@ -91,7 +83,8 @@ public class SøknadService extends BaseService {
             postRequest(sakServiceUri, sendTilSakDto);
         } catch (RestClientResponseException e) {
             LOG.warn("Innsending til sak feilet. Responskode: {}, body: {}", e.getRawStatusCode(), e.getResponseBodyAsString());
-            throw new IllegalStateException("Innsending til sak feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);
+            throw new IllegalStateException(
+                "Innsending til sak feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);
         } catch (RestClientException e) {
             throw new IllegalStateException("Innsending til sak feilet.", e);
         }
@@ -99,7 +92,8 @@ public class SøknadService extends BaseService {
 
     Soknad hentSoknad(String søknadId) {
         try {
-            return søknadRepository.findById(Long.valueOf(søknadId)).orElseThrow(() -> new RuntimeException("Finner ikke søknad med id=" + søknadId));
+            return søknadRepository.findById(Long.valueOf(søknadId))
+                                   .orElseThrow(() -> new RuntimeException("Finner ikke søknad med id=" + søknadId));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Kan ikke hente Søknad for søknadid=" + søknadId);
         }

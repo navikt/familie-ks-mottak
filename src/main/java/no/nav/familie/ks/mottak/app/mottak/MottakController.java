@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
 
@@ -24,10 +26,8 @@ public class MottakController {
     }
 
     @PostMapping(value = "/soknadmedvedlegg", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity mottaSoknadMedVedlegg(@RequestBody SøknadDto søknad,
-                                                @Nullable
-                                                @RequestHeader("journalforSelv") String journalførSelv) {
-        søknadService.lagreSoknadOgLagTask(søknad, Boolean.parseBoolean(journalførSelv));
+    public ResponseEntity mottaSoknadMedVedlegg(@RequestBody SøknadDto søknad) {
+        søknadService.lagreSoknadOgLagTask(søknad);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

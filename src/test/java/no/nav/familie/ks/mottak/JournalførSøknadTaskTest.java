@@ -3,6 +3,7 @@ package no.nav.familie.ks.mottak;
 import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
+import no.nav.familie.ks.mottak.app.task.HentSaksnummerFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
@@ -26,17 +27,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
-import static no.nav.familie.ks.mottak.app.task.HentJournalpostIdFraJoarkTask.HENT_JOURNALPOSTID_FRA_JOARK;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class}, properties = {"FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+                classes = {UnitTestLauncher.class, TokenGeneratorConfiguration.class},
+                properties = {"FAMILIE_INTEGRASJONER_API_URL=http://localhost:18085/api"})
 @ActiveProfiles({"integrasjonstest", "mock-oauth"})
 public class JournalførSøknadTaskTest {
 
     public static final Long SØKNAD_ID = 1L;
-    public static final String DOKARKIV_POST_JSON = "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"},{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
-    public static final String DOKARKIV_SUCCESS_RESPONSE = Ressurs.Companion.success(Map.of("journalpostId", "123"), "OK").toJson();
+    public static final String DOKARKIV_POST_JSON =
+        "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"},{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
+    public static final String DOKARKIV_SUCCESS_RESPONSE =
+        Ressurs.Companion.success(Map.of("journalpostId", "123"), "OK").toJson();
     @Autowired
     private TaskRepository repository;
 
@@ -70,7 +74,8 @@ public class JournalførSøknadTaskTest {
             .setBody(DOKARKIV_SUCCESS_RESPONSE);
         server.enqueue(response);
 
-        var task = repository.saveAndFlush(Task.nyTask(HENT_JOURNALPOSTID_FRA_JOARK, SØKNAD_ID.toString()));
+        var task =
+            repository.saveAndFlush(Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, SØKNAD_ID.toString()));
 
         journalførSøknadTask.doTask(task);
 
