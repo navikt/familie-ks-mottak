@@ -39,14 +39,14 @@ public class TaskWorkerTest {
     private SøknadRepository søknadRepository;
 
     @Autowired
-    private TaskExecutorService henvendelseService;
+    private TaskStepExecutorService henvendelseService;
 
     @Autowired
     private TaskWorker worker;
 
     @Test
     public void skal_behandle_task() {
-        var henvendelse1 = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
 
@@ -59,7 +59,7 @@ public class TaskWorkerTest {
 
     @Test
     public void skal_håndtere_feil() {
-        var henvendelse1 = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
         doThrow(new IllegalStateException()).when(task).doTask(any());

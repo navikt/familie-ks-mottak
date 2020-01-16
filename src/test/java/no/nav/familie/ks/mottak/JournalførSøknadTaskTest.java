@@ -75,7 +75,7 @@ public class JournalførSøknadTaskTest {
         server.enqueue(response);
 
         var task =
-            repository.saveAndFlush(Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, SØKNAD_ID.toString()));
+            repository.saveAndFlush(Task.Companion.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, SØKNAD_ID.toString()));
 
         journalførSøknadTask.doTask(task);
 

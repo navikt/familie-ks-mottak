@@ -64,7 +64,7 @@ public class SøknadService extends BaseService {
 
         lagreSøknad(soknad);
 
-        final Task task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString());
+        final Task task = Task.Companion.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString());
 
         taskRepository.save(task);
     }

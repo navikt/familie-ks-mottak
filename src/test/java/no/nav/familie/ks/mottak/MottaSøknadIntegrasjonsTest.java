@@ -105,7 +105,7 @@ public class MottaSøknadIntegrasjonsTest {
         List<Task> tasks = taskRepository.findAll();
 
         assertThat(tasks.size()).isEqualTo(1);
-        assertThat(tasks.get(0).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
+        assertThat(tasks.get(0).getTaskStepType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
     }
 
     @DirtiesContext
@@ -115,7 +115,7 @@ public class MottaSøknadIntegrasjonsTest {
         List<Task> tasks = taskRepository.findAll();
 
         assertThat(tasks.size()).isEqualTo(2);
-        assertThat(tasks.get(1).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
+        assertThat(tasks.get(1).getTaskStepType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
         setupIsDone = false;
     }
 

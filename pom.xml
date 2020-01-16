@@ -58,6 +58,11 @@
                 <version>${felles.version}</version>
             </dependency>
             <dependency>
+                <groupId>no.nav.familie.felles</groupId>
+                <artifactId>prosessering</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>42.2.9</version>
@@ -139,6 +144,10 @@
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
             <artifactId>log</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>prosessering</artifactId>
         </dependency>
 
         <!-- Database -->
