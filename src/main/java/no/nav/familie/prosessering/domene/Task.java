@@ -95,7 +95,7 @@ public class Task {
     }
 
     public Task avvikshåndter(Avvikstype avviksType, String årsak, String endretAv) {
-        this.status = Status.AVVIKS_HÅNDTERT;
+        this.status = Status.AVVIKSHÅNDTERT;
         this.avvikstype = avviksType;
         this.logg.add(new TaskLogg(this, LoggType.AVVIKS_HÅNDTERT, årsak, endretAv));
         return this;
