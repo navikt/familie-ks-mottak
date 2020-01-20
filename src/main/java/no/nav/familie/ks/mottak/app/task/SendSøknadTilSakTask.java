@@ -29,7 +29,9 @@ public class SendSøknadTilSakTask implements AsyncTask {
     }
 
     @Override
-    public void onCompletion(Task task){
-        taskRepository.save(Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.getPayload()));
+    public void onCompletion(Task task) {
+        Task nesteTask = Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.getPayload());
+        nesteTask.getMetadata().putAll(task.getMetadata());
+        taskRepository.save(nesteTask);
     }
 }

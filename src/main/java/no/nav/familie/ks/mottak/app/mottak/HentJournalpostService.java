@@ -53,7 +53,7 @@ public class HentJournalpostService extends BaseService {
         }
     }
 
-    public void hentSaksnummer(String søknadId) {
+    public String hentSaksnummer(String søknadId) {
         Soknad søknad = hentSoknad(søknadId);
         String journalpostID = søknad.getJournalpostID();
         Optional<String> saksnummer =
@@ -62,6 +62,7 @@ public class HentJournalpostService extends BaseService {
         søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException(
             "Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
         søknadService.lagreSøknad(søknad);
+        return saksnummer.get();
     }
 
     private Optional<String> hentFraUrl(String urlformat, String fieldName, Object... searchParams) {

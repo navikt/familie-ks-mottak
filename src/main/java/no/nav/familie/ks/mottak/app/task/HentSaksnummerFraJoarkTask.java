@@ -33,7 +33,9 @@ public class HentSaksnummerFraJoarkTask implements AsyncTask {
     @Override
     public void doTask(Task task) {
         try {
-            hentJournalpostService.hentSaksnummer(task.getPayload());
+            String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
+            task.getMetadata().put("saksnummer", saksnummer);
+            taskRepository.saveAndFlush(task);
         } catch (HttpClientErrorException.NotFound notFound) {
             LOG.info("Hent saksnummer returnerte 404 responsebody={}", notFound.getResponseBodyAsString());
             task.setTriggerTid(LocalDateTime.now().plusMinutes(15));
@@ -45,6 +47,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTask {
     @Override
     public void onCompletion(Task task) {
         Task nesteTask = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload());
+        nesteTask.getMetadata().putAll(task.getMetadata());
         taskRepository.save(nesteTask);
     }
 }
