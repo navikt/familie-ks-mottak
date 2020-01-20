@@ -28,12 +28,15 @@ public class JournalførSøknadTask implements AsyncTask {
 
     @Override
     public void doTask(Task task) {
-        journalføringService.journalførSøknad(task.getPayload());
+        String journlpostId = journalføringService.journalførSøknad(task.getPayload());
+        task.getMetadata().put("journalpostID", journlpostId);
+        taskRepository.saveAndFlush(task);
     }
 
     @Override
-    public void onCompletion(Task task){
-        Task nesteTask = Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload());
+    public void onCompletion(Task task) {
+        Task nesteTask = Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.getPayload());
+        nesteTask.getMetadata().putAll(task.getMetadata());
         taskRepository.save(nesteTask);
     }
- }
+}

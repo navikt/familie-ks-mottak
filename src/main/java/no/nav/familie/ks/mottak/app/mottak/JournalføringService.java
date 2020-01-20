@@ -42,7 +42,7 @@ public class JournalføringService extends BaseService {
         this.søknadService = søknadService;
     }
 
-    public void journalførSøknad(String søknadId) {
+    public String journalførSøknad(String søknadId) {
         Soknad søknad = søknadService.hentSoknad(søknadId);
         List<Dokument> dokumenter = søknad.getVedlegg().stream()
                                           .map(this::tilDokument)
@@ -52,6 +52,7 @@ public class JournalføringService extends BaseService {
         søknad.setJournalpostID(journalpostID);
         søknad.getVedlegg().clear();
         søknadService.lagreSøknad(søknad);
+        return journalpostID;
     }
 
     private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
