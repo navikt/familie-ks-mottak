@@ -1,7 +1,7 @@
 package no.nav.familie.ks.mottak.config;
 
-import no.nav.familie.ks.kontrakter.dokarkiv.api.ArkiverDokumentRequest;
-import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import no.nav.familie.kontrakter.felles.Ressurs;
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest;
 import no.nav.familie.ks.mottak.app.mottak.SendTilSakDto;
 import no.nav.familie.log.NavHttpHeaders;
 import no.nav.familie.log.mdc.MDCConstants;

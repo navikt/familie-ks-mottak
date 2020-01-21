@@ -1,7 +1,9 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
-import no.nav.familie.ks.kontrakter.dokarkiv.api.*;
-import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import no.nav.familie.kontrakter.felles.Ressurs;
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest;
+import no.nav.familie.kontrakter.felles.arkivering.Dokument;
+import no.nav.familie.kontrakter.felles.arkivering.FilType;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.config.BaseService;
@@ -18,7 +20,7 @@ import org.springframework.web.client.RestClientResponseException;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,20 +50,24 @@ public class JournalføringService extends BaseService {
                                           .map(this::tilDokument)
                                           .collect(Collectors.toList());
         var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
-        String journalpostID = send(arkiverDokumentRequest).getJournalpostId();
+        String journalpostID = send(arkiverDokumentRequest);
         søknad.setJournalpostID(journalpostID);
         søknad.getVedlegg().clear();
         søknadService.lagreSøknad(søknad);
         return journalpostID;
     }
 
-    private ArkiverDokumentResponse send(ArkiverDokumentRequest arkiverDokumentRequest) {
-        LOG.info("Sender søknad til " + integrasjonServiceUri);
+    private String send(ArkiverDokumentRequest arkiverDokumentRequest) {
+        LOG.info("Sender søknad til {}", integrasjonServiceUri);
         try {
             ResponseEntity<Ressurs>
                 response = postRequest(integrasjonServiceUri, arkiverDokumentRequest, Ressurs.class);
 
-            return Objects.requireNonNull(response.getBody()).convert(ArkiverDokumentResponse.class);
+            if (response != null && response.getBody() != null && response.getBody().getData() != null) {
+                return ((Map<String, String>) response.getBody().getData()).get("journalpostId");
+            } else {
+                throw new RuntimeException("Response mottat ved arkivering er null");
+            }
         } catch (RestClientResponseException e) {
             LOG.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}", e.getRawStatusCode(), e.getResponseBodyAsString());
             throw new IllegalStateException("Innsending til dokarkiv feilet. Status: " + e.getRawStatusCode() + ", body: " + e.getResponseBodyAsString(), e);
@@ -71,8 +77,8 @@ public class JournalføringService extends BaseService {
     }
 
     private Dokument tilDokument(Vedlegg vedlegg) {
-        DokumentType dokumentType = vedlegg.getFilnavn().equalsIgnoreCase("hovedskjema") ?
-            DokumentType.KONTANTSTØTTE_SØKNAD : DokumentType.KONTANTSTØTTE_SØKNAD_VEDLEGG;
-        return new Dokument(vedlegg.getData(), FilType.PDFA, vedlegg.getFilnavn(), dokumentType);
+        String dokumentType = vedlegg.getFilnavn().equalsIgnoreCase("hovedskjema") ?
+            "KONTANTSTØTTE_SØKNAD" : "KONTANTSTØTTE_SØKNAD_VEDLEGG";
+        return new Dokument(vedlegg.getData(), FilType.PDFA, vedlegg.getFilnavn(), null, dokumentType);
     }
 }

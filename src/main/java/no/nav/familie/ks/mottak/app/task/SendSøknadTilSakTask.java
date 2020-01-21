@@ -31,8 +31,7 @@ public class SendSøknadTilSakTask implements AsyncTaskStep {
 
     @Override
     public void onCompletion(Task task) {
-        Task nesteTask = Task.Companion.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.getPayload());
-        nesteTask.getMetadata().putAll(task.getMetadata());
+        Task nesteTask = Task.Companion.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.getPayload(), task.getMetadata());
         taskRepository.save(nesteTask);
     }
 
