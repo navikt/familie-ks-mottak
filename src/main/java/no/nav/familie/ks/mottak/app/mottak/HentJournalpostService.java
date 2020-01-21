@@ -1,6 +1,6 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
-import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import no.nav.familie.kontrakter.felles.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.config.BaseService;
@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -79,7 +80,8 @@ public class HentJournalpostService extends BaseService {
                           String.format("Ressurs returnerer %s men har http status kode %s",
                                         response.getBody().getStatus(),
                                         response.getStatusCode()));
-            return Optional.ofNullable(response.getBody().getData().get(fieldName).textValue());
+            Map<String, String> body = (Map) response.getBody().getData();
+            return Optional.ofNullable(body.get(fieldName));
         } catch (HttpClientErrorException.NotFound notFound) {
             throw notFound;
         } catch (HttpStatusCodeException e) {

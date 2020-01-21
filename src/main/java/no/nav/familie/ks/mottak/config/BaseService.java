@@ -1,9 +1,9 @@
 package no.nav.familie.ks.mottak.config;
 
-import no.nav.familie.http.client.NavHttpHeaders;
-import no.nav.familie.ks.kontrakter.dokarkiv.api.ArkiverDokumentRequest;
-import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import no.nav.familie.kontrakter.felles.Ressurs;
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest;
 import no.nav.familie.ks.mottak.app.mottak.SendTilSakDto;
+import no.nav.familie.log.NavHttpHeaders;
 import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
@@ -40,7 +40,7 @@ public class BaseService {
     protected <T> ResponseEntity<T> getRequest(URI uri, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), responseType);
     }
@@ -50,7 +50,7 @@ public class BaseService {
                                                 Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
@@ -58,7 +58,7 @@ public class BaseService {
     protected ResponseEntity<Ressurs> postRequest(URI uri, SendTilSakDto requestBody) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), Ressurs.class);
     }

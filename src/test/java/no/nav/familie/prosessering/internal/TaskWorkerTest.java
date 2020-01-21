@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Properties;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -39,14 +41,14 @@ public class TaskWorkerTest {
     private SøknadRepository søknadRepository;
 
     @Autowired
-    private TaskExecutorService henvendelseService;
+    private TaskStepExecutorService henvendelseService;
 
     @Autowired
     private TaskWorker worker;
 
     @Test
     public void skal_behandle_task() {
-        var henvendelse1 = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}", new Properties());
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
 
@@ -59,7 +61,7 @@ public class TaskWorkerTest {
 
     @Test
     public void skal_håndtere_feil() {
-        var henvendelse1 = Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}");
+        var henvendelse1 = Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, "{'a'='b'}", new Properties());
         repository.saveAndFlush(henvendelse1);
         assertThat(henvendelse1.getStatus()).isEqualTo(Status.UBEHANDLET);
         doThrow(new IllegalStateException()).when(task).doTask(any());

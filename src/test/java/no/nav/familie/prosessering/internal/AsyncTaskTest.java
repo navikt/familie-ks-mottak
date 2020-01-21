@@ -2,8 +2,8 @@ package no.nav.familie.prosessering.internal;
 
 import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.ks.mottak.config.ApplicationConfig;
-import no.nav.familie.prosessering.AsyncTask;
-import no.nav.familie.prosessering.TaskBeskrivelse;
+import no.nav.familie.prosessering.AsyncTaskStep;
+import no.nav.familie.prosessering.TaskStepBeskrivelse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -31,26 +31,26 @@ public class AsyncTaskTest {
     private SøknadService søknadService;
 
     @Autowired
-    private List<AsyncTask> tasker;
+    private List<AsyncTaskStep> tasker;
 
     @Test
     public void skal_ha_annotasjon() {
         assertThat(tasker.stream().anyMatch(this::harIkkePåkrevdAnnotasjon)).isFalse();
     }
 
-    private boolean harIkkePåkrevdAnnotasjon(AsyncTask it) {
-        return !AnnotationUtils.isAnnotationDeclaredLocally(TaskBeskrivelse.class, it.getClass());
+    private boolean harIkkePåkrevdAnnotasjon(AsyncTaskStep it) {
+        return !AnnotationUtils.isAnnotationDeclaredLocally(TaskStepBeskrivelse.class, it.getClass());
     }
 
     @Test
-    public void skal_ha_unike_nav() {
-        final var taskTyper = tasker.stream().map(this::finnAnnotasjon).map(TaskBeskrivelse::taskType).collect(Collectors.toList());
+    public void skal_ha_unike_navn() {
+        final var taskTyper = tasker.stream().map(this::finnAnnotasjon).map(TaskStepBeskrivelse::taskStepType).collect(Collectors.toList());
 
         assertThat(taskTyper).isEqualTo(taskTyper.stream().distinct().collect(Collectors.toList()));
     }
 
-    private TaskBeskrivelse finnAnnotasjon(AsyncTask task) {
+    private TaskStepBeskrivelse finnAnnotasjon(AsyncTaskStep task) {
         final Class<?> aClass = AopProxyUtils.ultimateTargetClass(task);
-        return AnnotationUtils.findAnnotation(aClass, TaskBeskrivelse.class);
+        return AnnotationUtils.findAnnotation(aClass, TaskStepBeskrivelse.class);
     }
 }

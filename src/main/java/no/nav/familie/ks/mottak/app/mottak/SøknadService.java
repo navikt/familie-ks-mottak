@@ -21,6 +21,7 @@ import org.springframework.web.client.RestClientResponseException;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,8 +64,9 @@ public class SøknadService extends BaseService {
         soknad.setFnr(søknadDto.getFnr());
 
         lagreSøknad(soknad);
-
-        final Task task = Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString());
+        Properties properties= new Properties();
+        properties.setProperty("søkerFødselsnummer", søknadDto.getFnr());
+        final Task task = Task.Companion.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString(), properties);
 
         taskRepository.save(task);
     }

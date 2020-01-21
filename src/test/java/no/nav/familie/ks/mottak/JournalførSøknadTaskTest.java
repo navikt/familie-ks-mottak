@@ -1,6 +1,6 @@
 package no.nav.familie.ks.mottak;
 
-import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import no.nav.familie.kontrakter.felles.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
 import no.nav.familie.ks.mottak.app.task.HentSaksnummerFraJoarkTask;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,7 +39,9 @@ public class JournalførSøknadTaskTest {
 
     public static final Long SØKNAD_ID = 1L;
     public static final String DOKARKIV_POST_JSON =
-        "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"},{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
+        "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":" +
+        "[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"tittel\":null,\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"}," +
+        "{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"tittel\":null,\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
     public static final String DOKARKIV_SUCCESS_RESPONSE =
         Ressurs.Companion.success(Map.of("journalpostId", "123"), "OK").toJson();
     @Autowired
@@ -75,7 +78,9 @@ public class JournalførSøknadTaskTest {
         server.enqueue(response);
 
         var task =
-            repository.saveAndFlush(Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, SØKNAD_ID.toString()));
+            repository.saveAndFlush(Task.Companion.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
+                                                          SØKNAD_ID.toString(),
+                                                          new Properties()));
 
         journalførSøknadTask.doTask(task);
 
