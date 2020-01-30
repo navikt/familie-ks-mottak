@@ -49,7 +49,7 @@ public class JournalføringService extends BaseService {
         List<Dokument> dokumenter = søknad.getVedlegg().stream()
                                           .map(this::tilDokument)
                                           .collect(Collectors.toList());
-        var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter);
+        var arkiverDokumentRequest = new ArkiverDokumentRequest(søknad.getFnr(), true, dokumenter, null, null);
         String journalpostID = send(arkiverDokumentRequest);
         søknad.setJournalpostID(journalpostID);
         søknad.getVedlegg().clear();
