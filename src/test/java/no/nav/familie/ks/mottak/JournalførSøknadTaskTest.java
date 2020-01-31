@@ -41,7 +41,8 @@ public class JournalførSøknadTaskTest {
     public static final String DOKARKIV_POST_JSON =
         "{\"fnr\":\"fnr\",\"forsøkFerdigstill\":true,\"dokumenter\":" +
         "[{\"dokument\":\"q83v\",\"filType\":\"PDFA\",\"filnavn\":\"hovedskjema\",\"tittel\":null,\"dokumentType\":\"KONTANTSTØTTE_SØKNAD\"}," +
-        "{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"tittel\":null,\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]}";
+        "{\"dokument\":\"EjRW\",\"filType\":\"PDFA\",\"filnavn\":\"vedlegg\",\"tittel\":null,\"dokumentType\":\"KONTANTSTØTTE_SØKNAD_VEDLEGG\"}]," +
+        "\"fagsakId\":null,\"journalførendeEnhet\":null}";
     public static final String DOKARKIV_SUCCESS_RESPONSE =
         Ressurs.Companion.success(Map.of("journalpostId", "123"), "OK").toJson();
     @Autowired
