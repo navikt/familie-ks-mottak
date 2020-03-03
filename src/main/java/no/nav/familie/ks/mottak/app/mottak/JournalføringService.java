@@ -40,7 +40,7 @@ public class JournalføringService extends BaseService {
 
         super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
-        this.integrasjonServiceUri = URI.create(integrasjonServiceUri + "/arkiv/v1");
+        this.integrasjonServiceUri = URI.create(integrasjonServiceUri + "/arkiv/v2");
         this.søknadService = søknadService;
     }
 
