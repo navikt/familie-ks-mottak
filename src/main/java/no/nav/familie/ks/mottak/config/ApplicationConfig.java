@@ -19,7 +19,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaAuditing
 @EnableJpaRepositories({"no.nav.familie"})
 @EntityScan({"no.nav.familie"})
-@ComponentScan({"no.nav.familie"})
+@ComponentScan({
+    "no.nav.familie.prosessering",
+    "no.nav.familie.sikkerhet",
+    "no.nav.familie.ks.mottak"
+})
 @EnableJwtTokenValidation
 @EnableOAuth2Client(cacheEnabled = true)
 public class ApplicationConfig {
