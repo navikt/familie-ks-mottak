@@ -32,11 +32,8 @@ public class ApplicationConfig {
 
     @Bean
     ServletWebServerFactory servletWebServerFactory() {
-
         JettyServletWebServerFactory serverFactory = new JettyServletWebServerFactory();
-
         serverFactory.setPort(8084);
-
         return serverFactory;
     }
 
