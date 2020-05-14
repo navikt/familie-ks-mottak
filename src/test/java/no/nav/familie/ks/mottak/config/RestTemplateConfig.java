@@ -1,4 +1,4 @@
-package no.nav.familie.config;
+package no.nav.familie.ks.mottak.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
