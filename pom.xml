@@ -17,7 +17,7 @@
 
     <properties>
         <revision>1</revision>
-        <sha1></sha1>
+        <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <spring.cloud.version>2.2.1.RELEASE</spring.cloud.version>
         <java.version>11</java.version>
@@ -59,7 +59,7 @@
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.2.9</version>
+                <version>42.2.12.jre7</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
