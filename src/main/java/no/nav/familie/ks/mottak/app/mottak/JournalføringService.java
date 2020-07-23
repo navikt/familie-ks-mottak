@@ -2,8 +2,8 @@ package no.nav.familie.ks.mottak.app.mottak;
 
 import no.nav.familie.kontrakter.felles.Ressurs;
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest;
-import no.nav.familie.kontrakter.felles.arkivering.Dokument;
-import no.nav.familie.kontrakter.felles.arkivering.FilType;
+import no.nav.familie.kontrakter.felles.dokarkiv.Dokument;
+import no.nav.familie.kontrakter.felles.dokarkiv.FilType;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
 import no.nav.familie.ks.mottak.config.BaseService;
