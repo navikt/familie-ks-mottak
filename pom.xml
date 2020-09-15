@@ -24,7 +24,7 @@
         <java.version>11</java.version>
         <kontrakt.version>2.0_20200723115650_db71799</kontrakt.version>
         <felles.version>1.20200629134442_aadbfc0</felles.version>
-        <kotlin.version>1.4.0</kotlin.version>
+        <kotlin.version>1.4.10</kotlin.version>
         <token-validation-spring.version>1.2.0</token-validation-spring.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.2.14</version>
+                <version>42.2.16</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
