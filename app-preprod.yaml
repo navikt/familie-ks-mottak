@@ -44,3 +44,5 @@ spec:
       value: preprod
     - name: JAVA_OPTS
       value: "-Xmx1g"
+  envFrom:
+    - configmap: loginservice-idporten
