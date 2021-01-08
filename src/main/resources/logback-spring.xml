@@ -16,8 +16,12 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
+    <!-- Logger for sensitive data -->
+    <appender name="secureLoggerRestAppender" class="no.nav.familie.ks.mottak.app.SecureLoggerRestAppender"/>
+
+
     <logger name="secureLogger" level="INFO" additivity="false">
-        <appender-ref ref="secureLog"/>
+        <appender-ref ref="secureLoggerRestAppender"/>
     </logger>
 
     <!-- Spesiell håndtering av loggeren no.nav.log.LogFilter for å forhindre logging av isAlive-sjekker o.l. -->
