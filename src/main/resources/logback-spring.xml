@@ -17,7 +17,7 @@
     </appender>
 
     <!-- Logger for sensitive data -->
-    <appender name="secureLoggerRestAppender" class="no.nav.familie.ks.mottak.app.SecureLoggerRestAppender"/>
+    <appender name="secureLoggerRestAppender" class="no.nav.familie.log.appender.SecureLoggerRestAppender"/>
 
 
     <logger name="secureLogger" level="INFO" additivity="false">
