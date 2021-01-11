@@ -15,7 +15,8 @@ class SecureLoggerRestAppender : AppenderBase<ch.qos.logback.classic.spi.ILoggin
 
     override fun append(eventObject: ch.qos.logback.classic.spi.ILoggingEvent) {
         val logEvent = mutableMapOf<String, String>()
-        logEvent["message"] = eventObject.message
+        logEvent["message"] = eventObject.formattedMessage
+        println("message:"+ eventObject.formattedMessage)
         logEvent["level"] = eventObject.level.levelStr
         logEvent["thread"] = eventObject.threadName
         val iThrowableProxy = eventObject.throwableProxy
