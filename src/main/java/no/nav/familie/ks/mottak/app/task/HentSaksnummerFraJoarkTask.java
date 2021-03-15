@@ -1,6 +1,8 @@
 package no.nav.familie.ks.mottak.app.task;
 
 import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
+import no.nav.familie.ks.mottak.app.mottak.HentSaksnummerException;
+import no.nav.familie.ks.mottak.app.util.TaskUtil;
 import no.nav.familie.prosessering.AsyncTaskStep;
 import no.nav.familie.prosessering.TaskStepBeskrivelse;
 import no.nav.familie.prosessering.domene.Task;
@@ -10,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 
@@ -22,11 +23,10 @@ import java.time.LocalDateTime;
                      triggerTidVedFeilISekunder = 60 * 15)
 public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HentSaksnummerFraJoarkTask.class);
-
     public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";
-    private TaskRepository taskRepository;
-    private HentJournalpostService hentJournalpostService;
+    private static final Logger LOG = LoggerFactory.getLogger(HentSaksnummerFraJoarkTask.class);
+    private final TaskRepository taskRepository;
+    private final HentJournalpostService hentJournalpostService;
 
 
     @Autowired
@@ -37,9 +37,16 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
     @Override
     public void doTask(Task task) {
-        String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
-        task.getMetadata().put("saksnummer", saksnummer);
-        taskRepository.saveAndFlush(task);
+        try {
+            String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
+            task.getMetadata().put("saksnummer", saksnummer);
+            taskRepository.saveAndFlush(task);
+        } catch (HentSaksnummerException e) {
+            task.setTriggerTid(TaskUtil.nesteTriggertidEksluderHelg(LocalDateTime.now()));
+            taskRepository.save(task);
+            throw e;
+        }
+
     }
 
     @Override

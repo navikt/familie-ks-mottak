@@ -60,7 +60,7 @@ public class HentJournalpostService extends BaseService {
         Optional<String> saksnummer =
             hentFraUrl(integrasjonServiceUri + "/journalpost/sak?journalpostId=%s", "saksnummer", journalpostID);
 
-        søknad.setSaksnummer(saksnummer.orElseThrow(() -> new RuntimeException(
+        søknad.setSaksnummer(saksnummer.orElseThrow(() -> new HentSaksnummerException(
             "Finner ikke saksnummer for journalpostId=" + journalpostID + ", søknadId=" + søknadId)));
         søknadService.lagreSøknad(søknad);
         return saksnummer.get();
