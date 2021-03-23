@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
+        <version>2.4.4</version>
     </parent>
 
     <groupId>no.nav.familie.ks.mottak</groupId>
@@ -19,8 +19,8 @@
         <revision>1</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <spring.cloud.version>3.0.1</spring.cloud.version>
-        <spring.vault.version>2.3.0</spring.vault.version>
+        <spring.cloud.version>3.0.2</spring.cloud.version>
+        <spring.vault.version>2.3.2</spring.vault.version>
         <java.version>11</java.version>
         <kontrakt.version>2.0_20210204090009_085a834</kontrakt.version>
         <felles.version>1.20210208115050_88991d1</felles.version>
