@@ -1,18 +1,19 @@
 package no.nav.familie.ks.mottak.app.task;
 
 import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
-import no.nav.familie.ks.mottak.app.mottak.HentSaksnummerException;
 import no.nav.familie.ks.mottak.app.util.TaskUtil;
 import no.nav.familie.prosessering.AsyncTaskStep;
 import no.nav.familie.prosessering.TaskStepBeskrivelse;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
+import no.nav.familie.prosessering.internal.RekjørSenereException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
 
@@ -41,12 +42,14 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
             String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
             task.getMetadata().put("saksnummer", saksnummer);
             taskRepository.saveAndFlush(task);
-        } catch (HentSaksnummerException e) {
-            task.setTriggerTid(TaskUtil.nesteTriggertidEksluderHelg(LocalDateTime.now()));
-            taskRepository.save(task);
+        } catch (Exception e) {
+            if (LocalDateTime.now().getDayOfWeek() == DayOfWeek.SATURDAY ||
+                LocalDateTime.now().getDayOfWeek() == DayOfWeek.SUNDAY) {
+                throw new RekjørSenereException("Task skal ikke rekjøres i helgene",
+                                                TaskUtil.nesteTriggertidEksluderHelg(LocalDateTime.now()));
+            }
             throw e;
         }
-
     }
 
     @Override
