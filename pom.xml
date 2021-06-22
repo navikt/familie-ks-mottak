@@ -55,11 +55,6 @@
                 <version>${felles.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.nav.familie.felles</groupId>
-                <artifactId>prosessering</artifactId>
-                <version>${felles.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>42.2.20</version>
