@@ -6,7 +6,7 @@ import no.nav.familie.prosessering.AsyncTaskStep;
 import no.nav.familie.prosessering.TaskStepBeskrivelse;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
-import no.nav.familie.prosessering.internal.RekjørSenereException;
+import no.nav.familie.prosessering.error.RekjørSenereException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
         try {
             String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
             task.getMetadata().put("saksnummer", saksnummer);
-            taskRepository.saveAndFlush(task);
+            taskRepository.save(task);
         } catch (Exception e) {
             if (LocalDateTime.now().getDayOfWeek() == DayOfWeek.SATURDAY ||
                 LocalDateTime.now().getDayOfWeek() == DayOfWeek.SUNDAY) {
@@ -54,7 +54,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
     @Override
     public void onCompletion(Task task) {
-        Task nesteTask = Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload(), task.getMetadata());
+        Task nesteTask = new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload(), task.getMetadata());
         taskRepository.save(nesteTask);
     }
 

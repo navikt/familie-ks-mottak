@@ -15,6 +15,7 @@ import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import no.nav.security.token.support.test.JwtTokenGenerator;
 import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
+import org.assertj.core.util.IterableUtil;
 import org.eclipse.jetty.http.HttpHeader;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -102,20 +104,22 @@ public class MottaSøknadIntegrasjonsTest {
 
     @Test
     public void mottak_av_søknad_genererer_sak_task() {
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> tasks = new ArrayList<>();
+        taskRepository.findAll().forEach(t -> tasks.add(t));
 
         assertThat(tasks.size()).isEqualTo(1);
-        assertThat(tasks.get(0).getTaskStepType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
+        assertThat(tasks.get(0).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
     }
 
     @DirtiesContext
     @Test
     public void mottak_av_søknad_med_journalføring_togglet_på_genererer_journal_task() {
         response = utførRequest(lagSøknadDtoMedHoveddokOgVedlegg(), true);
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> tasks = new ArrayList<>();
+        taskRepository.findAll().forEach(t -> tasks.add(t));
 
         assertThat(tasks.size()).isEqualTo(2);
-        assertThat(tasks.get(1).getTaskStepType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
+        assertThat(tasks.get(1).getType()).isEqualTo(JournalførSøknadTask.JOURNALFØR_SØKNAD);
         setupIsDone = false;
     }
 
