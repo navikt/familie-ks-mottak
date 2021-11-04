@@ -3,6 +3,7 @@ package no.nav.familie.ks.mottak.app.mottak;
 import no.nav.familie.kontrakter.felles.Ressurs;
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest;
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokument;
+import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype;
 import no.nav.familie.kontrakter.felles.dokarkiv.FilType;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.Vedlegg;
@@ -77,8 +78,8 @@ public class JournalføringService extends BaseService {
     }
 
     private Dokument tilDokument(Vedlegg vedlegg) {
-        String dokumentType = vedlegg.getFilnavn().equalsIgnoreCase("hovedskjema") ?
-            "KONTANTSTØTTE_SØKNAD" : "KONTANTSTØTTE_SØKNAD_VEDLEGG";
+        Dokumenttype dokumentType = vedlegg.getFilnavn().equalsIgnoreCase("hovedskjema") ?
+            Dokumenttype.KONTANTSTØTTE_SØKNAD : Dokumenttype.KONTANTSTØTTE_SØKNAD_VEDLEGG;
         return new Dokument(vedlegg.getData(), FilType.PDFA, vedlegg.getFilnavn(), null, dokumentType);
     }
 }
