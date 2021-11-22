@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @Service
 @TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
-                     maxAntallFeil = 100,
+                     maxAntallFeil = 200,
                      beskrivelse = "Hent saksnummer fra joark",
                      triggerTidVedFeilISekunder = 60 * 15)
 public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
