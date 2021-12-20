@@ -4,9 +4,12 @@ import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
 import no.nav.familie.ks.mottak.app.util.TaskUtil;
 import no.nav.familie.prosessering.AsyncTaskStep;
 import no.nav.familie.prosessering.TaskStepBeskrivelse;
+import no.nav.familie.prosessering.domene.Avvikstype;
+import no.nav.familie.prosessering.domene.Loggtype;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
 import no.nav.familie.prosessering.internal.RekjørSenereException;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,15 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
     @Override
     public void doTask(Task task) {
+
+        long antallFeilendeForsøk = task.getLogg().stream().filter(t -> t.getType() == Loggtype.FEILET ).count();
+
+        if(antallFeilendeForsøk >= 198) {
+            task.avvikshåndter(Avvikstype.ANNET,"Oppdaterer ikke oppgave med beslutningsstøtte", "VL");
+            taskRepository.saveAndFlush(task);
+            return;
+        }
+
         try {
             String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
             task.getMetadata().put("saksnummer", saksnummer);
