@@ -22,11 +22,12 @@ import java.time.LocalDateTime;
 
 @Service
 @TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
-                     maxAntallFeil = 200,
+                     maxAntallFeil = HentSaksnummerFraJoarkTask.MAX_ANTALL_FEIL,
                      beskrivelse = "Hent saksnummer fra joark",
                      triggerTidVedFeilISekunder = 60 * 15)
 public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
+    public static final int MAX_ANTALL_FEIL = 200;
     public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";
     private static final Logger LOG = LoggerFactory.getLogger(HentSaksnummerFraJoarkTask.class);
     private final TaskRepository taskRepository;
@@ -44,7 +45,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
         long antallFeilendeForsøk = task.getLogg().stream().filter(t -> t.getType() == Loggtype.FEILET ).count();
 
-        if(antallFeilendeForsøk >= 198) {
+        if(antallFeilendeForsøk >= MAX_ANTALL_FEIL - 2) { // -2 for å unngå alarmer når max forsøk er nådd
             task.avvikshåndter(Avvikstype.ANNET,"Oppdaterer ikke oppgave med beslutningsstøtte", "VL");
             taskRepository.saveAndFlush(task);
             return;
