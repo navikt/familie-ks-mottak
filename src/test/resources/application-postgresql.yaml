@@ -1,10 +1,10 @@
 no.nav.security.jwt:
   issuer.selvbetjening:
-    discoveryurl: http://metadata
+    discoveryurl: http://localhost:8080/metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
   issuer.azuread:
-    discoveryurl: http://metadata
+    discoveryurl: http://localhost:8080/metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
   client:
