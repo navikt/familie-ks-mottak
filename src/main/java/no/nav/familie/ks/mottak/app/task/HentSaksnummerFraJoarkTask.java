@@ -67,8 +67,11 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
     @Override
     public void onCompletion(Task task) {
-        Task nesteTask = Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload(), task.getMetadata());
-        taskRepository.save(nesteTask);
+        if (task.getMetadata().contains("saksnummer")) { // ikke fortsett hvis vi ikke har noe saksnummer
+            Task nesteTask =
+                Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload(), task.getMetadata());
+            taskRepository.save(nesteTask);
+        }
     }
 
     @Override
