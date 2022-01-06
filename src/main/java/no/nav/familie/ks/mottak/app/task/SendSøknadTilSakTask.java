@@ -4,7 +4,6 @@ import no.nav.familie.ks.mottak.app.mottak.SøknadService;
 import no.nav.familie.prosessering.AsyncTaskStep;
 import no.nav.familie.prosessering.TaskStepBeskrivelse;
 import no.nav.familie.prosessering.domene.Task;
-import no.nav.familie.prosessering.domene.TaskRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

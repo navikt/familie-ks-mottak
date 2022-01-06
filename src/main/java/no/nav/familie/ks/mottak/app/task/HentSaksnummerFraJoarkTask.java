@@ -47,7 +47,6 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
         if (antallFeilendeForsøk >= MAX_ANTALL_FEIL - 2) { // -2 for å unngå alarmer når max forsøk er nådd
             task.avvikshåndter(Avvikstype.ANNET, "Oppdaterer ikke oppgave med beslutningsstøtte", "VL");
             taskRepository.saveAndFlush(task);
-            return;
         } else {
             try {
                 String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
@@ -69,7 +68,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
 
     @Override
     public void onCompletion(Task task) {
-
+        //NOP
     }
 
     @Override
