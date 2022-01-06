@@ -14,14 +14,12 @@ import org.springframework.stereotype.Service;
 public class SendSøknadTilSakTask implements AsyncTaskStep {
 
     public static final String SEND_SØKNAD_TIL_SAK = "sendSøknadTilSak";
-    private TaskRepository taskRepository;
     private SøknadService søknadService;
 
 
     @Autowired
-    public SendSøknadTilSakTask(SøknadService søknadService, TaskRepository taskRepository) {
+    public SendSøknadTilSakTask(SøknadService søknadService) {
         this.søknadService = søknadService;
-        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -31,8 +29,7 @@ public class SendSøknadTilSakTask implements AsyncTaskStep {
 
     @Override
     public void onCompletion(Task task) {
-        Task nesteTask = Task.Companion.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.getPayload(), task.getMetadata());
-        taskRepository.save(nesteTask);
+        //NOP
     }
 
     @Override
