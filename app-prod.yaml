@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: familie-ks-mottak
-  namespace: default
+  namespace: teamfamilie
   labels:
     team: teamfamilie
 
@@ -35,9 +35,16 @@ spec:
       cpu: 200m
   secureLogs:
     enabled: true
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: soknad-kontantstotte-api
+          namespace: teamfamilie
+          cluster: prod-gcp
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - https://familie-ks-mottak.nais.adeo.no
-    - https://familie-ks-mottak.prod-fss-pub.nais.io
+    - https://familie-ks-mottak-teamfamilie.prod-fss-pub.nais.io
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod

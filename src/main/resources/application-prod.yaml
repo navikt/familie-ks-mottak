@@ -9,6 +9,9 @@ no.nav.security.jwt:
     accepted_audience: ${CLIENT_ID}
     proxyurl: http://webproxy-nais.nav.no:8088
     cookie_name: azure_token
+  issuer.tokenx:
+    discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
+    accepted_audience: ${TOKEN_X_CLIENT_ID}
   client:
     registration:
       ks-sak-clientcredentials:
