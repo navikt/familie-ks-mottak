@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: familie-ks-mottak
-  namespace: default
+  namespace: teamfamilie
   labels:
     team: teamfamilie
 
@@ -39,6 +39,14 @@ spec:
     - https://familie-ks-mottak.dev-fss-pub.nais.io
   secureLogs:
     enabled: true
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: soknad-kontantstotte-api
+          namespace: teamfamilie
+          cluster: dev-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod
