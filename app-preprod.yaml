@@ -47,6 +47,9 @@ spec:
         - application: soknad-kontantstotte-api
           namespace: teamfamilie
           cluster: dev-gcp
+        - application: familie-prosessering
+          namespace: teamfamilie
+          cluster: dev-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod
