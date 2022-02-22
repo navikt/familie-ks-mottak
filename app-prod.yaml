@@ -48,6 +48,7 @@ spec:
           cluster: prod-gcp
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ks-mottak-teamfamilie.prod-fss-pub.nais.io
+    - https://familie-ks-mottak.prod-fss-pub.nais.io
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
