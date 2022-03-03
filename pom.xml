@@ -22,7 +22,7 @@
         <spring.cloud.version>3.1.0</spring.cloud.version>
         <spring.vault.version>2.3.2</spring.vault.version>
         <java.version>17</java.version>
-        <kontrakt.version>2.0_20220221124047_9506016</kontrakt.version>
+        <kontrakt.version>2.0_20220222213922_64795e8</kontrakt.version>
         <felles.version>1.20211217154554_3bb883e</felles.version>
         <kotlin.version>1.6.10</kotlin.version>
         <token-validation-spring.version>2.0.5</token-validation-spring.version>
