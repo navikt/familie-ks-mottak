@@ -10,7 +10,7 @@ jobs:
     name: Bygg app/image, push til github, deploy til dev-fss
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build -t $IMAGE .
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@42d299face0c5c43a0487c477f595ac9cf22f1a7
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
