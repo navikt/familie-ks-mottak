@@ -1,6 +1,7 @@
 package no.nav.familie.ks.mottak.app.mottak;
 
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
+import no.nav.security.token.support.core.api.Unprotected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +16,8 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api")
-@ProtectedWithClaims(issuer = "tokenx", claimMap = {"acr=Level4"})
+//@ProtectedWithClaims(issuer = "tokenx", claimMap = {"acr=Level4"})
+@Unprotected
 @Transactional
 public class MottakController {
 

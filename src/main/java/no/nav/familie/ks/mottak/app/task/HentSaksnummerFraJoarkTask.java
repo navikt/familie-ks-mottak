@@ -4,11 +4,11 @@ import no.nav.familie.ks.mottak.app.mottak.HentJournalpostService;
 import no.nav.familie.ks.mottak.app.util.TaskUtil;
 import no.nav.familie.prosessering.AsyncTaskStep;
 import no.nav.familie.prosessering.TaskStepBeskrivelse;
-import no.nav.familie.prosessering.domene.Avvikstype;
 import no.nav.familie.prosessering.domene.Loggtype;
 import no.nav.familie.prosessering.domene.Task;
+import no.nav.familie.prosessering.domene.TaskLogg;
 import no.nav.familie.prosessering.domene.TaskRepository;
-import no.nav.familie.prosessering.internal.RekjørSenereException;
+import no.nav.familie.prosessering.error.RekjørSenereException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +42,24 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
     @Override
     public void doTask(Task task) {
 
-        long antallFeilendeForsøk = task.getLogg().stream().filter(t -> t.getType() == Loggtype.FEILET ).count();
+        long antallFeilendeForsøk = task.getLogg().stream().filter(t -> t.getType() == Loggtype.FEILET).count();
 
         if (antallFeilendeForsøk >= MAX_ANTALL_FEIL - 2) { // -2 for å unngå alarmer når max forsøk er nådd
-            task.avvikshåndter(Avvikstype.ANNET, "Oppdaterer ikke oppgave med beslutningsstøtte", "VL");
-            taskRepository.saveAndFlush(task);
+            //task.avvikshåndter(Avvikstype.ANNET, "Oppdaterer ikke oppgave med beslutningsstøtte", "VL");
+            //taskRepository.save(task);
+            task.getMetadata().put("avsluttet", "ja");
+            task.getLogg().add(new TaskLogg(0,
+                                            "VL", Loggtype.AVVIKSHÅNDTERT,
+                                            "node1",
+                                            "Oppdaterer ikke oppgave med beslutningsstøtte",
+                                            LocalDateTime.now()
+            ));
         } else {
             try {
                 String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
                 task.getMetadata().put("saksnummer", saksnummer);
-                taskRepository.saveAndFlush(task);
                 Task nesteTask =
-                    Task.Companion.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload(), task.getMetadata());
+                    new Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.getPayload(), task.getMetadata());
                 taskRepository.save(nesteTask);
             } catch (Exception e) {
                 if (LocalDateTime.now().getDayOfWeek() == DayOfWeek.SATURDAY ||
