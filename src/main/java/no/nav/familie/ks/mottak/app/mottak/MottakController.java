@@ -16,8 +16,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api")
-//@ProtectedWithClaims(issuer = "tokenx", claimMap = {"acr=Level4"})
-@Unprotected
+@ProtectedWithClaims(issuer = "tokenx", claimMap = {"acr=Level4"})
 @Transactional
 public class MottakController {
 
