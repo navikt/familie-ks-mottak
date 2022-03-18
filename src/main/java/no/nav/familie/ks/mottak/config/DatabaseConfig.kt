@@ -3,6 +3,7 @@ package no.nav.familie.ks.mottak.config
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -21,6 +22,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
     "no.nav.familie",
     excludeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = arrayOf(TaskRepository::class))]
 )
+@EntityScan("no.nav.familie")
 @EnableJpaAuditing
 class DatabaseConfig : AbstractJdbcConfiguration() {
     @Bean
