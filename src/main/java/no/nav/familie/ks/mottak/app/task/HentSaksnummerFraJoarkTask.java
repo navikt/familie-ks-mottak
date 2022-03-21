@@ -29,6 +29,7 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
     public static final int MAX_ANTALL_FEIL = 200;
     public static final String HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark";
     private static final Logger LOG = LoggerFactory.getLogger(HentSaksnummerFraJoarkTask.class);
+    private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private final TaskRepository taskRepository;
     private final HentJournalpostService hentJournalpostService;
 
@@ -52,6 +53,9 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
                                             "Oppdaterer ikke oppgave med beslutningsstøtte",
                                             LocalDateTime.now()
             ));
+            secureLogger.warn("HentSaksnummerFraJoarkTask {} har feilet og avsluttet, antallFeilendeForsøk = {}",
+                              task.getId(),
+                              antallFeilendeForsøk);
         } else {
             try {
                 String saksnummer = hentJournalpostService.hentSaksnummer(task.getPayload());
