@@ -51,6 +51,7 @@ public class SøknadService extends BaseService {
 
     @Transactional
     public void lagreSoknadOgLagTask(SøknadDto søknadDto) {
+        LOG.info("lagreSoknadOgLagTask()");
         Soknad soknad = new Soknad();
         soknad.setSoknadJson(søknadDto.getSoknad());
         List<Vedlegg> vedlegg = søknadDto.getVedlegg().stream().map(vedleggDto -> {
@@ -66,7 +67,7 @@ public class SøknadService extends BaseService {
         lagreSøknad(soknad);
         Properties properties= new Properties();
         properties.setProperty("søkerFødselsnummer", søknadDto.getFnr());
-        final Task task = Task.Companion.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString(), properties);
+        final Task task = new Task(JournalførSøknadTask.JOURNALFØR_SØKNAD, soknad.getId().toString(), properties);
 
         taskRepository.save(task);
     }

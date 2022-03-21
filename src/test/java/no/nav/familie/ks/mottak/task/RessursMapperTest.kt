@@ -12,20 +12,17 @@ class RessursMapperTest {
 
     @Test
     fun `map task til ressurs med rest task`() {
-        val task = Task.Companion.nyTaskMedTriggerTid(JOURNALFØR_SØKNAD, "payload", LocalDateTime.now())
-        task.klarTilPlukk("foobar")
-        task.metadata.apply {
+        val task = Task(type = JOURNALFØR_SØKNAD, payload = "payload").medTriggerTid(LocalDateTime.now())
+        val kanPlukkTask = task.klarTilPlukk("foobar")
+        kanPlukkTask.metadata.apply {
             put("journalpostID", "journalpostID")
         }
 
-
-        val list = mutableListOf(task)
+        val list = mutableListOf(kanPlukkTask)
 
         val successRessurs = Ressurs.success(list, "OK")
         assertThat(successRessurs.data?.first()?.metadata?.get("journalpostID")).isEqualTo("journalpostID")
-        assertThat(successRessurs.data?.first()?.taskStepType).isEqualTo(JOURNALFØR_SØKNAD)
-        assertThat(successRessurs.data?.first()?.logg?.first()?.type).isEqualTo(Loggtype.KLAR_TIL_PLUKK)
-
+        assertThat(successRessurs.data?.first()?.type).isEqualTo(JOURNALFØR_SØKNAD)
+        assertThat(successRessurs.data?.first()?.logg?.last()?.type).isEqualTo(Loggtype.KLAR_TIL_PLUKK)
     }
 }
-

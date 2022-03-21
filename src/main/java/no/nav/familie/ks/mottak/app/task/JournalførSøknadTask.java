@@ -28,12 +28,11 @@ public class JournalførSøknadTask implements AsyncTaskStep {
     public void doTask(Task task) {
         String journlpostId = journalføringService.journalførSøknad(task.getPayload());
         task.getMetadata().put("journalpostID", journlpostId);
-        taskRepository.saveAndFlush(task);
     }
 
     @Override
     public void onCompletion(Task task) {
-        Task nesteTask = Task.Companion.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), task.getMetadata());
+        Task nesteTask = new Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), task.getMetadata());
         taskRepository.save(nesteTask);
     }
 
