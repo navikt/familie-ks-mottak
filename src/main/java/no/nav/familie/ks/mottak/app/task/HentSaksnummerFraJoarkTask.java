@@ -45,8 +45,6 @@ public class HentSaksnummerFraJoarkTask implements AsyncTaskStep {
         long antallFeilendeForsøk = task.getLogg().stream().filter(t -> t.getType() == Loggtype.FEILET).count();
 
         if (antallFeilendeForsøk >= MAX_ANTALL_FEIL - 2) { // -2 for å unngå alarmer når max forsøk er nådd
-            //task.avvikshåndter(Avvikstype.ANNET, "Oppdaterer ikke oppgave med beslutningsstøtte", "VL");
-            //taskRepository.save(task);
             task.getMetadata().put("avsluttet", "ja");
             task.getLogg().add(new TaskLogg(0,
                                             "VL", Loggtype.AVVIKSHÅNDTERT,
