@@ -14,11 +14,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootConfiguration
-@EnableJpaAuditing
-@EnableJpaRepositories({"no.nav.familie"})
-@EntityScan({"no.nav.familie"})
 @ComponentScan({
     "no.nav.familie.prosessering",
     "no.nav.familie.sikkerhet",
@@ -26,6 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 })
 @EnableJwtTokenValidation
 @EnableOAuth2Client(cacheEnabled = true)
+@EnableScheduling
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
