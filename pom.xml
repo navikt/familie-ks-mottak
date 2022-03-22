@@ -19,7 +19,7 @@
         <revision>1</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <spring.cloud.version>3.1.1</spring.cloud.version>
+        <spring.cloud.version>3.1.0</spring.cloud.version>
         <spring.vault.version>2.3.2</spring.vault.version>
         <java.version>17</java.version>
         <kontrakt.version>2.0_20220315122122_ffe5712</kontrakt.version>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <version>${spring.cloud.version}</version>
+            <version>3.1.1</version>
         </dependency>
 
 
