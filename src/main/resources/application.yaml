@@ -41,7 +41,7 @@ management:
       enabled: true
 
 FAMILIE_INTEGRASJONER_API_URL: http://familie-integrasjoner.teamfamilie/api
-FAMILIE_KS_SAK_API_URL: http://familie-ks-sak.default/api
+FAMILIE_KS_SAK_API_URL: https://familie-ks-sak.nais.adeo.no/api
 
 CREDENTIAL_USERNAME: INVALID_USERNAME
 CREDENTIAL_PASSWORD: INVALID_PASSWORD

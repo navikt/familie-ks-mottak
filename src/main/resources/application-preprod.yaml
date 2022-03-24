@@ -39,3 +39,5 @@ spring:
 
 #Brukes til tilgangskontroll av familie-ks-mottak-frontend
 MOTTAK_ROLLE: ${MOTTAK_ROLLE}
+
+FAMILIE_KS_SAK_API_URL: https://familie-ks-sak.intern.dev.adeo.no/api
