@@ -46,3 +46,5 @@ APPDYNAMICS_AGENT_ACCOUNT_NAME: PROD
 #Brukes til tilgangskontroll av familie-ks-mottak-frontend
 MOTTAK_ROLLE: ${MOTTAK_ROLLE}
 
+FAMILIE_KS_SAK_API_URL: https://familie-ks-sak.nais.adeo.no/api
+
