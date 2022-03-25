@@ -26,8 +26,8 @@
         <felles.version>1.20220310100515_c0dcfc1</felles.version>
         <prosessering.version>1.20220321101749_55e4576</prosessering.version>
         <kotlin.version>1.6.10</kotlin.version>
-        <token-validation-spring.version>2.0.5</token-validation-spring.version>
-        <token-validation-spring.version>2.0.5</token-validation-spring.version>
+        <token-validation-spring.version>2.0.7</token-validation-spring.version>
+        <token-validation-spring.version>2.0.7</token-validation-spring.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
