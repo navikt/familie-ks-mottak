@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.4</version>
+        <version>2.6.6</version>
     </parent>
 
     <groupId>no.nav.familie.ks.mottak</groupId>
@@ -22,12 +22,11 @@
         <spring.cloud.version>3.1.0</spring.cloud.version>
         <spring.vault.version>2.3.2</spring.vault.version>
         <java.version>17</java.version>
-        <kontrakt.version>2.0_20220321181602_8d247bd</kontrakt.version>
-        <felles.version>1.20220310100515_c0dcfc1</felles.version>
-        <prosessering.version>1.20220321101749_55e4576</prosessering.version>
+        <kontrakt.version>2.0_20220331215756_9594442</kontrakt.version>
+        <felles.version>1.20220329165814_c0860ec</felles.version>
+        <prosessering.version>1.20220331123748_03bdb3b</prosessering.version>
         <kotlin.version>1.6.10</kotlin.version>
-        <token-validation-spring.version>2.0.5</token-validation-spring.version>
-        <token-validation-spring.version>2.0.5</token-validation-spring.version>
+        <token-validation-spring.version>2.0.14</token-validation-spring.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
@@ -110,7 +109,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-test-support</artifactId>
-            <version>${token-validation-spring.version}</version>
+            <version>2.0.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
