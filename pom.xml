@@ -25,7 +25,7 @@
         <kontrakt.version>2.0_20220405105519_4194bfd</kontrakt.version>
         <felles.version>1.20220405120953_6df4d70</felles.version>
         <prosessering.version>1.20220331123748_03bdb3b</prosessering.version>
-        <kotlin.version>1.6.10</kotlin.version>
+        <kotlin.version>1.6.20</kotlin.version>
         <token-validation-spring.version>2.0.14</token-validation-spring.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
