@@ -3,7 +3,6 @@ package no.nav.familie.ks.mottak;
 import no.nav.familie.kontrakter.felles.Ressurs;
 import no.nav.familie.ks.mottak.app.domene.Soknad;
 import no.nav.familie.ks.mottak.app.domene.SøknadRepository;
-import no.nav.familie.ks.mottak.app.task.HentSaksnummerFraJoarkTask;
 import no.nav.familie.ks.mottak.app.task.JournalførSøknadTask;
 import no.nav.familie.prosessering.domene.Task;
 import no.nav.familie.prosessering.domene.TaskRepository;
@@ -71,7 +70,7 @@ public class JournalførSøknadTaskTest {
     @Test
     @Sql("classpath:sql-testdata/søknad_med_vedlegg.sql")
     @DirtiesContext
-    public void skal_hente_journalpost_id_og_slette_vedlegg() throws IOException, InterruptedException {
+    public void skal_journalføre_og_slette_vedlegg() throws IOException, InterruptedException {
         MockResponse response = new MockResponse()
             .addHeader("Content-Type", "application/json; charset=utf-8")
             .setResponseCode(201)
@@ -79,7 +78,7 @@ public class JournalførSøknadTaskTest {
         server.enqueue(response);
 
         var task =
-            repository.save(new Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
+            repository.save(new Task(JournalførSøknadTask.JOURNALFØR_SØKNAD,
                                                           SØKNAD_ID.toString(),
                                                           new Properties()));
 
