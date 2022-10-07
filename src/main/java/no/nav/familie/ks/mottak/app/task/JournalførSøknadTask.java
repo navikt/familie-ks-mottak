@@ -32,8 +32,6 @@ public class JournalførSøknadTask implements AsyncTaskStep {
 
     @Override
     public void onCompletion(Task task) {
-        Task nesteTask = new Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,task.getPayload(), task.getMetadata());
-        taskRepository.save(nesteTask);
     }
 
     @Override
